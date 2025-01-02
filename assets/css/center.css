@@ -1,0 +1,24 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-area {
+    max-width: 500px; /* Adjust as needed */
+    width: 100%;
+}
+
+
+
+.login-form-head img {
+    display: block;
+    margin: 0 auto 20px; /* Center image */
+}

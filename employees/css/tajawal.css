@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&display=swap');
+
+body {
+    font-family: 'Tajawal', sans-serif;
+}
+
+
+@font-face {
+    font-family: 'Tajawal';
+    src: url('../fonts/Tajawal-Regular.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+}
