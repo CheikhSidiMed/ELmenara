@@ -3,51 +3,36 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include database connection
 include 'db_connection.php';
 
-$response = []; // Initialize response array
+$response = []; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name_student = $_POST['student_name'];
+    $student_id = $_POST['student_id'];
     $activity_id = $_POST['activity_id'];
     $subscription_date = $_POST['subscription_date'];
+    $after_discount = $_POST['after_discount']; // Correction ici
 
-    // Fetch the student ID based on the entered name
-    $stmt = $conn->prepare("SELECT id FROM students WHERE student_name = ?");
-    $stmt->bind_param("s", $name_student);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $student = $result->fetch_assoc();
-        $student_id = $student['id'];
 
         // Insert the subscription into the student_activities table
-        $insert_stmt = $conn->prepare("INSERT INTO student_activities (student_id, activity_id, subscription_date) VALUES (?, ?, ?)");
-        $insert_stmt->bind_param("iis", $student_id, $activity_id, $subscription_date);
+    $insert_stmt = $conn->prepare("INSERT INTO student_activities (student_id, activity_id, subscription_date, fee) VALUES (?, ?, ?, ?)");
+    $insert_stmt->bind_param("iiss", $student_id, $activity_id, $subscription_date, $after_discount);
 
-        if ($insert_stmt->execute()) {
-            $response = [
-                'success' => true,
-                'message' => 'تم التسجيل في الدورة أو النشاط بنجاح!'
-            ];
-        } else {
-            $response = [
-                'success' => false,
-                'message' => 'حدث خطأ أثناء التسجيل: ' . $insert_stmt->error
-            ];
-        }
-
-        $insert_stmt->close();
+    if ($insert_stmt->execute()) {
+        $response = [
+            'success' => true,
+            'message' => 'تم التسجيل في الدورة أو النشاط بنجاح!'
+        ];
     } else {
         $response = [
             'success' => false,
-            'message' => 'لم يتم العثور على التلميذ!'
+            'message' => 'حدث خطأ أثناء التسجيل: ' . $insert_stmt->error
         ];
     }
 
-    $stmt->close();
+    $insert_stmt->close();
+
+
     $conn->close();
 }
 ?>

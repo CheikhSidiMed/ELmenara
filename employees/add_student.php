@@ -4,9 +4,8 @@ session_start();
 
 // Check if the session variable 'userid' is set
 if (!isset($_SESSION['userid'])) {
-    // If the user is not logged in, redirect them to the login page
     echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-    exit(); // Stop further execution
+    exit(); 
 }
 
 // Access session variables safely
@@ -292,11 +291,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
                         <div class="form-group col-md-4">
-
                             <label for="studentName">الاسم الكامل</label>
-
                             <input type="text" class="form-control" id="studentName" name="studentName" placeholder="أدخل االاسم الكامل" required>
-
                         </div>
 
                         <div class="form-group col-md-4">
