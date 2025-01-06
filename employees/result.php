@@ -209,6 +209,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             @page {
                 size: A4;
             }
+            tr{
+                height: 31px;
+            }
 
             th {
                 font-size: 14px;
@@ -217,7 +220,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 white-space: wrap;
             }
             td {
-                font-size: 12px;
+                font-size: 15px;
+                font-weight: bold;
                 padding: 0px !important;
                 margin: 0px  !important;
                 border: 1px solid black;

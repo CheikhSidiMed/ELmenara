@@ -231,6 +231,9 @@
                                         <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
                                         <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
                                         <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                        <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                        <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
+
                             
                                     </ul>
                                 </li>
@@ -308,6 +311,7 @@
                             <ul class="collapse list-unstyled">
                                 <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
                                 <li><a href="Debt report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
+                                <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
                             </ul>
                         </li>
                         </ul>
@@ -590,12 +594,12 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="employees_salary.php"><i class="fa fa-money-bill-wave"></i>     إدخال الرواتب </a></li>
-                                <li><a href="fire_employee.php"><i class="fa fa-user-slash"></i>     فصل موظف </a></li>
+                                <li><a href="employees_salary.php"><i class="fa fa-money-bill-wave"></i> إدخال الرواتب </a></li>
+                                <li><a href="fire_employee.php"><i class="fa fa-user-slash"></i> فصل موظف </a></li>
                                 <li><a href="employees_manage.php"><i class="fa fa-user-edit"></i> إدارة الموظفين </a></li>
-                                <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i>      تعديل عملية حسابية </a></li>
+                                <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
                             </ul>
                         </li>
                         <li class="dropdown">

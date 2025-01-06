@@ -28,19 +28,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
     // SQL query to fetch student and activity details
     $sql = "SELECT 
                 a.id AS id_act,
-                s.student_name, 
-                s.phone, 
+                s_e.name AS student_name, 
+                s_e.phone, 
                 sa.id AS student_activity_id, 
-                s.id AS student_id, 
-                c.class_name, 
+                s_e.id AS student_id, 
                 a.activity_name, 
                 sa.fee AS price, 
                 sa.subscription_date
             FROM student_activities sa
-            INNER JOIN students s ON sa.student_id = s.id
-            LEFT JOIN classes c ON s.class_id = c.class_id
+            INNER JOIN students_etrang s_e ON sa.student_id_etrang = s_e.id
             INNER JOIN activities a ON sa.activity_id = a.id
-            WHERE s.id = ?";
+            WHERE s_e.id = ?";
 
     $stmt = $conn->prepare($sql);
     
@@ -70,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
 
 }
 
-// Fetch the bank list for the modal
+
 $bankList = [];
 $sql = "SELECT account_id, bank_name FROM bank_accounts";
 $result = $conn->query($sql);
@@ -242,7 +240,16 @@ $conn->close();
             font-weight: bold;
             color: #1a73e8;
         }
+        #etrangDropdown {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
 
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
         #agentDropdown {
             position: absolute;
             z-index: 1000;
@@ -261,9 +268,9 @@ $conn->close();
     <!-- Header Section -->
 <div class="row mb-3">
     <div class="col-12 d-flex justify-content-between align-items-center">
-        <h1 class="header-title">  تسديد رسوم الإشتراك في نشاط أو دورة تكوينية </h1>
+        <h1 class="header-title">  تسديد رسوم الإشتراك في نشاط أو دورة تكوينية للطلاب الأجانب </h1>
         <div>
-            <a href="activitie_payment_etrang.php" class="btn bg-light">الطلاب الأجانب</a>
+                <a href="activitie_payment.php" class="btn bg-light">رجوع </a>
         </div>
         <div class="d-flex align-items-center">
             <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
@@ -287,9 +294,7 @@ $conn->close();
                 <div class="input-group">
                     <input type="hidden" name="student_id" class="form-control" id="student_id" placeholder="رقم الهاتف (الرقم الشخصي)">
                     <input type="text" class="form-control" id="name_student" name="student_name" placeholder="أدخل اسم التلميذ" required>
-
                     <div id="agentDropdown" class="dropdown-menu mt-5"></div>
-
                     <button class="btn btn-outline-secondary border-2" type="submit">
                     <i class="bi bi-search"></i>
 
@@ -316,10 +321,6 @@ $conn->close();
                 <div><?php echo $firstActivity['student_name']; ?></div>
             </div>
             <div>
-                <label>القسم</label>
-                <div><?php echo $firstActivity['class_name']; ?></div>
-            </div>
-            <div>
                 <label>الرسوم</label>
                 <div id="due-amount"><?php echo $tot_price ; ?> أوقية جديدة</div>
             </div>
@@ -327,7 +328,7 @@ $conn->close();
     </div>
 
     <!-- Payment Information Section -->
-    <form method="POST" action="process_activitie_payment.php">
+    <form method="POST" action="process_activitie_payment_ertanger.php">
         <input type="hidden" name="student_activity_id" value="<?php echo $firstActivity['student_id']; ?>">
         <input type="hidden" name="payment_method" id="payment_method">
         <input type="hidden" name="student_activitie_id" id="student_activitie_id">
@@ -368,19 +369,19 @@ $conn->close();
                         <!-- <label>النشاط</label>
                         <div></div> -->
                         <div class="mb-3">
-                            <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
-                            <select class="form-select" id="activity_id" name="activity_id" required>
-                                <option value="" disabled selected>اختر دورة أو نشاط</option>
-                                <?php foreach ($activities as $activity): ?>
-                                    <option value="<?php echo $activity['activity_name']; ?>" data-price="<?php echo $activity['price']; ?>" data-id="<?php echo $activity['id_act']; ?>">
-                                        <?php echo $activity['activity_name'] . '  ¬|¬  ' . 'تاريخ التسجيل: ' . $activity['subscription_date']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                        <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
+                        <select class="form-select" id="activity_id" name="activity_id" required>
+                            <option value="" disabled selected>اختر دورة أو نشاط</option>
+                            <?php foreach ($activities as $activity): ?>
+                                <option value="<?php echo $activity['activity_name']; ?>" data-price="<?php echo $activity['price']; ?>" data-id="<?php echo $activity['id_act']; ?>">
+                                    <?php echo $activity['activity_name'] . '  ¬|¬  ' . 'تاريخ التسجيل: ' . $activity['subscription_date']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                    </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
@@ -431,7 +432,7 @@ $conn->close();
 
             if (agentPhone.length > 0) {
                 $.ajax({
-                    url: 'check_student.php',
+                    url: 'check_student_eranger.php',
                     type: 'POST',
                     data: { phone: agentPhone },
                     dataType: 'json',
@@ -480,36 +481,17 @@ $conn->close();
             }
         });
     });
-</script>
-<script>
-    // $(function() {
-    //     $("#student_name").autocomplete({
-    //         source: function(request, response) {
-    //             $.ajax({
-    //                 url: "autocomplete.php",
-    //                 dataType: "json",
-    //                 data: {
-    //                     term: request.term
-    //                 },
-    //                 success: function(data) {
-    //                     response(data);
-    //                 }
-    //             });
-    //         },
-    //         minLength: 2
-    //     });
-    // });
-    document.getElementById('activity_id').addEventListener('change', function () {
-    // Get the selected option
-    var selectedOption = this.options[this.selectedIndex];
-    
-    // Get the price from the data attribute
-    var price = selectedOption.getAttribute('data-price');
-    $('#student_activitie_id').val(selectedOption.getAttribute('data-id'));
 
-    // Update the due amount div
-    document.getElementById('due-amount').textContent = price + ' أوقية جديدة';
-});
+
+</script>
+
+<script>
+    document.getElementById('activity_id').addEventListener('change', function () {
+        var selectedOption = this.options[this.selectedIndex];
+        var price = selectedOption.getAttribute('data-price');
+        $('#student_activitie_id').val(selectedOption.getAttribute('data-id'));
+        document.getElementById('due-amount').textContent = price + ' أوقية جديدة';
+    });
 
 
     function calculateRemaining() {

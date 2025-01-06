@@ -1,3 +1,4 @@
+
 <?php
 // Include database connection
 include 'db_connection.php';
@@ -95,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         h2 {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 4px;
         }
         .form-container {
             width: 100%;
@@ -114,11 +114,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .header-title {
             text-align: center;
-            margin-bottom: 20px; /* Reduced margin */
+           
         }
         .sheet-header {
             text-align: center;
-            margin-bottom: 15px; /* Reduced margin */
         }
         .sheet-header p {
             display: inline-block;
@@ -131,9 +130,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             height: auto;
         }
         table {
-            width: 98%;
+            width: 100%;
             margin-left: 0px;
-            margin-right: 20px;
         }
         th, td {
             border: 1px solid black;
@@ -173,6 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         /* Print-specific adjustments */
         @media print {
+            /* Hide unnecessary elements */
             .button-group, .form-container, .container-fluid {
                 display: none;
             }
@@ -188,25 +187,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             .form-container, table{
-                transform: scale(.9);
+                transform: scale(.82);
                 text-align: center;
-                margin-right: -30px !important;
+                margin-top: -30px !important;
             }
-            table {
-                margin-top: -20px;
-                width: 96%;
+            tr {
+                margin-top: -30px;
+                width: 100%;
                 border-collapse: collapse;
                 font-size: 12px !important;
                 text-align: start;
                 table-layout: fixed;
-            }
-            .receipt-header{
-                margin-right: -180px !important;
+                border: 1px solid red;
 
             }
+            
 
             @page {
-                size: A4;
+                size: landscape;
             }
 
             th {
@@ -235,7 +233,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 font-size: 14px;
             }
             .sheet-header {
-                margin-top: -16px;
+                margin-top: -22px;
+                margin-bottom: -32px;
 
             }
 
@@ -334,10 +333,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <thead>
                 <tr>   
                     <th style="width: 15%; font-size: 18px">الاسم الكامل</th>
-                    <th style="width: 5%; font-size: 18px"> عدد الأحزاب</th>
-                    <th style="width: 5%; font-size: 18px"> مقدار الحفظ</th>
-                    <th style="width: 18%; font-size: 18px">  المستوى السابق</th>
-                    <th style="width: 18%; font-size: 18px">  المستوى الحالي</th>
+                    <th style="width: 8%; font-size: 18px"> عدد الأحزاب</th>
+                    <th style="width: 7%; font-size: 18px"> مقدار الحفظ</th>
+                    <th style="width: 20%; font-size: 18px">  المستوى السابق</th>
+                    <th style="width: 20%; font-size: 18px">  المستوى الحالي</th>
                     <th style="width: 17%; font-size: 18px">  الزيادة</th>
                     <th style="width: 4%; font-size: 18px">  الغياب</th>
                     <th style="width: 11%; font-size: 18px">  الملاحظات</th>
@@ -396,7 +395,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php
 $conn->close();
 ?>
-
-
 
 

@@ -34,6 +34,23 @@ if (isset($_GET['activity_id']) && !empty($_GET['activity_id'])) {
             $students[] = $row;
         }
     }
+
+    $sql = "
+        SELECT s.id AS student_id, s.name AS student_name, sa.subscription_date, '_' AS gender
+        FROM student_activities sa
+        JOIN students_etrang s ON sa.student_id_etrang = s.id
+        WHERE sa.activity_id = ?";
+
+    $stmt_s = $conn->prepare($sql);
+    $stmt_s->bind_param('i', $activity_id);
+    $stmt_s->execute();
+    $result = $stmt_s->get_result();
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $students[] = $row;
+        }
+    }
 }
 ?>
 

@@ -342,7 +342,7 @@ if ($activity_result->num_rows > 0) {
 
 
 
-$(document).ready(function() {
+    $(document).ready(function() {
         $('#etrang_student').on('input', function() {
             var agentPhone = $(this).val();
 
