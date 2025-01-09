@@ -88,7 +88,7 @@ if (isset($_POST['agent_id']) && isset($_POST['student_id'])) {
         $monthsBefore2 = [];
 
         foreach ($academicMonths as $month) {
-            $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;
+            $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;        
             if ($month <= $registrationMonth ) {
                 $monthsBefore1[] = $monthsArabic[$month];
             }
@@ -98,7 +98,7 @@ if (isset($_POST['agent_id']) && isset($_POST['student_id'])) {
                 $monthsBefore2[] = $monthsArabic[$month];
 
             }
-        }
+        } 
         $monthsBefore = array_merge($monthsBefore1, $monthsBefore2);
 
 

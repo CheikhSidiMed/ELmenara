@@ -6,7 +6,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -44,6 +44,7 @@ if ($currentMonth <= $startMonth) {
 }
 $allAcademicMonths = array_merge($starAcademicMonths, $endaAcademicMonths);
 
+
 $allMonths = [
     'October' => 'أكتوبر',
     'November' => 'نوفمبر',
@@ -73,7 +74,7 @@ $monthsArabic = [
     10 => 'أكتوبر',
     11 => 'نوفمبر',
     12 => 'ديسمبر'
-]; 
+];
 
 $commonMonths = [];
 $student_s = [];
@@ -130,34 +131,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($student_s as $student) {
             $registrationYear = (int)date('Y', strtotime($student['registration_date']));
             $registrationMonth = (int)date('m', strtotime($student['registration_date']));
-            $academicMonths = ($registrationMonth <= $endMonth) ? $endaAcademicMonths : $starAcademicMonths;
-                
-            $monthsBefore = []; 
-            $monthsBefore1 = []; 
-            $monthsBefore2 = []; 
+            $academicMonths = ($registrationMonth <= $endMonth) ? $allAcademicMonths : $starAcademicMonths;
+            
+            $monthsBefore = [];
+            $monthsBefore1 = [];
+            $monthsBefore2 = [];
         
             foreach ($academicMonths as $month) {
-                $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;        
-                if ($registrationYear == $academicYear && $month <= $registrationMonth ) {
+                $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;
+                if ($month <= $registrationMonth ) {
                     $monthsBefore1[] = $monthsArabic[$month];
                 }
             }
             if ($registrationMonth < $startMonth) {
                 foreach ($starAcademicMonths as $month) {
                     $monthsBefore2[] = $monthsArabic[$month];
-        
+
                 }
-            } 
+            }
         
             $monthsBefore = array_merge($monthsBefore1, $monthsBefore2);
             $academicMonths[$student['id']] = $monthsBefore;
-        
+
             $student_id = $student['id'];
             $monthsBefore = $academicMonths[$student_id] ?? [];
             $paidMonths = $paidMonths_with[$student_id] ?? [];
                    
             $combinedMonths = array_unique(array_merge($monthsBefore, $paidMonths));
             $finalMonths[$student_id] = $combinedMonths;
+
         }
         
         $commonMonths = array_values(reset($finalMonths)); // Get the first student's months
@@ -165,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($finalMonths as $studentID => $months) {
             $commonMonths = array_intersect($commonMonths, $months);
             if (empty($commonMonths)) {
-                break; 
+                break;
             }
         }
 
@@ -467,7 +469,7 @@ $conn->close();
             <div class="d-flex align-items-center">
                 <!-- Home Button with Icon -->
                 <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i> 
+                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i>
                     الرئيسية
                 </a>
                 <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
@@ -538,7 +540,6 @@ $conn->close();
 <form method="POST" action="process_agent_payment_all.php">
 
     <input type="hidden" name="id" value="<?php echo $agent_data['agent_id']; ?>">
-    <label for="remaining"></label>
     <input type="hidden" id="remaining" name="remaining" readonly>
     <input type="hidden" id="months_s" name="monthss[]" readonly>
     <div class="row form-section">
@@ -606,16 +607,16 @@ $conn->close();
             <div class="months-card">
                 <div class="section-title">الأشهر</div>
                 <div class="months-grid" id="months-grid">
-                <?php foreach ($allMonths as $monthKey => $monthName): 
+                <?php foreach ($allMonths as $monthKey => $monthName):
                     $isPaid = in_array($monthName, $commonMonths);
                 ?>
                     <div class="month-option">
-                        <input type="checkbox" 
-                            name="months[]" 
-                            value="<?php echo $monthName; ?>" 
-                            id="month-<?php echo $monthKey; ?>" 
+                        <input type="checkbox"
+                            name="months[]"
+                            value="<?php echo $monthName; ?>"
+                            id="month-<?php echo $monthKey; ?>"
                             <?php echo $isPaid ? 'checked readonly' : ''; ?>
-                            data-month-fee="<?php echo $monthly_fee; ?>" 
+                            data-month-fee="<?php echo $monthly_fee; ?>"
                             onclick="updateDueAmount(<?php echo $agent_data['agent_id']; ?>)"/>
                         <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
                     </div>
@@ -877,7 +878,7 @@ $conn->close();
     function updateDueAmount(agent_id) {
         const checkboxes = document.querySelectorAll('input[name="months[]"]');
         const selectedMonths = Array.from(checkboxes)
-            .filter(checkbox => checkbox.checked && !checkbox.hasAttribute('readonly')) 
+            .filter(checkbox => checkbox.checked && !checkbox.hasAttribute('readonly'))
             .map(checkbox => checkbox.value);
 
         if (selectedMonths.length === 0) {

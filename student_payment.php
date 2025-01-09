@@ -140,6 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
             $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;        
             if ($month <= $registrationMonth ) {
                 $monthsBefore1[] = $monthsArabic[$month];
+                echo $monthsArabic[$month];
             }
         }
         if ($registrationMonth < $startMonth) {

@@ -31,7 +31,7 @@ $allMonths = [
     'September' => 'سبتمبر'
 ];
 $total_remaining = count($allMonths) * $monthly_fee; 
-$remaining = 0; 
+$remaining = 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];

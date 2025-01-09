@@ -35,7 +35,7 @@ $arabicMonths = [
 ];
 
 $startMonth = 10;
-$endMonth = 9; 
+$endMonth = 9;
 $currentYear = (int)date('Y');
 $currentMonth = (int)date('m');
 $starAcademicMonths = [];
@@ -59,7 +59,6 @@ if ($currentMonth <= $startMonth) {
 }
 $allAcademicMonths = array_merge($starAcademicMonths, $endaAcademicMonths);
 
-print_r($allAcademicMonths);
 
 if ($filterType === 'all') {
     $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month, 
@@ -94,7 +93,7 @@ $students = [];
 while ($row = $result->fetch_assoc()) {
     $registrationDate = $row['registration_date'];
     $registrationYear = (int)date('Y', strtotime($registrationDate));
-    $registrationMonth = (int)date('n', strtotime($registrationDate)); 
+    $registrationMonth = (int)date('n', strtotime($registrationDate));
 
     $studentName = $row['student_name'];
     if (!isset($students[$studentName])) {
@@ -132,7 +131,7 @@ foreach ($students as $studentName => &$student) {
 
         if ((int)$month > 0 && isset($arabicMonths[(int)$month]) && !in_array($arabicMonths[(int)$month], $student['paid_months'])) {
             $student['unpaid_months'][] = $arabicMonths[(int)$month];
-        }
+        }   
         
     }
 }

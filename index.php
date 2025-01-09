@@ -23,6 +23,7 @@ if (isset($_POST['signin'])) {
         $_SESSION['userid'] = $result->id;
         $_SESSION['username'] = $result->username;
         $_SESSION['role_id'] = $result->role_id; // Store the role_id in the session
+        $_SESSION['UR_id'] = $result->id; // Store the role_id in the session
 
 
         // Redirect to the same page regardless of role
