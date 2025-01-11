@@ -130,7 +130,7 @@ if (isset($_GET['activity_id']) && !empty($_GET['activity_id'])) {
                         <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
                         <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
                             الرئيسية
-                        </a>                    
+                        </a>
                     </div>
                 </div>
                 <form method="GET" action="" class="mb-4">

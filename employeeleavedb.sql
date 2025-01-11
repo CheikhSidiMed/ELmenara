@@ -11,6 +11,20 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+session
+
+
+CREATE TABLE absences_activity (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id INT NOT NULL,
+    session_number INT NULL,
+    student_id INT NULL,
+    student_ert_id INT NULL,
+    absence_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_absent BOOLEAN NOT NULL DEFAULT 1,
+    FOREIGN KEY (activity_id) REFERENCES activities(id)
+);
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

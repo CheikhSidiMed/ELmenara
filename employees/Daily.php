@@ -15,14 +15,14 @@ if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = 'index.php'; </script>";
     exit();
 }
-    $role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; 
-    $con_user_id = isset($_SESSION['UR_id']) ? $_SESSION['UR_id'] : null; 
-    $username_con = isset($_SESSION['username']) ? $_SESSION['username'] : null; 
+    $role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null;
+    $con_user_id = isset($_SESSION['UR_id']) ? $_SESSION['UR_id'] : null;
+    $username_con = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['year'] = $_POST['year'];
-    $_SESSION['user_id'] = $_POST['user_id'];
+    $_SESSION['user_id'] = $_POST['user_id'] ?? '';
     $_SESSION['start_date'] = $_POST['start_date'];
     $_SESSION['end_date'] = $_POST['end_date'];
 }
@@ -37,15 +37,17 @@ $selectedEndDate = $_SESSION['end_date'] ?? '';
 $query = "SELECT id, username FROM users";
 $result = $conn->query($query);
 
-if($role_id)
 
-$user_id = $role_id == 1 ? $_POST['user_id'] ?? null : $con_user_id;
-// $_POST['user_id'] ?? null;
-$username = $role_id == 1 ? $_POST['username'] ?? null : $username_con;
-$start_date = $_POST['start_date'] . " 00:00:00" ?? null;
-$end_date = $_POST['end_date'] . " 23:59:59" ?? null;
+$user_id = $role_id == 1 ? $_POST['user_id'] ?? $con_user_id : $con_user_id;
 
-// Ensure user is logged in
+$currentDate = date('Y-m-d');
+
+
+$username = $role_id == 1 ? $_POST['username'] ?? $username_con : $username_con;
+$start_date = isset($_POST['start_date']) ? $_POST['start_date'] . " 00:00:00" : $currentDate . " 00:00:00";
+$end_date = isset($_POST['end_date']) ? $_POST['end_date'] . " 23:59:59" : $currentDate . " 23:59:59";
+
+
 if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = 'index.php'; </script>";
     exit();
@@ -56,26 +58,27 @@ $payments = [];
 $transactions = [];
 
 
+
 if (!empty($user_id)) {
     $transactions_query = "
-    SELECT 
+    SELECT
         r.receipt_id,
-        r.receipt_description AS transaction_description, 
-        sum(ct.paid_amount) AS amount, 
-        ct.type AS transaction_type, 
-        r.receipt_date AS transaction_date, 
+        r.receipt_description AS transaction_description,
+        sum(ct.paid_amount) AS amount,
+        ct.type AS transaction_type,
+        r.receipt_date AS transaction_date,
         ct.bank_id AS bank_account_id,
         b.bank_name
-    FROM 
+    FROM
         receipts r
     JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
     LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
     LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
-    WHERE 
-        ct.user_id = ? 
-        AND r.receipt_date BETWEEN ? AND ? 
+    WHERE
+        ct.user_id = ?
+        AND r.receipt_date BETWEEN ? AND ?
         GROUP BY r.receipt_id
-    ORDER BY 
+    ORDER BY
         r.receipt_date DESC
 ";
 
@@ -83,29 +86,29 @@ if (!empty($user_id)) {
     $stmt->bind_param("iss", $user_id, $start_date, $end_date);
 } else {
     $transactions_query = "
-    SELECT 
+    SELECT
         r.receipt_id,
-        r.receipt_description AS transaction_description, 
-        sum(ct.paid_amount) AS amount, 
-        ct.type AS transaction_type, 
-        r.receipt_date AS transaction_date, 
+        r.receipt_description AS transaction_description,
+        sum(ct.paid_amount) AS amount,
+        ct.type AS transaction_type,
+        r.receipt_date AS transaction_date,
         ct.bank_id AS bank_account_id,
         b.bank_name
-    FROM 
+    FROM
         receipts r
     JOIN receipt_payments rp ON rp.receipt_id = r.receipt_id
     LEFT JOIN combined_transactions ct ON ct.id = rp.transaction_id
     LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
-    WHERE 
-        r.receipt_date BETWEEN ? AND ? 
+    WHERE
+        r.receipt_date BETWEEN ? AND ?
         GROUP BY r.receipt_id
-    ORDER BY 
+    ORDER BY
         r.receipt_date DESC;
 ";
 
 
     $stmt = $conn->prepare($transactions_query);
-    $stmt->bind_param("ss", $start_date, $end_date);
+    $stmt->bind_param("ss", $start_current_date, $end_current_date);
 }
 
 $stmt->execute();
