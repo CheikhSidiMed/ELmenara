@@ -74,7 +74,7 @@ if ($conn->connect_error) {
         </div>
 
         <!-- Formulaire -->
-        <form id="absenceForm" method="POST" action="ab_envoyer_whatsapp.php" target="_blank">
+        <form id="absenceForm" method="POST" action="ab_envoyer_whatsapp_activity.php" target="_blank">
 
             <div class="mb-3">
                 <label for="activity" class="form-label">  اختر دورة ونشاط:</label>
@@ -92,7 +92,7 @@ if ($conn->connect_error) {
 
             <div id="seansContainer" class="hidden mb-3">
                 <label for="seans" class="form-label">اختر الحصة:</label>
-                <select id="seans" name="seans_id" class="form-select" required>
+                <select id="seans" name="session_time" class="form-select" required>
                     <option value="">-- اختر الحصة --</option>
                 </select>
             </div>
@@ -134,16 +134,14 @@ const seansContainer = document.getElementById('seansContainer');
         fetch(`students_activitie_ab_get.php?activity_id=${activityId}`)
             .then(response => response.json())
             .then(data => {
-                // Effacer le contenu précédent
                 studentList.innerHTML = '';
-                // Ajouter chaque étudiant dans la liste
                 data.forEach(student => {
                     const phone = (!student.phone || student.phone === '0') ? student.whatsapp_phone : student.phone;
                     studentList.innerHTML += `
                         <tr>
                             <td>${student.student_name}</td>
                             <td>${phone}</td>
-                            <td><input type="checkbox" name="absent_students[]" value="${student.student_id}"></td>
+                            <td><input type="checkbox" name="absent_students[]" value="${student.id}"></td>
                         </tr>`;
                 });
                 // Afficher la liste des étudiants

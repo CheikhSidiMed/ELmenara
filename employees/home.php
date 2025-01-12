@@ -121,7 +121,7 @@
         <div class="sidebar-menu">
             <div class="sidebar-header">
                 <div class="logo">
-                    <a href="home.php"><img src="../images/menar.png" alt="logo"></a> 
+                    <a href="home.php"><img src="../images/menar.png" alt="logo"></a>
                 </div>
             </div>
             <div class="main-menu">
@@ -164,6 +164,8 @@
                         <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
                         <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
 			            <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
+                        <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                        <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                     </ul>
                 </li>
             </ul>
@@ -198,7 +200,7 @@
                 <ul class="collapse">
                     <li><a href="student_data.php"><i class="fa fa-user"></i> بيانات الطلاب</a></li>
                     <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                    <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>        
+                    <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                 </ul>
             </li>
         </li>
@@ -244,6 +246,9 @@
                                         <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
                                         <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
                                         <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
+                                        <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                        <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                                        
                                     </ul>
                                 </li>
                             </ul>
@@ -361,14 +366,16 @@
                                         <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
                                         <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
                                         <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
+                                        <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                        <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </li>
                         <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
-                            <ul class="collapse">  
-                                <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>    
+                            <ul class="collapse">
+                                <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
                             </ul>
                         </li>
                         <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
@@ -424,13 +431,16 @@
                         </li>
                         <li>
                             <a href="agents.php"><i class="fa fa-plus-circle"></i> تسجيل الوكلاء</a>
-                        </li>  
+                        </li>
                         <li class="dropdown">
                             <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-book"></i> الدورات والأنشطة</a>
                             <ul class="collapse list-unstyled">
                                 <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
                                 <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
                                 <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
+                                <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
+                                <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -438,7 +448,7 @@
                 <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                     <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
                     <ul class="collapse">
-                        <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li> 
+                        <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
                     </ul>
                 </li>
                 <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">

@@ -16,7 +16,7 @@ $currentTime = time();
 
 // Nettoyer les étudiants traités après 10 minutes (600 secondes)
 foreach ($_SESSION['processed_students'] as $id => $timestamp) {
-    if ($currentTime - $timestamp > 6000) { 
+    if ($currentTime - $timestamp > 6000) {
         unset($_SESSION['processed_students'][$id]);
     }
 }
@@ -47,9 +47,30 @@ if (!empty($_POST['absent_students'])) {
         $query->execute();
         $result = $query->get_result();
 
-        if ($result && $student = $result->fetch_assoc()) {
+        $query2 = $conn->prepare("
+            SELECT s.name AS student_name, s.phone, s.wh AS whatsapp_phone
+            FROM students_etrang s
+            WHERE s.id = ?
+        ");
+        $query2->bind_param("i", $student_id);
+        $query2->execute();
+        $result2 = $query2->get_result();
+
+        $student = null;
+
+        if ($result && $student1 = $result->fetch_assoc()) {
+            $student = $student1;
+
+        }elseif ($result2 && $student2 = $result2->fetch_assoc()) {
+            $student = $student2;
+        }
+
+
+        if ($student !== null) {
+
             // Récupération des données de session
             $session_time = htmlspecialchars($_POST['session_time'] ?? '', ENT_QUOTES, 'UTF-8');
+            $activity_id = htmlspecialchars($_POST['activity_id'] ?? '', ENT_QUOTES, 'UTF-8');
             $student_name = htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8');
 
             // Sélection du numéro de téléphone
@@ -62,7 +83,7 @@ if (!empty($_POST['absent_students'])) {
                 $message = "السلام عليكم ورحمة الله تعالى وبركاته\n";
                 $message .= "تحية طيبة وبعد،\n\n";
                 $message .= "الطالب(ة): $student_name\n";
-                $message .= "غاب/ت اليوم : $session_time.\n";
+                $message .= "غاب/ت اليوم : عن الحصة $session_time.\n";
                 $message .= "عساه خيرا.\n\n";
 
                 $encodedMessage = urlencode($message);
@@ -75,7 +96,7 @@ if (!empty($_POST['absent_students'])) {
                         📩 رسالة جاهزة للطالب : <strong style='color: #007bff;'>$student_name</strong>
                     </span>
                     <a href=\"$whatsappUrl\" target=\"_blank\"
-                        onclick=\"markAsProcessed($student_id, '$session_time')\"
+                        onclick=\"markAsProcessed($student_id, '$session_time', '$activity_id')\"
                         style='display: inline-block; padding: 8px 12px; background-color: #25D366; color: #fff; text-decoration: none; border-radius: 5px; font-family: Arial, sans-serif; font-size: 14px;'>
                         📤 إرسال إلى $phone
                     </a>
@@ -101,12 +122,12 @@ if (!empty($_POST['absent_students'])) {
 ?>
 
 <script>
-function markAsProcessed(studentId, session_time) {
-    console.log('nccn?CN', session_time);
-    fetch('ab_mark_processed.php', {
+function markAsProcessed(studentId, session_time, activity_id) {
+
+    fetch('ab_mark_processed_activity.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ student_id: studentId, session_time: session_time })
+        body: JSON.stringify({ student_id: studentId, session_time: session_time,  activity_id: activity_id})
     })
     .then(response => {
         if (!response.ok) {

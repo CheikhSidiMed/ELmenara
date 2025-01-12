@@ -14,7 +14,6 @@ if (isset($_GET['activity_id'])) {
         WHERE sa.activity_id = $activity_id
     ";
     $result1 = $conn->query($query1);
-
     // Exécute la seconde requête
     $query2 = "
         SELECT s.id, s.name AS student_name, s.phone, s.wh AS whatsapp_phone
