@@ -71,7 +71,7 @@ if (!empty($activity_id)) {
             LEFT JOIN
                 absences_activity AS ab ON ab.student_id = s.id AND ab.activity_id = ?
             WHERE
-                s.id IS NOT NULL
+                s.id IS NOT NULL AND sa.activity_id = ?
             UNION ALL
             SELECT
                 s.id,
@@ -90,12 +90,12 @@ if (!empty($activity_id)) {
             LEFT JOIN
                 absences_activity AS ab ON ab.student_ert_id = s.id AND ab.activity_id = ?
             WHERE
-                s.id IS NOT NULL
+                s.id IS NOT NULL AND sa.activity_id = ?
             ORDER BY
                 id;";
     
     $stmt = $conn->prepare($sql1);
-    $stmt->bind_param('ii', $activity_id, $activity_id);
+    $stmt->bind_param('iiii', $activity_id, $activity_id, $activity_id, $activity_id);
     $stmt->execute();
     $result = $stmt->get_result();
 

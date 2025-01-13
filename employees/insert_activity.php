@@ -9,16 +9,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
     $price = $_POST['price'];
+    $session = $_POST['session'];
+
 
     // Prepare SQL to insert data
-    $sql = "INSERT INTO activities (activity_name, start_date, end_date, price) VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO activities (activity_name, start_date, end_date, price, session) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
         die('Error preparing the statement: ' . $conn->error);
     }
 
-    $stmt->bind_param('sssd', $activity_name, $start_date, $end_date, $price);
+    $stmt->bind_param('sssds', $activity_name, $start_date, $end_date, $price, $session);
 
     if ($stmt->execute()) {
         $response = [
