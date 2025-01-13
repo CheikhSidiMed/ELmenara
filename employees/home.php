@@ -755,7 +755,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="session" class="form-label">عدد حلقات</label>
+                <label for="session" class="form-label">عدد الحلقات</label>
                 <input type="text" class="form-control" id="session" name="session" required>
             </div>
             

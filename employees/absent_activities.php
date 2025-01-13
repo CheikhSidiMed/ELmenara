@@ -111,7 +111,7 @@ if (!empty($activity_id)) {
                 'phone1' => $row['p_st'],
                 'phone2' => $row['p_ag'],
                 'phone3' => $row['phone_2'],
-                'status' => $row['student_id'] ? 'الحظرت ' : 'خارج',
+                'status' => $row['student_id'] ? 'المحظرة ' : 'خارج',
                 'absences' => [],
                 'total_absences' => 0
             ];
@@ -333,9 +333,9 @@ $conn->close();
         <div class="d-flex justify-content-evenly">
             <!-- Champ activity -->
             <div class="form-group col-md-6">
-                <label for="activity">اختر الفرع:</label>
+                <label for="activity">اختر الدورة:</label>
                 <select name="activity" id="activity" class="form-control" onchange="this.form.submit()" required>
-                    <option value="">اختر الفرع</option>
+                    <option value="">-- اختر الدورة --</option>
                     <?php foreach ($activitys as $activity): ?>
                         <option value="<?php echo $activity['id']; ?>" <?php if ($selectedActivity == $activity['id']){
                             $activity_name = $activity['activity_name'];
@@ -412,7 +412,7 @@ $conn->close();
                     <tr>
                         <td colspan="1" style="width: 3%;"><?= htmlspecialchars($index) ?></td>
                         <td colspan="12" style="text-align: right;"><?= htmlspecialchars($student['name']) ?></td>
-                        <td colspan="1" style="width: 4%; font-weigth: bold; color: <?= $student['status'] === 'خارج' ? 'red' : 'inherit'; ?>;">
+                        <td colspan="1" style="width: 5%; font-weigth: bold; color: <?= $student['status'] === 'خارج' ? 'red' : 'inherit'; ?>;">
                             <strong> <?= htmlspecialchars($student['status']) ?> </strong>
                         </td>
                         <td colspan="5" style="width: 6%;"><?= htmlspecialchars($student['phone2'] ?? $student['phone1']) ?></td>

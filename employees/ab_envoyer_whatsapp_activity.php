@@ -73,7 +73,17 @@ if (!empty($_POST['absent_students'])) {
             $activity_id = htmlspecialchars($_POST['activity_id'] ?? '', ENT_QUOTES, 'UTF-8');
             $student_name = htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8');
 
-            // Sélection du numéro de téléphone
+            $activity_name = '';
+            $stmt = $conn->prepare("SELECT id, activity_name FROM activities WHERE id = ?");
+            $stmt->bind_param("i", $activity_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                $activity_name = $result->fetch_assoc()['activity_name'];
+            }
+
+
             $phone = !empty($student['phone']) && $student['phone'] != '0'
                 ? $student['phone']
                 : $student['whatsapp_phone'];
@@ -84,8 +94,9 @@ if (!empty($_POST['absent_students'])) {
                 $message .= "تحية طيبة وبعد،\n\n";
                 $message .= "الطالب(ة): $student_name\n";
                 $message .= "غاب/ت اليوم : عن الحصة $session_time.\n";
+                $message .= "  من : $activity_name.\n";
                 $message .= "عساه خيرا.\n\n";
-
+                
                 $encodedMessage = urlencode($message);
                 $whatsappUrl = "https://wa.me/222$phone?text=$encodedMessage";
 
