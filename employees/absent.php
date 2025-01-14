@@ -9,12 +9,12 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
 }
-$currentMonth = date('m'); 
+$currentMonth = date('m');
                    
 
 
@@ -30,7 +30,7 @@ $selectedClass = isset($_SESSION['class']) ? $_SESSION['class'] : '';
 $selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : '';
 
 
-$monthToUse = ($currentMonth != (int)$selectedMonth + 1) ? (int)$selectedMonth + 1 : $currentMonth;
+$monthToUse = $selectedMonth + 1;
  
 // Fetch branches from the database
 $sqlBranches = "SELECT branch_id, branch_name FROM branches";
@@ -68,7 +68,7 @@ if (!empty($branch_id)) {
 }
 
 $arabic_months = [
-    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
     'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
 ];
 
@@ -77,9 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];
 
-    $sql = "SELECT classes.class_name, branches.branch_name 
-            FROM classes 
-            JOIN branches ON classes.branch_id = branches.branch_id 
+    $sql = "SELECT classes.class_name, branches.branch_name
+            FROM classes
+            JOIN branches ON classes.branch_id = branches.branch_id
             WHERE classes.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
@@ -88,24 +88,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->fetch();
     $stmt->close();
 
-    $sql = "SELECT 
-                s.id, 
-                s.student_name, 
-                s.phone AS p_st, 
-                a.phone AS p_ag, 
+    $sql = "SELECT
+                s.id,
+                s.student_name,
+                s.phone AS p_st,
+                a.phone AS p_ag,
                 a.phone_2,
                 ab.session_time,
                 ab.created_at
-            FROM 
+            FROM
                 students AS s
-            LEFT JOIN 
+            LEFT JOIN
                 agents AS a ON s.agent_id = a.agent_id
-            LEFT JOIN 
+            LEFT JOIN
                 absences AS ab ON s.id = ab.student_id
                 AND (ab.created_at IS NULL OR MONTH(ab.created_at) = ? + 1)
-            WHERE 
-                s.class_id = ? 
-            ORDER BY 
+            WHERE
+                s.class_id = ?
+            ORDER BY
                 s.id, ab.created_at, ab.session_time;
             ";
     $stmt = $conn->prepare($sql);
@@ -152,13 +152,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
             $students[$student_id]['total_absences']++;
         }
-        
-
-
 
     }
     $stmt->close();
 }
+
 
 $conn->close();
 ?>
@@ -176,7 +174,7 @@ $conn->close();
             .absent {
                 background-color: #ffcccc;
                 color: red;
-
+                text-align: center;
             }
             h2 {
                 text-align: center;
@@ -224,7 +222,7 @@ $conn->close();
             }
             th, td {
                 border: 1px solid black;
-                padding: 1px;
+                padding: 0px;
                 font-size: 12px;
                 text-align: center;
             }
@@ -266,13 +264,13 @@ $conn->close();
                 display: none;
             }
             .print-date {
-                display: block; 
+                display: block;
                 text-align: right;
                 font-weight: bold;
             }
 
             body {
-                font-size: 10px !important; 
+                font-size: 10px !important;
                 align-items: center;
                 margin-bottom: 0px !important;
 
@@ -292,9 +290,9 @@ $conn->close();
 
             .receipt-header img {
                 width: 100%;
-                height: auto; 
-                max-width: 100%;                        
-                display: block; 
+                height: auto;
+                max-width: 100%;
+                display: block;
             }
             .print-date {
                 display: none; /* Hide by default */
@@ -465,44 +463,67 @@ $conn->close();
                 <th colspan="2" style="min-width: 30px;">30</th>
                 <th colspan="2" style="min-width: 30px;">31</th>
 
-                <th colspan="3">عدد الغياب</th>
+                <th colspan="3" style="width: 3%;">عدد الغياب</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($students as $student_id => $student): ?>
-                <tr>
-                    <td colspan="3"><?= $student_id ?></td>
-                    <td colspan="12"><?= $student['name'] ?></td>
-                    <td colspan="5"><?= $student['phone2'] ?? $student['phone1'] ?></td>
-                    <td colspan="5"><?= $student['phone3'] ?? $student['phone1']  ?></td>
+        <?php foreach ($students as $student_id => $student): ?>
+            <tr>
+                <td colspan="3"><?= $student_id ?></td>
+                <td colspan="12"><?= $student['name'] ?></td>
+                <td colspan="5"><?= $student['phone2'] ?? $student['phone1'] ?></td>
+                <td colspan="5"><?= $student['phone3'] ?? $student['phone1'] ?></td>
 
-                    <?php 
-                                        
-                    for ($day = 1; $day <= 31; $day++): ?>
-                        <?php
-                        $date = date('Y-' . str_pad($monthToUse, 2, '0', STR_PAD_LEFT) . '-') . str_pad($day, 2, '0', STR_PAD_LEFT);
-                        $morning_absent = isset($student['absences'][$date]['morning']) && $student['absences'][$date]['morning'];
-                        $evening_absent = isset($student['absences'][$date]['evening']) && $student['absences'][$date]['evening'];
-                        ?>
-                        <td contenteditable="true" class="<?= $morning_absent ? 'absent' : 'present' ?>"><?= $morning_absent ? 'X' : '' ?></td>
-                        <td contenteditable="true" class="<?= $evening_absent ? 'absent' : 'present' ?>"><?= $evening_absent ? 'X' : '' ?></td>
-                    <?php endfor; ?>
+                <?php
+                    $days_in_month = cal_days_in_month(CAL_GREGORIAN, $monthToUse, date('Y'));
 
-                    <td contenteditable="true" colspan="3"><?= $student['total_absences'] ?? 0 ?></td>
-                </tr>
-            <?php endforeach; ?>
-            <?php for ($i = 0; $i < 3; $i++): ?>
+                    for ($day = 1; $day <= 31; $day++):
+                        $formatted_day = sprintf('%02d', $day);
+                        $formatted_month = sprintf('%02d', $monthToUse);
+                        
+                        $absence_found = false;
+                        foreach ($student['absences'] as $date => $absence_data) {
+                            // Extraire mois et jour de la clé de date
+                            [$absence_year, $absence_month, $absence_day] = explode('-', $date);
+
+                            if ($absence_month == $formatted_month && $absence_day == $formatted_day) {
+                                $absence_found = true;
+                                $morning_absent = !empty($absence_data['morning']);
+                                $evening_absent = !empty($absence_data['evening']);
+                                break; // Arrêter la recherche pour ce jour
+                            }
+                        }
+
+                        if (!$absence_found) {
+                            $morning_absent = false;
+                            $evening_absent = false;
+                        }
+                    ?>
+                    <td style="width: 1.1%; height: 4px;" contenteditable="true" class="<?= $morning_absent ? 'absent' : 'present' ?>">
+                        <?= $morning_absent ? 'X' : '' ?>
+                    </td>
+                    <td style="width: 1.1%;  height: 4px;" contenteditable="true" class="<?= $evening_absent ? 'absent' : 'present' ?>">
+                        <?= $evening_absent ? 'X' : '' ?>
+                    </td>
+                <?php endfor; ?>
+
+                <td contenteditable="true" colspan="3"><?= $student['total_absences'] ?? 0 ?></td>
+            </tr>
+        <?php endforeach; ?>
+
+
+        <?php for ($i = 0; $i < 3; $i++): ?>
             <tr>
                 <td colspan="3"></td>
                     <td colspan="12"></td>
                     <td colspan="5" contenteditable="true"></td>
-                    <td colspan="5" contenteditable="true"></td>            
+                    <td colspan="5" contenteditable="true"></td>
                     <?php for ($j = 0; $j < 62; $j++): ?>
                     <td contenteditable="true"></td>
                 <?php endfor; ?>
                 <td colspan ="3" contenteditable="true"></td>
             </tr>
-            <?php endfor; ?>        
+            <?php endfor; ?>
         </tbody>
 
     </table>
