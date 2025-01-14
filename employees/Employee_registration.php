@@ -93,19 +93,19 @@ if ($result->num_rows > 0) {
         <h1 class="text-center mb-4">اكتتاب الموظفين</h1>
         <form id="Employeform" action="add_employee.php" method="POST">
             <div class="form-row">
-            <div class="form-group col-md-6">
-    <label for="Nbr">رقم الموظف</label>
-    <input 
-        type="number" 
-        class="form-control form-control-lg" 
-        id="Nbr" 
-        name="Nbr" 
-        value="<?php echo $nextEmployeeNumber; ?>" 
-        min="0" 
-        placeholder="أدخل رقم الموظف" 
-        required
-    >
-</div>
+                <div class="form-group col-md-6">
+                    <label for="Nbr">رقم الموظف</label>
+                    <input
+                        type="number"
+                        class="form-control form-control-lg"
+                        id="Nbr"
+                        name="Nbr"
+                        value="<?php echo $nextEmployeeNumber; ?>"
+                        min="0"
+                        placeholder="أدخل رقم الموظف"
+                        required
+                    >
+                </div>
                 <div class="form-group col-md-6">
                     <label for="Nom">الإسم الكامل</label>
                     <input type="text" class="form-control form-control-lg" id="Nom" name="Nom" placeholder="أدخل الإسم الكامل" required>

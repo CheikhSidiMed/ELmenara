@@ -1005,7 +1005,7 @@
 
     <script>
         document.getElementById('submitFormBtn').addEventListener('click', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
             var formData = new FormData(document.getElementById('ExpenseAccountForm'));
 
             fetch('Employee_registration.php', {

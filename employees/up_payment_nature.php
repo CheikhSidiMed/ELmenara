@@ -13,14 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment_nature'
     $level_id = $_POST['level_id'];
 
     $payment_nature = $_POST['payment_nature'];
-    $discount = $_POST['discount'] ?? null;  // Optional field, only for "معفى"
+    $discount = $_POST['discount'] ?? null;
 
         $level_query = $conn->query("SELECT price FROM levels WHERE id = '$level_id'");
         $level = $level_query->fetch_assoc();
         $fees = (float)$level['price'];
         $remaining = $fees - $discount;
 
-        // Update the payment_nature and possibly the discount if "معفى" is selected
         if ($payment_nature == 'معفى' && $discount !== null) {
             $stmt = $conn->prepare("UPDATE students SET payment_nature = ?, discount = 0, fees =0, remaining = 0 WHERE id = ?");
             $stmt->bind_param("si", $payment_nature, $student_id);
@@ -120,13 +119,13 @@ $result = $conn->query("SELECT id, student_name, payment_nature, discount, level
                                     <!-- Discount input visible only if 'معفى' is selected -->
                                     <div id="discount-input-<?= $row['id'] ?>" class="ms-2 d-inline" style="display: <?= $row['payment_nature'] == 'معفى' ? 'block' : 'none' ?>;">
                                         <label class="form-label d-inline me-2" for="discount">الخصم:</label>
-                                        <input 
-                                        type="text" 
-                                        min="0" 
-                                        step="0" 
+                                        <input
+                                        type="text"
+                                        min="0"
+                                        step="0"
                                         style="max-width: 70px;"
-                                        name="discount" id="discount" 
-                                        class="form-control form-control-sm d-inline w-auto discount-field" 
+                                        name="discount" id="discount"
+                                        class="form-control form-control-sm d-inline w-auto discount-field"
                                         value="<?= $row['discount'] ?? '' ?>">
                                     </div>
                                     

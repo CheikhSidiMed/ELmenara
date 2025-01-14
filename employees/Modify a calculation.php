@@ -11,13 +11,14 @@ while ($row = $result->fetch_assoc()) {
     $bankList[] = $row;
 }
 
+$currentDate = date('Y-m-d');
 
 
 $accountType = isset($_POST['account_type']) ? $_POST['account_type'] : 'موظف';
 $transactions = [];
 
-$startDate = isset($_POST['start_date']) ? $_POST['start_date'] : null;
-$endDate = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+$startDate = isset($_POST['start_date']) ? $_POST['start_date'] : $currentDate . " 00:00:00";
+$endDate = isset($_POST['end_date']) ? $_POST['end_date'] : $currentDate . " 23:59:59";
 if ($endDate) {
     $endDate = date('Y-m-d', strtotime($endDate . ' +1 day'));
 }
@@ -35,42 +36,42 @@ if ($startDate && $endDate) {
 
 switch ($accountType) {
     case 'موظف':
-        $query = "SELECT t.id, e.full_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type
+        $query = "SELECT t.bank_account_id, t.id, e.full_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type
                   FROM transactions t
                   JOIN employees e ON t.employee_id = e.id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
         break;
     case 'صندوق':
-        $query = "SELECT t.id, f.fund_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
+        $query = "SELECT t.bank_account_id, t.id, f.fund_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
                   FROM transactions t
                   JOIN funds f ON t.fund_id = f.id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
         break;
     case 'البنك':
-        $query = "SELECT t.id, b.bank_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
+        $query = "SELECT t.bank_account_id, t.id, b.bank_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
                   FROM transactions t
                   JOIN bank_accounts b ON t.bank_account_id = b.account_id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
         break;
     case 'تلميذ':
-        $query = "SELECT t.id, s.student_name AS account_name,t.transaction_date AS tran_date,  t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
+        $query = "SELECT t.bank_account_id, t.id, s.student_name AS account_name,t.transaction_date AS tran_date,  t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
                   FROM transactions t
                   JOIN students s ON t.student_id = s.id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
         break;
     case 'وكيل':
-        $query = "SELECT t.id, a.agent_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
+        $query = "SELECT t.bank_account_id, t.id, a.agent_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, t.student_id, t.agent_id, t.transaction_type 
                   FROM transactions t
                   JOIN agents a ON t.agent_id = a.agent_id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
         break;
-    case 'مصاريف': 
-        $query = "SELECT et.id, ea.account_name AS account_name, et.transaction_date AS tran_date, et.transaction_description, et.amount, et.bank_id AS bank_account_id, NULL AS fund_id, et.bank_id AS employee_id, NULL AS student_id, NULL AS agent_id, 'minus' AS transaction_type
+    case 'مصاريف':
+        $query = "SELECT et.bank_id AS bank_account_id, et.id, ea.account_name AS account_name, et.transaction_date AS tran_date, et.transaction_description, et.amount, et.bank_id AS bank_account_id, NULL AS fund_id, et.bank_id AS employee_id, NULL AS student_id, NULL AS agent_id, 'minus' AS transaction_type
                   FROM expense_transaction et
                   JOIN expense_accounts ea ON et.expense_account_id = ea.id WHERE 1=1 $dateTran ORDER BY et.id DESC";
         break;
-    case 'مداخيل': 
-        $query = "SELECT dt.id, da.account_name AS account_name, dt.transaction_date AS tran_date, dt.transaction_description, dt.amount, dt.bank_id AS bank_account_id, NULL AS fund_id, NULL AS employee_id, NULL AS student_id, NULL AS agent_id, 'plus' AS transaction_type
+    case 'مداخيل':
+        $query = "SELECT dt.bank_id AS bank_account_id, dt.id, da.account_name AS account_name, dt.transaction_date AS tran_date, dt.transaction_description, dt.amount, dt.bank_id AS bank_account_id, NULL AS fund_id, NULL AS employee_id, NULL AS student_id, NULL AS agent_id, 'plus' AS transaction_type
                   FROM donate_transactions dt
                   JOIN donate_accounts da ON dt.donate_account_id = da.id WHERE 1=1 $dateTranDon ORDER BY dt.id DESC";
         break;
     default:
-        $query = "SELECT t.id, e.full_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, NULL AS student_id, NULL AS agent_id, '' AS transaction_type 
+        $query = "SELECT t.bank_account_id, t.id, e.full_name AS account_name, t.transaction_date AS tran_date, t.transaction_description, t.amount, t.bank_account_id, t.fund_id, t.employee_id, NULL AS student_id, NULL AS agent_id, '' AS transaction_type 
                   FROM transactions t
                   JOIN employees e ON t.employee_id = e.id WHERE 1=1 $dateFilter ORDER BY t.id DESC";
 }
@@ -79,7 +80,16 @@ switch ($accountType) {
 $result = $conn->query($query);
 
 while ($row = $result->fetch_assoc()) {
+
+    $stmt = $conn->prepare("SELECT bank_name FROM bank_accounts WHERE account_id = ?");
+    $stmt->bind_param("s", $row['bank_account_id']);
+    $stmt->execute();
+    $bank_query = $stmt->get_result();
+    $bank = $bank_query->fetch_assoc();
+
+    $row['payment_nature'] = $bank['bank_name'] ?? 'الصندوق';
     $transactions[] = $row;
+    $stmt->close();
 }
 $months = [];
 
@@ -97,7 +107,7 @@ $conn->close();
     <link href="css/bootstrap-5.3.1.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
     <style>
         body {
@@ -451,6 +461,7 @@ $conn->close();
                         <th>#</th>
                         <th>بتاريخ</th>
                         <th>اسم الحساب</th>
+                        <th>  حساب الدفع</th>
                         <th style="width: 60%">بيان العملية</th>
                         <th>المبلغ</th>
                         <th>تحرير</th>
@@ -458,7 +469,7 @@ $conn->close();
                     </tr>
                 </thead>
                 <tbody id="suspendedStudentsTableBody">
-                    <?php foreach ($transactions as $index => $transaction) : 
+                    <?php foreach ($transactions as $index => $transaction) :
                             if(preg_match('/الأشهر:\s*\{([^}]*)\}/', $transaction['transaction_description'], $matches)){
                                 
                                 $months = explode(', ', $matches[1]);
@@ -472,11 +483,30 @@ $conn->close();
                             <td><?=  $index + 1 ?></td>
                             <td><?= $transaction['tran_date'] ?></td>
                             <td><?= $transaction['account_name'] ?></td>
-
+                            <td>
+                                <select style="height: 40px; padding-right: 30px" name="payment_nature" class="form-select form-select-sm d-inline w-auto"
+                                    onchange="toggleDiscountInput(this, <?= $transaction['id'] ?>,
+                                        <?= $transaction['amount'] ?>,
+                                        '<?= $transaction['payment_nature'] ?>',
+                                        '<?= $transaction['transaction_description'] ?>',
+                                        '<?= $transaction['employee_id'] ?>',
+                                        '<?= $transaction['student_id'] ?>',
+                                        '<?= $transaction['agent_id'] ?>',
+                                        '<?= $transaction['bank_account_id'] ?>',
+                                        '<?= $transaction['fund_id'] ?>')">
+                                    <option value="الصندوق" <?= $transaction['payment_nature'] == 'الصندوق' ? 'selected' : '' ?>>الصندوق</option>
+                                    <option value="بنكيلي" <?= $transaction['payment_nature'] == 'بنكيلي' ? 'selected' : '' ?>>بنكيلي</option>
+                                    <option value="السداد" <?= $transaction['payment_nature'] == 'السداد' ? 'selected' : '' ?>>السداد</option>
+                                    <option value="بيم بانك" <?= $transaction['payment_nature'] == 'بيم بانك' ? 'selected' : '' ?>>بيم بانك</option>
+                                    <option value="باميس" <?= $transaction['payment_nature'] == 'باميس' ? 'selected' : '' ?>>باميس</option>
+                                    <option value="أمانتي" <?= $transaction['payment_nature'] == 'أمانتي' ? 'selected' : '' ?>>أمانتي</option>
+                                </select>
+                            </td>
                             <td class="editable">
                             <span class="transaction-description"><?= isset($transaction['transaction_description']) ? htmlspecialchars($transaction['transaction_description'], ENT_QUOTES, 'UTF-8') : 'وصف غير متوفر' ?></span>
                             <input type="text" class="transaction-input form-control" value="<?= $transaction['transaction_description'] ?>" style="display: none;">
                             </td>
+
 
                             <td class="editable">
                                 <span class="transaction-amount"><?= number_format($transaction['amount'], 2) ?></span>
@@ -496,11 +526,11 @@ $conn->close();
                             <td>
                                 <button class="btn btn-primary edit-btn" onclick="editTransaction(this, <?= $transaction['id'] ?>)">تعديل</button>
                                 <button class="btn btn-success save-btn" style="display: none;" onclick="saveTransaction(this, <?= $transaction['id'] ?>)">حفظ</button>
-                            </td>  
+                            </td>
                             <td>
-                                <button id="pay-arrears-button-<?php echo $index; ?>" 
+                                <button id="pay-arrears-button-<?php echo $index; ?>"
                                         onclick="openArrearsModal(
-                                            document.getElementById('student_id_<?php echo $index; ?>').value, 
+                                            document.getElementById('student_id_<?php echo $index; ?>').value,
                                             document.getElementById('total_amount_<?php echo $index; ?>').value,
                                             document.getElementById('tran_des_<?php echo $index; ?>').value,
                                             document.getElementById('employe_id_<?php echo $index; ?>').value,
@@ -508,7 +538,7 @@ $conn->close();
                                             document.getElementById('studen_id_<?php echo $index; ?>').value,
                                             document.getElementById('mn_th_<?php echo $index; ?>').value,
                                             document.getElementById('trans_type_<?php echo $index; ?>').value
-                                        )" 
+                                        )"
                                         class="styled-button">إلغاء </button>
                                 <input type="hidden" id="student_id_<?php echo $index; ?>" value="<?php echo $transaction['id']; ?>">
                                 <input type="hidden" id="mn_th_<?php echo $index; ?>" value="<?php echo htmlspecialchars(implode(', ', $months), ENT_QUOTES, 'UTF-8'); ?>">
@@ -566,7 +596,7 @@ $conn->close();
                                         </div>
 
                                         <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-                                            <button class="confirm-button" 
+                                            <button class="confirm-button"
                                                     onclick="deleteTransaction(
                                                         this,
                                                         document.getElementById('id_us').value,
@@ -580,10 +610,9 @@ $conn->close();
                                                         document.getElementById('accoun_type').value,
                                                         document.getElementById('mnt_hs_ch').value,
                                                         document.getElementById('transa_type').value
-
-                                                    )" 
+                                                    )"
                                                     style="padding: 12px 25px; background-color: #28a745; color: white; border-radius: 5px; font-size: 1.1rem; cursor: pointer;">تأكيد العملية</button>
-                                            <button type="button" onclick="closeArrearsModal()" 
+                                            <button type="button" onclick="closeArrearsModal()"
                                                     style="padding: 12px 25px; background-color: #dc3545; color: white; border-radius: 5px; font-size: 1.1rem; cursor: pointer;">إغلاق</button>
                                         </div>
                                     </div>
@@ -619,6 +648,58 @@ $conn->close();
         </div>
     </div>
 
+
+
+    <script>
+
+        function toggleDiscountInput(selectElement, studentId, amount, ancienBanque, description,
+            employee_id, student_id, agent_id, bank_account_id, fund_id) {
+            const formData = new FormData();
+            formData.append('id', studentId);
+            formData.append('newBank', selectElement.value);
+            formData.append('amount', amount);
+            formData.append('ancienBanque', ancienBanque);
+            formData.append('description', description);
+            formData.append('employee_id', employee_id);
+            formData.append('student_id', student_id);
+            formData.append('agent_id', agent_id);
+            formData.append('bank_account_id', bank_account_id);
+            formData.append('fund_id', fund_id);
+            formData.append('account_type', document.getElementById('account-type').value);
+
+            for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+            }
+
+            fetch('up_transaction_banck.php', { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم تحديث العملية بنجاح',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'فشل في التحديث',
+                            text: data.message || 'حدث خطأ أثناء محاولة تحديث العملية.'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'فشل في التحديث',
+                        text: 'حدث خطأ أثناء محاولة تحديث العملية.'
+                    });
+                });
+        }
+
+    </script>
 
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -693,7 +774,7 @@ $conn->close();
 
     <script>
         
-            function deleteTransaction(button, id, amount, payment_method, bank_account_id, tran_des, employee_id, student_id, agent_id, account_type, months, transac_type) {
+        function deleteTransaction(button, id, amount, payment_method, bank_account_id, tran_des, employee_id, student_id, agent_id, account_type, months, transac_type) {
             if (confirm('هل أنت متأكد أنك تريد إلغاء هذه العملية؟')) {
                 const formData = new FormData();
                 formData.append('id', id);
@@ -745,7 +826,7 @@ $conn->close();
 
     </script>
 
-    <script src="JS/jquery-3.5.1.min.js"></script>
+    <script src="js/jquery-3.5.1.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#searchInput').on('input', function() {
@@ -761,7 +842,7 @@ $conn->close();
 
 
 
-<script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/sweetalert2.min.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
@@ -769,58 +850,51 @@ $conn->close();
 
     <script>
         function openArrearsModal(id, tot_am, tran_des, employe_id, agen_id, studen_id, mnths, tr_type) {
-                document.getElementById('arrears-modal').style.display = 'flex';
-                document.getElementById('total-arrears').innerText = tot_am + ' أوقية جديدة';
-                document.getElementById('id_us').value = id;
-                document.getElementById('amo_unt_paid').value = tot_am;
-                document.getElementById('mnt_hs_ch').value = mnths;
+            document.getElementById('arrears-modal').style.display = 'flex';
+            document.getElementById('total-arrears').innerText = tot_am + ' أوقية جديدة';
+            document.getElementById('id_us').value = id;
+            document.getElementById('amo_unt_paid').value = tot_am;
+            document.getElementById('mnt_hs_ch').value = mnths;
 
-                document.getElementById('tran_des').value = tran_des;
-                document.getElementById('employe_id').value = employe_id;
-                document.getElementById('agen_id').value = agen_id;
-                document.getElementById('studen_id').value = studen_id;
-                document.getElementById('transa_type').value = tr_type;
+            document.getElementById('tran_des').value = tran_des;
+            document.getElementById('employe_id').value = employe_id;
+            document.getElementById('agen_id').value = agen_id;
+            document.getElementById('studen_id').value = studen_id;
+            document.getElementById('transa_type').value = tr_type;
 
-                const monthsArray = mnths.split(', ');
+            const monthsArray = mnths.split(', ');
+            const monthsGrid = document.getElementById('months-grid');
+            monthsGrid.innerHTML = '';
 
-                const monthsGrid = document.getElementById('months-grid');
-                monthsGrid.innerHTML = '';
+            const updateCheckedMonths = () => {
+                const checkedMonths = Array.from(monthsGrid.querySelectorAll('input[type="checkbox"]:checked'))
+                    .map(checkbox => checkbox.value);
+                document.getElementById('mnt_hs_ch').value = checkedMonths.join(', ');
+            };
 
-                const updateCheckedMonths = () => {
-                    const checkedMonths = Array.from(monthsGrid.querySelectorAll('input[type="checkbox"]:checked'))
-                        .map(checkbox => checkbox.value);
-                    document.getElementById('mnt_hs_ch').value = checkedMonths.join(', ');
-                };
+            monthsArray.forEach((monthName) => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'month[]';
+            checkbox.value = monthName;
+            checkbox.checked = true;
+            checkbox.addEventListener('change', updateCheckedMonths);
 
-    monthsArray.forEach((monthName) => {
-        // Debug: Check each month being processed
-        console.log('Processing month:', monthName);
+            const label = document.createElement('label');
+            label.textContent = monthName;
 
-        // Create a checkbox input
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'month[]';
-        checkbox.value = monthName;
-        checkbox.checked = true;
-        checkbox.addEventListener('change', updateCheckedMonths);
+            // Create a container div for the checkbox and label
+            const monthOption = document.createElement('div');
+            monthOption.className = 'month-option';
+            monthOption.appendChild(checkbox);
+            monthOption.appendChild(label);
 
-        const label = document.createElement('label');
-        label.textContent = monthName;
+            // Append the container div to the months-grid
+            monthsGrid.appendChild(monthOption);
+            });
 
-        // Create a container div for the checkbox and label
-        const monthOption = document.createElement('div');
-        monthOption.className = 'month-option';
-        monthOption.appendChild(checkbox);
-        monthOption.appendChild(label);
-
-        // Append the container div to the months-grid
-        monthsGrid.appendChild(monthOption);
-    });
-
-
-    document.getElementById('mnt_hs').value = monthsArray.join(', ');
-
-            }
+            document.getElementById('mnt_hs').value = monthsArray.join(', ');
+        }
 
         function closeArrearsModal() {
             document.getElementById('arrears-modal').style.display = 'none';
@@ -840,46 +914,38 @@ $conn->close();
             const amountPaid = parseFloat(document.getElementById('amount_paid').value) || 0;
             const remaining = totalArrears - amountPaid;
 
-            document.getElementById('remaining_amount').innerText = remaining >= 0 
-                ? remaining.toFixed(2) + ' أوقية جديدة' 
+            document.getElementById('remaining_amount').innerText = remaining >= 0
+                ? remaining.toFixed(2) + ' أوقية جديدة'
                 : '0.00 أوقية جديدة';
         }
 
 
-        // Function to toggle bank modal inside the arrears modal 
         function toggleBankModalInArrears(paymentMethod) {
-        if (paymentMethod === 'بنكي') {
-            // Show the bank modal using Bootstrap's Modal component
-            const bankModal = new bootstrap.Modal(document.getElementById('bankModall'), {
-                keyboard: false
-            });
-            bankModal.show();
+            if (paymentMethod === 'بنكي') {
+                const bankModal = new bootstrap.Modal(document.getElementById('bankModall'), {
+                    keyboard: false
+                });
+                bankModal.show();
 
-            // Add an event listener for bank selection, if not already added
-            const bankSelectElement = document.getElementById('bankk');
-            if (!bankSelectElement.hasAttribute('data-listener-added')) {
-                bankSelectElement.addEventListener('change', selectBankInArrears);
-                bankSelectElement.setAttribute('data-listener-added', 'true'); // Mark listener as added
+                const bankSelectElement = document.getElementById('bankk');
+                if (!bankSelectElement.hasAttribute('data-listener-added')) {
+                    bankSelectElement.addEventListener('change', selectBankInArrears);
+                    bankSelectElement.setAttribute('data-listener-added', 'true'); // Mark listener as added
+                }
+            } else if (paymentMethod === 'نقدي') {
+                clearSelectedBankNameInArrears();
             }
-        } else if (paymentMethod === 'نقدي') {
-            // Clear selected bank details if the payment method is 'نقدي'
-            clearSelectedBankNameInArrears();
         }
-        }
-        // Function to select the bank in arrears modal
+
         function selectBankInArrears() {
             const bankSelect = document.getElementById('bankk');
             const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
             const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
-            
-            // Set the hidden input with the selected bank ID in arrears modal
+
             document.getElementById('selected-bank-id-arrears').value = selectedBankId;
-            
-            // Update the display with the selected bank name in the arrears modal
             document.getElementById('selected-bank-name-arrears').innerText = 'البنك المحدد: ' + selectedBankName;
         }
 
-        // Function to clear bank name in arrears modal
         function clearSelectedBankNameInArrears() {
             document.getElementById('selected-bank-name-arrears').innerText = '';
         }
@@ -916,11 +982,8 @@ $conn->close();
             document.getElementById('selected-bank-name').innerText = '';
         }
 
-
-
     </script>
 
-    <script src="JS/jquery-3.5.1.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#searchInput').on('input', function() {

@@ -67,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param('di', $amount, $destinationId);
                 $stmt->execute();
 
-            
                 
                 $des = "نقل الأموال من حساب " . $sourceN .  " الى حساب " . $destinationN .' { ' . $desc . ' }';  
 
