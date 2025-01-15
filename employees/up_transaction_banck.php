@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $id_newBnk = null;
-    if($newBank){
+    if($newBank !== 'الصندوق'){
         $stmt = $conn->prepare("SELECT account_id FROM bank_accounts WHERE bank_name = ?");
         $stmt->bind_param("s", $newBank);
         $stmt->execute();
@@ -34,18 +34,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($result->num_rows > 0) {
             $id_newBnk = $result->fetch_assoc()['account_id'];
-        } else {
-            $id_newBnk = null; // ou un message d'erreur
         }
-
         $stmt->close();
     }
 
-    $newFund = $id_newBnk === null ? 1 : null;
+    $newFund = null;
 
     $amount_t = (float)$amount;
 
     try {
+
         if ($bank_account_id) {
             $stmt_bank = $conn->prepare("UPDATE bank_accounts SET balance = balance - ? WHERE account_id = ?");
             $stmt_bank->bind_param("di", $amount_t, $bank_account_id);
@@ -53,14 +51,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('فشل تحديث رصيد البنك.');
             }
             $stmt_bank->close();
-        } elseif ($fund_id) {
-            $stmt_fund = $conn->prepare("UPDATE funds SET balance = balance - ? WHERE id = ?");
-            $stmt_fund->bind_param("di", $amount_t, $fund_id);
+        } else{
+            $stmt_fund = $conn->prepare("UPDATE funds SET balance = balance - ? WHERE id = 1");
+            $stmt_fund->bind_param("d", $amount_t);
             if (!$stmt_fund->execute()) {
                 throw new Exception('فشل تحديث رصيد الصندوق.');
             }
             $stmt_fund->close();
         }
+
         $payment_method = '';
         if ($id_newBnk) {
             $payment_method = 'بنكي';
@@ -71,11 +70,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             $stmt_bank->close();
         } else {
+            $newFund = 1;
             $payment_method = 'نقدي';
-
-            // Update fund balance
-            $stmt_fund = $conn->prepare("UPDATE funds SET balance = balance + ? WHERE id = ?");
-            $stmt_fund->bind_param("di", $amount_t, $fund_id);
+            $stmt_fund = $conn->prepare("UPDATE funds SET balance = balance + ? WHERE id = 1");
+            $stmt_fund->bind_param("d", $amount_t);
             if (!$stmt_fund->execute()) {
                 throw new Exception('فشل تحديث رصيد الصندوق.');
             }
@@ -143,9 +141,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $stmt_paymt->execute();
                         $stmt_paymt->close();
                     }
+
+
                 } else {
                     throw new Exception('Month array is empty after processing.');
                 }
+                $stmt_e = $conn->prepare("UPDATE combined_transactions SET payment_method = ?, bank_id = ?, fund_id = ? WHERE id = ? ");
+                $stmt_e->bind_param("sssi", $payment_method, $id_newBnk, $newFund, $id);
+                if (!$stmt_e->execute()) {
+                    throw new Exception('فشل في تحديث المعاملات المشتركة.');
+                }
+                $stmt_e->close();
             } else {
                 $stmt_empl = $conn->prepare("UPDATE combined_transactions SET payment_method = ?, bank_id = ?, fund_id = ? WHERE id = ? ");
                 $stmt_empl->bind_param("sssi", $payment_method, $id_newBnk, $newFund, $id);
