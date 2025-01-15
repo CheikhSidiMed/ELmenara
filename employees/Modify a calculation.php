@@ -13,12 +13,13 @@ while ($row = $result->fetch_assoc()) {
 
 $currentDate = date('Y-m-d');
 
+$nextDay = date('Y-m-d', strtotime($currentDate . ' +1 day'));
 
 $accountType = isset($_POST['account_type']) ? $_POST['account_type'] : 'موظف';
 $transactions = [];
 
-$startDate = isset($_POST['start_date']) ? $_POST['start_date'] : $currentDate . " 00:00:00";
-$endDate = isset($_POST['end_date']) ? $_POST['end_date'] : $currentDate . " 23:59:59";
+$startDate = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+$endDate = isset($_POST['end_date']) ? $_POST['end_date'] : null;
 if ($endDate) {
     $endDate = date('Y-m-d', strtotime($endDate . ' +1 day'));
 }
@@ -29,9 +30,9 @@ if ($startDate && $endDate) {
     $dateTranDon = " AND dt.transaction_description BETWEEN '$startDate' AND '$endDate'";
 
 } else {
-    $dateFilter = "";
-    $dateTran = "";
-    $dateTranDon = "";
+    $dateFilter = " AND t.transaction_date BETWEEN '$currentDate' AND '$nextDay'";
+    $dateTran = " AND et.transaction_date BETWEEN '$currentDate' AND '$nextDay'";
+    $dateTranDon = " AND dt.transaction_description BETWEEN '$currentDate' AND '$nextDay'";
 }
 
 switch ($accountType) {
