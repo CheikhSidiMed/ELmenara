@@ -1,6 +1,9 @@
 
 <?php
-// Include database connection
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include 'db_connection.php';
 // Initialize variables
 $last_year = "";
@@ -12,10 +15,18 @@ $month = "";
 $branch_id = null;
 $class_id = null;
 
+
+$arabic_months = [
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+];
+
+
+
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -52,11 +63,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];
     $year = $_POST['year'];
-
+echo $month;
+    
      // Fetch class name and branch name
-     $sql = "SELECT classes.class_name, branches.branch_name 
-     FROM classes 
-     JOIN branches ON classes.branch_id = branches.branch_id 
+     $sql = "SELECT classes.class_name, branches.branch_name
+     FROM classes
+     JOIN branches ON classes.branch_id = branches.branch_id
      WHERE classes.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
@@ -66,9 +78,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Fetch students in the selected class
-    $sql = "SELECT id, student_name FROM students WHERE class_id = ?";
+    $sql = "SELECT s.id, s.student_name, count(ab.created_at) AS ABS
+        FROM students AS s
+        LEFT JOIN
+            absences AS ab ON s.id = ab.student_id AND (ab.created_at IS NULL OR MONTH(ab.created_at) = ? )
+        WHERE class_id = ?
+        GROUP BY
+                s.id";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $class_id);
+    $stmt->bind_param('ii', $month, $class_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -277,18 +295,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-group col-md-2">
                     <label for="month">اختر الشهر:</label>
                     <select name="month" id="month" class="form-control">
-                        <option value="يناير">يناير</option>
-                        <option value="فبراير">فبراير</option>
-                        <option value="مارس">مارس</option>
-                        <option value="أبريل">أبريل</option>
-                        <option value="مايو">مايو</option>
-                        <option value="يونيو">يونيو</option>
-                        <option value="يوليو">يوليو</option>
-                        <option value="أغسطس">أغسطس</option>
-                        <option value="سبتمبر">سبتمبر</option>
-                        <option value="أكتوبر">أكتوبر</option>
-                        <option value="نوفمبر">نوفمبر</option>
-                        <option value="ديسمبر">ديسمبر</option>
+                        <option value="1">يناير</option>
+                        <option value="2">فبراير</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أبريل</option>
+                        <option value="5">مايو</option>
+                        <option value="6">يونيو</option>
+                        <option value="7">يوليو</option>
+                        <option value="8">أغسطس</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
                     </select>
                 </div>
 
@@ -302,38 +320,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-group col-md-2 align-self-end">
                     <button type="sibmit" class="btn btn-primary btn-block" id="generate-button">عرض التقرير</button>
                 </div>
-            </div>    
+            </div>
         </form>
     </div>
 
 
         <div class="button-group">
             <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> 
+            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i>
             </button>
             <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-                الصفحة الرئيسية <i class="bi bi-house-door-fill me-2"></i> 
+                الصفحة الرئيسية <i class="bi bi-house-door-fill me-2"></i>
             </button>
         </div>
         
         <div class="sheet-header receipt-header">
             <img src="../images/header.png" width="100%" alt="Header Image">
             <h3>تقرير الحصيلة الشهرية</h3>
-            <p>الشهر: <?php echo $month; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
+            <p>الشهر: <?php echo $arabic_months[$month-1]; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
             <p>الفرع: <?php echo $branch_name; ?></p>
             <p>القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
         </div>
         <table>
             <thead>
-                <tr>   
+                <tr>
                     <th style="width: 13%; font-size: 18px">الاسم الكامل</th>
                     <th style="width: 8%; font-size: 18px"> عدد الأحزاب</th>
                     <th style="width: 8%; font-size: 18px"> مقدار الحفظ</th>
                     <th style="width: 20%; font-size: 18px">  المستوى السابق</th>
                     <th style="width: 20%; font-size: 18px">  المستوى الحالي</th>
                     <th style="width: 19%; font-size: 18px">  الزيادة</th>
-                    <th style="width: 4%; font-size: 18px">  الغياب</th>
+                    <th style="width: 2%; font-size: 18px">  الغياب</th>
                     <th style="width: 11%; font-size: 18px">  الملاحظات</th>
                 </tr>
             </thead>
@@ -346,13 +364,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <td contenteditable="true"></td>
                     <td contenteditable="true"></td>
                     <td contenteditable="true"></td>
+                    <td contenteditable="true" style="text-align: center;"><?php echo $student['ABS']; ?></td>
                     <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
+
                 </tr>
                 <?php endforeach; ?>
                 <?php for ($i = 0; $i < 3; $i++): ?>
                 <tr>
-                    <td contenteditable="true"></td>            
+                    <td contenteditable="true"></td>
                     <?php for ($j = 0; $j < 4; $j++): ?>
                     <td contenteditable="true"></td>
                 <?php endfor; ?>

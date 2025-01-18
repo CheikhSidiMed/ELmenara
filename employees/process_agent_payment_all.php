@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -6,7 +7,7 @@ error_reporting(E_ALL);
 include 'db_connection.php';
 $conn->set_charset("utf8mb4");
 $response = array('success' => false, 'message' => '');
-session_start();  
+session_start();
 
 if (!isset($_SESSION['userid'])) {
     die("Error: User is not logged in.");
@@ -35,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fund_d = null;
     $bank_accoun_id = null;
     if ($payment_method === "نقدي") {
-        $fund_d = 1; 
+        $fund_d = 1;
     } elseif ($payment_method === "بنكي" && $bank_id) {
         $bank_accoun_id = $bank_id;
     }
@@ -55,57 +56,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $des_1 = !((float)$registuration_fee) ?? 'رسوم تسجيل لطالبة ';
         $des_2 = !((float)$p_paid) ?? 'و ' . "{ " . $description_p . " } ";
         $descr_ion = "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) " . "{ " . $des_1 . $des_2 . " }" . ' لطالبة ';
-
+        
         $receipts_id = insertReceipts($conn, $to_t_paid, $descr_ion, $user_id, $agent_id);
-
+        
         $sql_students = "SELECT id, student_name FROM students WHERE agent_id = ?";
         $stmt_students = $conn->prepare($sql_students);
         $stmt_students->bind_param("i", $agent_id);
         $stmt_students->execute();
         $result_students = $stmt_students->get_result();
-    
+        
         if ($result_students->num_rows > 0) {
             $student_count = $result_students->num_rows;
             $tot_paid = (( (float)$p_paid ?? 0) + ( (float)$registuration_fee ?? 0)) / $student_count;
-
+        
+            // Process each student
             while ($row = $result_students->fetch_assoc()) {
                 $student_name = $row['student_name'];
                 $student_id = $row['id'];
-
-                if ($registuration_fee || $description_p) {
-                    $paid_amount_T = (((float)$registuration_fee ?? 0 )+ ((float)$p_paid ?? 0)) / count($row);    
-                    $des_ins =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) " . " رسوم تسجيل لطالب(ة)  " . ': ' . ($student_name) ;
-
-                    if ($registuration_fee) {
-                        $reg_fee = (float) $registuration_fee / $student_count;
-
-                        $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $reg_fee, 0.00, $des_ins, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                        insertReceiptPay($conn, $receipts_id, $transaction_id); 
-                        insertTransaction($conn, $type, $student_id, $des_ins, $reg_fee, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                        updateBalance($conn, $payment_method, $reg_fee, $bank_id);
-                    }
-
-                    if ($p_paid) {
-                        $p_paidd = (float) $p_paid / $student_count;
-                        $description =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . "دفع(ت) " . "{ " . $description_p . " }" . 'لطالب(ة): ' . ($student_name) ;
-
-                        $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $p_paidd, 0.00, $description, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                        insertReceiptPay($conn, $receipts_id, $transaction_id); 
-                        insertTransaction($conn, $type, $student_id, $description, $p_paidd, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                        updateBalance($conn, $payment_method, $p_paidd, $bank_id);
-                    }
+        
+                // Process registration fee
+                if ((float)$registuration_fee) {
+                    $reg_fee = (float) $registuration_fee / $student_count;
+                    $des_ins = "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) " . " رسوم تسجيل لطالب(ة)  " . ': ' . ($student_name);
+                    processTransaction($conn, $type, $student_id, $des_ins, $reg_fee, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d, $receipts_id);
+                }
+        
+                // Process payment
+                if ((float)$p_paid) {
+                    $p_paidd = (float) $p_paid / $student_count;
+                    $description = "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . "دفع(ت) " . "{ " . $description_p . " }" . 'لطالب(ة): ' . ($student_name);
+                    processTransaction($conn, $type, $student_id, $description, $p_paidd, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d, $receipts_id);
                 }
             }
+        
             header("Location: agent_receipt.php?payment_ids=" . $receipts_id);
             exit();
         } else {
-            $response = ['success' => false, 'message' => 'يرجى ملء الحقول المطلوبة للدفع أو إدخال رسوم تسجيل أو وصف للدفع.'];
+         $response = ['success' => false, 'message' => 'يرجى ملء الحقول المطلوبة للدفع أو إدخال رسوم تسجيل أو وصف للدفع.'];
         }
     } else {
 
         $to_t_paid = (float)$paid_amount + ( (float)$p_paid ?? 0) + ( (float)$registuration_fee ?? 0);
 
-        $m_h = implode(', ', $months); 
+        $m_h = implode(', ', $months);
         $des_1 = !((float)$registuration_fee) ?? 'ورسوم تسجيل لطالبة ';
         $des_2 = !((float)$p_paid) ?? 'و ' . "{ " . $description_p . " } ";
         $descr_ion =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) الأشهر " . "{ " . $m_h . " }" . $des_1 . $des_2 . 'لطالبة ';
@@ -128,14 +121,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             while ($row = $result_students->fetch_assoc()) {
                 $student_name = $row['student_name'];
                 $student_id = $row['id'];
-                $remaining_balance = $row['remaining'];
 
                 if ($registuration_fee) {
                     $regist_fee = $registuration_fee / $student_count;
                     $des_ins =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) " . " رسوم تسجيل لطالب(ة)  " . ': ' . ($student_name) ;
 
                     $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $regist_fee, 0.00, $des_ins, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                    insertReceiptPay($conn, $receipts_id, $transaction_id); 
+                    insertReceiptPay($conn, $receipts_id, $transaction_id);
                     insertTransaction($conn, $type, $student_id, $des_ins, $regist_fee, $bank_accoun_id, $user_id, $agent_id, $fund_d);
                     updateBalance($conn, $payment_method, $regist_fee, $bank_id);
                 }
@@ -145,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     $description =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') '. " دفع(ت)  " . "{ " . $description_p . " }" . 'لطالب(ة): ' . ($student_name);
                     $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $pp_paid, 0.00, $description, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
-                    insertReceiptPay($conn, $receipts_id, $transaction_id); 
+                    insertReceiptPay($conn, $receipts_id, $transaction_id);
                     insertTransaction($conn, $type, $student_id, $description, $pp_paid, $bank_accoun_id, $user_id, $agent_id, $fund_d);
                     updateBalance($conn, $payment_method, $pp_paid, $bank_id);
 
@@ -154,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
             $months = $_POST['monthss'] ?? [];
             $placeholders = rtrim(str_repeat('?,', count($months)), ',');
-            $monthsString = implode(',', $_POST['monthss'] ?? []); 
+            $monthsString = implode(',', $_POST['monthss'] ?? []);
             $monthsA = explode(',', $monthsString);
             $sql_s = "SELECT s.id, s.student_name, s.remaining FROM students s
                         LEFT JOIN payments p ON s.id = p.student_id AND p.month IN ($placeholders)
@@ -171,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $rem_paid = $paid_amount;
 
             if ($result_s->num_rows > 0) {
-                $success = true; 
+                $success = true;
                 $st_ct = $result_s->num_rows;
                 $result_array = $result_s->fetch_all(MYSQLI_ASSOC);
                 foreach ($result_array as $row)  {
@@ -192,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     }
                     if (empty($unpaid_months)) {
-                        continue; 
+                        continue;
                     }
                     
                     $conn->begin_transaction();
@@ -203,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         $stmt = $conn->prepare("INSERT INTO payments (agent_id, student_id, month, due_amount, paid_amount, remaining_amount, bank_id, payment_date, payment_method, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         $stmt->bind_param("iisdddissi", $agent_id, $student_id, $month, $remaining_balance, $payment_per_month, $rem_amount, $bank_id, $payment_date,$payment_method,$user_id);
-                        if ($stmt->execute()) {           
+                        if ($stmt->execute()) {
                             updateBalance($conn, $payment_method, $payment_per_month, $bank_id);
                             $des_tion =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) الأشهر " . "{ " . $month . " }" . 'لطالب(ة): ' . ($student_name) ;
 
@@ -220,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $success = false;
                             break;
                         }
-                        $stmt->close(); 
+                        $stmt->close();
                     }
                 }
                 if ($success) {
@@ -234,8 +226,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $response['message'] = 'Transaction failed, rolled back.';
                 }
             }
-        }   
-    }   
+        }
+    }
 }
 
 $conn->close();
@@ -255,9 +247,9 @@ function insertReceiptPay($conn, $receipts_id, $transaction_id){
 function insertComTransaction($conn, $months, $type, $student_id, $due_amount, $paid_amount, $remaining_amount, $description, $payment_method, $bank_id, $user_id, $agent_id, $fund_id) {
     $stmt = $conn->prepare("INSERT INTO combined_transactions (month, type, student_id, due_amount, paid_amount, remaining_amount, description, payment_method, bank_id, user_id, agent_id, fund_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssssssss", $months, $type, $student_id, $due_amount, $paid_amount, $remaining_amount, $description, $payment_method, $bank_id, $user_id, $agent_id, $fund_id);
-    if (!$stmt) { throw new Exception("Prepare failed: " . $conn->error);}
-    $stmt->execute();
-    if (!$stmt->execute()) { throw new Exception("Execute failed: " . $stmt->error);}
+    if (!$stmt) { throw new Exception("Prepare failed: " . $conn->error); }
+    $stmt->bind_param("ssssssssssss", $months, $type, $student_id, $due_amount, $paid_amount, $remaining_amount, $description, $payment_method, $bank_id, $user_id, $agent_id, $fund_id);
+    if (!$stmt->execute()) { throw new Exception("Execute failed: " . $stmt->error); }
     $insert_id = $stmt->insert_id;
     $stmt->close();
 
@@ -278,14 +270,21 @@ function updateBalance($conn, $payment_method, $amount, $bank_id) {
 
 function insertReceipts($conn, $tot_paid, $description, $user_id, $agent_id) {
     $recp = $conn->prepare("INSERT INTO receipts (receipt_date, total_amount, receipt_description, created_by, agent_id) VALUES (NOW(), ?, ?, ?, ?)");
-    $recp->bind_param("ssss", $tot_paid, $description, $user_id, $agent_id);
     if (!$recp) { throw new Exception("Prepare failed: " . $conn->error);}
-    $recp->execute();
+    $recp->bind_param("ssss", $tot_paid, $description, $user_id, $agent_id);
     if (!$recp->execute()) { throw new Exception("Execute failed: " . $recp->error);}
     $insert_id = $recp->insert_id;
     $recp->close();
 
     return $insert_id;
+}
+
+
+function processTransaction($conn, $type, $student_id, $description, $amount, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d, $receipts_id) {
+    $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $amount, 0.00, $description, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
+    insertReceiptPay($conn, $receipts_id, $transaction_id);
+    insertTransaction($conn, $type, $student_id, $description, $amount, $bank_accoun_id, $user_id, $agent_id, $fund_d);
+    updateBalance($conn, $payment_method, $amount, $bank_id);
 }
 
 

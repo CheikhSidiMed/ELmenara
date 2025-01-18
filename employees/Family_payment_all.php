@@ -162,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         }
         
-        $commonMonths = array_values(reset($finalMonths)); // Get the first student's months
+        $commonMonths = array_values(reset($finalMonths));
         
         foreach ($finalMonths as $studentID => $months) {
             $commonMonths = array_intersect($commonMonths, $months);

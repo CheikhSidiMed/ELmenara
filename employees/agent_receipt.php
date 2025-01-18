@@ -41,43 +41,43 @@ if (!empty($receiptId)) {
     // Prepare placeholders for SQL IN clause
     // $receiptId = 28;
     // implode(',', array_fill(0, count($payment_ids), '?'));
-    $sql = "SELECT 
-        r.receipt_id AS payment_id, 
-        a.agent_id, 
-        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name, 
+    $sql = "SELECT
+        r.receipt_id AS payment_id,
+        a.agent_id,
+        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name,
         a.phone AS agent_phone,
         r.total_amount,
         r.receipt_date,
         u.username AS created_by,
-        s.student_name AS student_name, 
-        IFNULL(b.bank_name, 'نقدي') AS bank_name,  
+        s.student_name AS student_name,
+        IFNULL(b.bank_name, 'نقدي') AS bank_name,
         IFNULL(cl.class_name, 'N/A') AS student_class,
-        SUM(c.remaining_amount) AS remaining_amount, 
-        s.remaining AS student_remaining, 
-        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid, 
-        SUM(c.paid_amount) AS total_paid, 
+        SUM(c.remaining_amount) AS remaining_amount,
+        s.remaining AS student_remaining,
+        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
+        SUM(c.paid_amount) AS total_paid,
         COALESCE(c.description, 'دفع رسوم اشهر ') AS transaction_descriptions
 
-        FROM 
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             students s ON c.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             users u ON u.id = r.created_by
-        LEFT JOIN 
+        LEFT JOIN
             agents a ON a.agent_id = r.agent_id
-        LEFT JOIN 
+        LEFT JOIN
             classes cl ON s.class_id = cl.class_id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-        WHERE 
+        WHERE
             r.receipt_id = ?
-        GROUP BY 
-            s.id;";
+        GROUP BY
+            s.id, c.description;";
 
     $stmt = $conn->prepare($sql);
 
@@ -85,7 +85,7 @@ if (!empty($receiptId)) {
         die("Prepare failed: " . $conn->error);
     }
     
-    $stmt->bind_param('i', $receiptId); 
+    $stmt->bind_param('i', $receiptId);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -115,7 +115,7 @@ if (!empty($receiptId)) {
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
         }
-    } 
+    }
 
     $stmt->close();
 }
@@ -313,10 +313,12 @@ $conn->close();
             <div>
                 <strong>وصل رقم: </strong>  <?php echo sprintf("%010d", $resptId); ?>
             </div>
-            <div><strong>بتاريخ: </strong>  <?php 
-                    $formatted_date = date('Y-m-d', strtotime($receipt_date)); 
-                    $formatted_time = date('H:i:s', strtotime($receipt_date));
-                    echo $formatted_date . ' | ' . $formatted_time;  ?></div>
+                <div><strong>بتاريخ: </strong>
+                    <?php
+                        $formatted_date = date('Y-m-d', strtotime($receipt_date));
+                        $formatted_time = date('H:i:s', strtotime($receipt_date));
+                        echo $formatted_date . ' | ' . $formatted_time;  ?>
+                </div>
             <div>
                     <strong>المستخدم: </strong>  <?php echo $created_by; ?>
             </div>
@@ -346,9 +348,9 @@ $conn->close();
                     <td><?php echo $data['student_name']; ?></td>
                     <td><?php echo $data['student_class']; ?></td>
                     <td>
-                        <?php 
-                        echo !empty($data['months_paid']) 
-                            ? $data['months_paid'] 
+                        <?php
+                        echo !empty($data['months_paid'])
+                            ? $data['months_paid']
                             : (!empty($data['transaction_descriptions']) ? $data['transaction_descriptions'] : '');
                         ?>
                     </td>
@@ -361,12 +363,14 @@ $conn->close();
         <!-- Summary section -->
         <div class="summary-container">
             <div>
-                <span>حساب الدفع</span>: 
+                <span>حساب الدفع</span>:
                 <span class="text-primary">
                     <?php echo empty($bank_name) ? 'نقدي' : $bank_name; ?>
                 </span>
             </div>
             <div>
+            <!-- !empty($data['months_paid']) ? ' ' : "<div><strong>مجموع الرسوم: </strong>" . $student_remaining_sum . "</div>"; -->
+
                 <strong>مجموع الرسوم: </strong><?php echo $student_remaining_sum; ?>
             </div>
             <div>
