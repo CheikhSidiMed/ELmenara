@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Retrieve stored values from session
 $selectedBranch = isset($_SESSION['branch']) ? $_SESSION['branch'] : '';
 $selectedClass = isset($_SESSION['class']) ? $_SESSION['class'] : '';
-$selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : '';
+$selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : 0;
 
 
 $monthToUse = $selectedMonth + 1;

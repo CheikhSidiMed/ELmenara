@@ -12,7 +12,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $selectedBranch = isset($_SESSION['branch']) ? $_SESSION['branch'] : '';
 $selectedClass = isset($_SESSION['class']) ? $_SESSION['class'] : '';
 $selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : '';
+
 
 // Fetch branches from the database
 $sqlBranches = "SELECT branch_id, branch_name FROM branches";
@@ -58,12 +59,12 @@ if (!empty($branch_id)) {
     $stmt->close();
 }
 
-// Arabic quarterly names
+
 $arabic_quarterly = [
     'الفصل الأول', 'الفصل الثاني', 'الفصل الثالث', 'الفصل الرابع'
 ];
 
-// Define quarterly months
+
 $quarterlyMonths = [
     'الفصل الأول' => ['ديسمبر', 'نوفمبر', 'أكتوبر'],
     'الفصل الثاني' => ['مارس', 'فبراير', 'يناير'],
@@ -71,9 +72,20 @@ $quarterlyMonths = [
     'الفصل الرابع' => ['سبتمبر', 'أغسطس', 'يوليو'],
 ];
 
-// Fetch the selected class name and all students in the class
+$quarterlyMonths_number = [
+    'الفصل الأول' => ['12', '11', '10'],
+    'الفصل الثاني' => ['3', '2', '1'],
+    'الفصل الثالث' => ['6', '5', '4'],
+    'الفصل الرابع' => ['9', '8', '7'],
+];
+
+$months = $selectedMonth !== '' ? $quarterlyMonths_number[$selectedMonth] : '';
+
+
 $className = '';
 $students = [];
+$studentAbsences = [];
+
 if (!empty($selectedClass)) {
     $stmt = $conn->prepare("SELECT class_name FROM classes WHERE class_id = ?");
     $stmt->bind_param("i", $selectedClass);
@@ -82,18 +94,46 @@ if (!empty($selectedClass)) {
     $stmt->fetch();
     $stmt->close();
 
-    $sql = "SELECT id, student_name FROM students WHERE class_id = ?";
+    $sql = "SELECT
+            s.id,
+            s.student_name,
+            MONTH(ab.created_at) AS absence_month,
+            COUNT(ab.created_at) AS absences
+        FROM
+            students AS s
+        LEFT JOIN
+            absences AS ab
+            ON s.id = ab.student_id
+            AND MONTH(ab.created_at) IN (?, ?, ?)
+        WHERE
+            class_id = ?
+        GROUP BY
+            s.id, absence_month ";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $selectedClass);
+    $stmt->bind_param('iiii', $months[0], $months[1], $months[2], $selectedClass);
     $stmt->execute();
     $result = $stmt->get_result();
 
     while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
+        $id = $row['id'];
+        $month = $row['absence_month'];
+        $absences = $row['absences'];
+        
+        $students[$id] = [
+            'id' => $id,
+            'student_name' => $row['student_name']
+        ];
+
+        $studentAbsences[$id][$month] = $absences;
     }
     $stmt->close();
+
+    $students = array_values($students);
+
 }
 
+// echo '<pre>'; print_r($students); echo '</pre>';
 
 
 
@@ -118,15 +158,12 @@ if (!empty($selectedClass)) {
     <link rel="shortcut icon" type="image/png" href="../images/menar.png">
     <style>
         input.no-border {
-            border: none;              
-            outline: none;             
-            padding: 2px;              
-            font-size: 14px;  
-            width: 98%;       
+            border: none;
+            outline: none;
+            padding: 2px;
+            font-size: 14px;
+            width: 98%;
         }
-
-
-
 
             h2 {
                 text-align: center;
@@ -365,12 +402,12 @@ if (!empty($selectedClass)) {
 
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> 
+            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i>
         </button>
 
 
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-        الصفحة الرئيسية <i class="bi bi-home" style="margin-right: 8px;"></i> 
+        الصفحة الرئيسية <i class="bi bi-home" style="margin-right: 8px;"></i>
         </button>
 
     </div>
@@ -378,7 +415,7 @@ if (!empty($selectedClass)) {
     <div class="sheet-header receipt-header">
         <img src="../images/header.png" width="100%" alt="Header Image">
         <h3 style="margin-top: 3px; margin-bottom: -1px;"> الحصيلة الفصلية </h3>
-        <P>إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> | 
+        <P>إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> |
         الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : 'غير محدد'; ?> </P>
         <P class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></P> <!-- Print date only visible during print -->
 
@@ -416,28 +453,30 @@ if (!empty($selectedClass)) {
                     <td>الغياب</td>
                 </tr>
 
-                <?php foreach ($students as $student) {
-                    $studentId = $student['id'];
+                <?php foreach ($students as $studentId => $student) {
 
-                    $stmt = $conn->prepare("
-                        SELECT month_1_income, month_1_absence, month_2_income, month_2_absence, 
-                            month_3_income, month_3_absence, total_income, total_absence, 
+                    $tot_ab =
+                    ($studentAbsences[$student['id']][$months[0]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[1]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[2]] ?? 0);
+                                    $stmt = $conn->prepare("SELECT month_1_income, month_1_absence, month_2_income, month_2_absence,
+                            month_3_income, month_3_absence, total_income, total_absence,
                             total_groups, extra, notes
-                        FROM student_performance 
-                        WHERE student_id = ? AND quarter = ?");  
-                    $stmt->bind_param('is', $studentId, $selectedMonth);
+                        FROM student_performance
+                        WHERE student_id = ? AND quarter = ?");
+                    $stmt->bind_param('is', $student['id'], $selectedMonth);
                     $stmt->execute();
                     $stmt->store_result();
 
                     if ($stmt->num_rows > 0) {
-                        $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence, 
-                                        $month3Income, $month3Absence, $totalIncome, $totalAbsence, 
+                        $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence,
+                                        $month3Income, $month3Absence, $totalIncome, $totalAbsence,
                                         $totalGroups, $extra, $notes);
                         $stmt->fetch();
                     } else {
                         // Set variables to empty if no data exists
-                        $month1Income = $month1Absence = $month2Income = $month2Absence = 
-                        $month3Income = $month3Absence = $totalIncome = $totalAbsence = 
+                        $month1Income = $month1Absence = $month2Income = $month2Absence =
+                        $month3Income = $month3Absence = $totalIncome = $totalAbsence =
                         $totalGroups = $extra = $notes = '';
                     }
                     $stmt->close();
@@ -447,18 +486,18 @@ if (!empty($selectedClass)) {
                     <input type="hidden" name="student_ids[]" value="<?php echo $student['id']; ?>" />
                     <input type="hidden" name="quarter" value="<?php echo $selectedMonth; ?>" />
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_income]" value="<?php echo htmlspecialchars($month1Income); ?>" class="no-border"/></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($month1Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[2]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_income]" value="<?php echo htmlspecialchars($month2Income); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($month2Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[1]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_income]" value="<?php echo htmlspecialchars($month3Income); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($month3Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[0]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_income]" value="<?php echo htmlspecialchars($totalIncome); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($totalAbsence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_ab); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_groups]" value="<?php echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][extra]" value="<?php echo htmlspecialchars($extra); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][notes]" value="<?php echo htmlspecialchars($notes); ?>" class="no-border" /></td>
                 </tr>
-                <?php } ?>  
+                <?php } ?>
                 <?php for ($i = 0; $i < 4; $i++): ?>
                     <tr>
                         <?php for ($j = 0; $j < 12; $j++): ?>
@@ -472,11 +511,11 @@ if (!empty($selectedClass)) {
                 <div class="signature">
                     <p>الإدارة</p>
                     <p>__________________</p>
-                </div>      
+                </div>
             </div>
             <div class="button-group">
                 <button type="submit" class="btn btn-primary d-flex align-items-center my-3" >حفظ البيانات</button>
-            </div> 
+            </div>
         </form>
 
     <?php else: ?>

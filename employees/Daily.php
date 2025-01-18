@@ -59,9 +59,8 @@ $transactions = [];
 
 
 
-if (!empty($user_id)) {
-    $transactions_query = "
-    SELECT
+if (!empty($_POST['user_id'])) {
+    $transactions_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
         sum(ct.paid_amount) AS amount,
@@ -79,14 +78,12 @@ if (!empty($user_id)) {
         AND r.receipt_date BETWEEN ? AND ?
         GROUP BY r.receipt_id
     ORDER BY
-        r.receipt_date DESC
-";
+        r.receipt_date DESC";
 
     $stmt = $conn->prepare($transactions_query);
     $stmt->bind_param("iss", $user_id, $start_date, $end_date);
 } else {
-    $transactions_query = "
-    SELECT
+    $t_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
         sum(ct.paid_amount) AS amount,
@@ -96,8 +93,8 @@ if (!empty($user_id)) {
         b.bank_name
     FROM
         receipts r
-    JOIN receipt_payments rp ON rp.receipt_id = r.receipt_id
-    LEFT JOIN combined_transactions ct ON ct.id = rp.transaction_id
+    JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+    LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
     LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
     WHERE
         r.receipt_date BETWEEN ? AND ?
@@ -107,8 +104,8 @@ if (!empty($user_id)) {
 ";
 
 
-    $stmt = $conn->prepare($transactions_query);
-    $stmt->bind_param("ss", $start_current_date, $end_current_date);
+    $stmt = $conn->prepare($t_query);
+    $stmt->bind_param("ss", $start_date, $end_date);
 }
 
 $stmt->execute();
@@ -281,7 +278,10 @@ foreach ($transactions as $transaction) {
             text-align: right;
         }
 
-
+        img{
+            border-radius: 10px;
+            border: 1px solid #14865b;
+        }
         .signatures {
         margin-top: 10px; 
         text-align: right;
@@ -349,6 +349,7 @@ foreach ($transactions as $transaction) {
                 display: none; /* Hide non-essential elements */
             }
             img {
+                border: none;
                 display: block;
                 margin: 0 auto; /* Center image */
                 width: 100%; /* Adjusted for A4 print width */
@@ -391,7 +392,7 @@ foreach ($transactions as $transaction) {
                 <a href="home.php" class="btn btn-success d-flex align-items-center" style="margin-left: 15px;">
                 <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
                     الرئيسية
-                </a> 
+                </a>
             </div>
         </div>
         <form action="" method="POST">
@@ -399,7 +400,7 @@ foreach ($transactions as $transaction) {
                 <!-- Year Selection -->
                 <div class="form-group">
                     <label for="year-select">السنة المالية:</label>
-                    <select id="year-select" class="form-select" name="year">
+                    <select style="padding-right: 30px" id="year-select" class="form-select" name="year">
                         <option><?php echo htmlspecialchars($last_year); ?></option>
                     </select>
                 </div>
@@ -408,7 +409,7 @@ foreach ($transactions as $transaction) {
                 <?php if($role_id == 1) { ?>
     <div class="form-group">
         <label for="user-select">المستخدم:</label>
-        <select id="user-select" class="form-select" name="user_id" onchange="updateUsername()"> 
+        <select style="padding-right: 30px" id="user-select" class="form-select" name="user_id" onchange="updateUsername()">
             <option value="">جميع المستخدمين</option> <!-- New Option for All Users -->
             <?php
             if ($result->num_rows > 0) {

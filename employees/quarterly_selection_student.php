@@ -12,7 +12,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -42,31 +42,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : '';
+
+$quarterlyMonths_number = [
+    'الفصل الأول' => ['12', '11', '10'],
+    'الفصل الثاني' => ['3', '2', '1'],
+    'الفصل الثالث' => ['6', '5', '4'],
+    'الفصل الرابع' => ['9', '8', '7'],
+];
+
+$months = $selectedMonth !== '' ? $quarterlyMonths_number[$selectedMonth] : '';
+
 $selectedYear = date('Y');
 $branch = '';
 $className = '';
 $students = [];
+$studentAbsences = [];
 
 // Check if student_name is set and not empty
 if (!empty($_POST['id'])) {
     $id = $_POST['id'];
-    $sql = "SELECT s.id, s.student_name, b.branch_name, c.class_name
+    $sql = "SELECT s.id, s.student_name, b.branch_name, c.class_name,
+                MONTH(ab.created_at) AS absence_month,
+                COUNT(ab.created_at) AS absences
             FROM students AS s
             LEFT JOIN branches AS b ON s.branch_id = b.branch_id
             LEFT JOIN classes AS c ON s.class_id = c.class_id
-            WHERE s.id LIKE ?";
+            LEFT JOIN
+                absences AS ab
+                ON s.id = ab.student_id
+                AND MONTH(ab.created_at) IN (?, ?, ?)
+            WHERE s.id LIKE ?
+            GROUP BY
+                s.id, absence_month";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $id);
+    $stmt->bind_param('iiii', $months[0], $months[1], $months[2], $id);
     $stmt->execute();
     $result = $stmt->get_result();
-
+    
     while ($row = $result->fetch_assoc()) {
-        $className = $row['class_name'];
-        $branch = $row['branch_name'];
-        $students[] = $row;
+        $id = $row['id'];
+        $month = $row['absence_month'];
+        $absences = $row['absences'];
+    
+        $students[$id] = [
+            'id' => $id,
+            'student_name' => $row['student_name'],
+            'branch_name' => $row['branch_name'],
+            'class_name' => $row['class_name'],
+        ];
+        $studentAbsences[$id][$month] = $absences;
     }
     $stmt->close();
+
+    $students = array_values($students);
+
 }
+
+
 ?>
 
 
@@ -262,7 +294,7 @@ if (!empty($_POST['id'])) {
         margin: auto; 
         margin-right: -52px;
     }
-}
+    }
 
 
     </style>
@@ -336,7 +368,7 @@ if (!empty($_POST['id'])) {
 
     </div>
     <div class="for-container">
-        <?php if ($className && $selectedMonth && $selectedYear): ?>
+        <?php if ($selectedMonth): ?>
 
             <table>
                 <tr>
@@ -372,28 +404,29 @@ if (!empty($_POST['id'])) {
                 </tr>
                 
             <tr>
-            <?php foreach ($students as $student) {
-                    $studentId = $student['id'];
-
-                    $stmt = $conn->prepare("
-                        SELECT month_1_income, month_1_absence, month_2_income, month_2_absence, 
+            <?php foreach ($students as $studentId => $student) {
+                    $tot_ab =
+                    ($studentAbsences[$student['id']][$months[0]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[1]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[2]] ?? 0);
+                    $stmt = $conn->prepare("SELECT month_1_income, month_1_absence, month_2_income, month_2_absence, 
                             month_3_income, month_3_absence, total_income, total_absence, 
                             total_groups, extra, notes
-                        FROM student_performance 
-                        WHERE student_id = ? AND quarter = ?");  
-                    $stmt->bind_param('is', $studentId, $selectedMonth);
+                        FROM student_performance
+                        WHERE student_id = ? AND quarter = ?");
+                    $stmt->bind_param('is', $student['id'], $selectedMonth);
                     $stmt->execute();
                     $stmt->store_result();
 
                     if ($stmt->num_rows > 0) {
-                        $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence, 
-                                        $month3Income, $month3Absence, $totalIncome, $totalAbsence, 
+                        $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence,
+                                        $month3Income, $month3Absence, $totalIncome, $totalAbsence,
                                         $totalGroups, $extra, $notes);
                         $stmt->fetch();
                     } else {
                         // Set variables to empty if no data exists
-                        $month1Income = $month1Absence = $month2Income = $month2Absence = 
-                        $month3Income = $month3Absence = $totalIncome = $totalAbsence = 
+                        $month1Income = $month1Absence = $month2Income = $month2Absence =
+                        $month3Income = $month3Absence = $totalIncome = $totalAbsence =
                         $totalGroups = $extra = $notes = '';
                     }
                     $stmt->close();
@@ -403,13 +436,13 @@ if (!empty($_POST['id'])) {
                     <input type="hidden" name="student_ids[]" value="<?php echo $student['id']; ?>" />
                     <input type="hidden" name="quarter" value="<?php echo $selectedMonth; ?>" />
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_income]" value="<?php echo htmlspecialchars($month1Income); ?>" class="no-border"/></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($month1Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[2]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_income]" value="<?php echo htmlspecialchars($month2Income); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($month2Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[1]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_income]" value="<?php echo htmlspecialchars($month3Income); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($month3Absence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[0]]??0); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_income]" value="<?php echo htmlspecialchars($totalIncome); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($totalAbsence); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_ab); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_groups]" value="<?php echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][extra]" value="<?php echo htmlspecialchars($extra); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][notes]" value="<?php echo htmlspecialchars($notes); ?>" class="no-border" /></td>
