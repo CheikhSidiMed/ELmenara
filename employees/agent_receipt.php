@@ -168,7 +168,10 @@ $conn->close();
             color: #007b5e;
             font-weight: bold;
         }
-
+        th, td{
+            text-align: center !important;
+            vertical-align: middle!important;
+        }
         .info-container {
             display: flex;
             justify-content: space-between;
