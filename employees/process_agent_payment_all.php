@@ -118,7 +118,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $tot_paid = ((float)$paid_amount + ( (float)$p_paid ?? 0) + ( (float)$registuration_fee ?? 0)) / $student_count;
 
             $description =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) الأشهر " . "{ " . $m_h . " }" . ' ' ;
-            // $receipts_id = insertReceipts($conn, $tot_paid, $description, $user_id, $agent_id);
 
             while ($row = $result_students->fetch_assoc()) {
                 $student_name = $row['student_name'];
@@ -234,6 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 
+
 function insertTransaction($conn, $type, $student_id, $description, $amount, $bank_id, $user_id, $agent_id, $fund_id) {
     $tran = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, fund_id, bank_account_id, student_id, agent_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $tran->bind_param("ssssssss", $description, $amount, $type, $fund_id, $bank_id, $student_id, $agent_id, $user_id);
@@ -280,7 +280,6 @@ function insertReceipts($conn, $tot_paid, $description, $user_id, $agent_id) {
 
     return $insert_id;
 }
-
 
 function processTransaction($conn, $type, $student_id, $description, $amount, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d, $receipts_id) {
     $transaction_id = insertComTransaction($conn, '', $type, $student_id, 0.00, $amount, 0.00, $description, $payment_method, $bank_accoun_id, $user_id, $agent_id, $fund_d);
