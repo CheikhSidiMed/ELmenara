@@ -99,9 +99,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $to_t_paid = (float)$paid_amount + ( (float)$p_paid ?? 0) + ( (float)$registuration_fee ?? 0);
 
         $m_h = implode(', ', $months);
-        $des_1 = !((float)$registuration_fee) ?? 'ورسوم تسجيل لطالبة ';
-        $des_2 = !((float)$p_paid) ?? 'و ' . "{ " . $description_p . " } ";
-        $descr_ion =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) الأشهر " . "{ " . $m_h . " }" . $des_1 . $des_2 . 'لطالبة ';
+        $des_1 = $registuration_fee ? 'ورسوم تسجيل ' : '';
+        $des_2 = $p_paid ? 'و ' . "{ " . $description_p . " } " : '';
+        $descr_ion = "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') '
+            . " دفع(ت) الأشهر " . "{ " . $m_h . " }, "
+            . $des_1 . $des_2 . 'لطلبة ';
 
         $receipts_id = insertReceipts($conn, $to_t_paid, $descr_ion, $user_id, $agent_id);
 
@@ -116,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $tot_paid = ((float)$paid_amount + ( (float)$p_paid ?? 0) + ( (float)$registuration_fee ?? 0)) / $student_count;
 
             $description =  "الوكيل(ة): " . $agent_name . '(' . $agent_phone . ') ' . " دفع(ت) الأشهر " . "{ " . $m_h . " }" . ' ' ;
-            $receipts_id = insertReceipts($conn, $tot_paid, $description, $user_id, $agent_id);
+            // $receipts_id = insertReceipts($conn, $tot_paid, $description, $user_id, $agent_id);
 
             while ($row = $result_students->fetch_assoc()) {
                 $student_name = $row['student_name'];
