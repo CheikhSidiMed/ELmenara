@@ -328,7 +328,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Insert into `combined_transactions`
                 $stmt = $conn->prepare("
-                    INSERT INTO combined_transactions 
+                    INSERT INTO combined_transactions
                     (description, type, student_id, month, due_amount, paid_amount, remaining_amount, payment_method, bank_id, user_id, agent_id, fund_id)
                     VALUES (?, 'plus', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
@@ -347,7 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Commit the transaction
                 $conn->commit();
 
-                $transaction_type = 'plus'; 
+                $transaction_type = 'plus';
 
                 // Insert into transactions table
                 $stmt_transaction = $conn->prepare("
@@ -364,7 +364,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $conn->begin_transaction();
         $success = true;
-        $payment_ids = []; 
+        $payment_ids = [];
 
         // Loop through months to insert separate entries
         foreach ($months as $month) {
@@ -381,14 +381,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Bind parameters including the `user_id`
             $stmt->bind_param(
-                "iisdddissi", 
-                $agent_id, 
-                $student_id, 
-                $month, 
-                $amount_per_month,  // Use the variable here
-                $paid_amount_per_month, 
-                $remaining_amount_per_month, 
-                $bank_id, 
+                "iisdddissi",
+                $agent_id,
+                $student_id,
+                $month,
+                $amount_per_month,
+                $paid_amount_per_month,
+                $remaining_amount_per_month,
+                $bank_id,
                 $payment_date,
                 $payment_method,
                 $user_id
@@ -396,7 +396,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
 
             if ($stmt->execute()) {
-                $payment_ids[] = $stmt->insert_id; 
+                $payment_ids[] = $stmt->insert_id;
 
                 $fund_id = null;
                 $bank_account_id = null;
@@ -434,8 +434,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $response['success'] = true;
             $response['message'] = 'Payment inserted successfully.';
             
-            // Redirect to the receipt page with payment IDs
-            // $payment_ids_str = implode(',', $payment_ids);
             header("Location: agent_receipt.php?payment_ids=" . $receipts_id);
             exit();
         } else {

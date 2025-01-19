@@ -21,14 +21,12 @@ if (!isset($_SESSION['userid'])) {
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $_SESSION['year'] = $_POST['year'];
     $_SESSION['user_id'] = $_POST['user_id'] ?? '';
     $_SESSION['start_date'] = $_POST['start_date'];
     $_SESSION['end_date'] = $_POST['end_date'];
 }
 
 // Retrieve previous values or set default values
-$selectedYear = $_SESSION['year'] ?? '2024-2023';
 $selectedUser = $_SESSION['user_id'] ?? '';
 $selectedStartDate = $_SESSION['start_date'] ?? '';
 $selectedEndDate = $_SESSION['end_date'] ?? '';
@@ -59,7 +57,7 @@ $transactions = [];
 
 
 
-if (!empty($_POST['user_id'])) {
+if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     $transactions_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
@@ -82,7 +80,7 @@ if (!empty($_POST['user_id'])) {
 
     $stmt = $conn->prepare($transactions_query);
     $stmt->bind_param("iss", $user_id, $start_date, $end_date);
-} else {
+} elseif(!empty($_POST['user_id']) && $_POST['user_id'] === 'all'){
     $t_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
@@ -100,12 +98,35 @@ if (!empty($_POST['user_id'])) {
         r.receipt_date BETWEEN ? AND ?
         GROUP BY r.receipt_id
     ORDER BY
-        r.receipt_date DESC;
-";
+        r.receipt_date DESC;";
 
 
     $stmt = $conn->prepare($t_query);
     $stmt->bind_param("ss", $start_date, $end_date);
+} else {
+    $t_query = "SELECT
+        r.receipt_id,
+        r.receipt_description AS transaction_description,
+        sum(ct.paid_amount) AS amount,
+        ct.type AS transaction_type,
+        r.receipt_date AS transaction_date,
+        ct.bank_id AS bank_account_id,
+        b.bank_name
+    FROM
+        receipts r
+    JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+    LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
+    LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
+    WHERE ct.user_id = ?
+        AND
+            r.receipt_date BETWEEN ? AND ?
+        GROUP BY r.receipt_id
+    ORDER BY
+        r.receipt_date DESC;";
+
+
+    $stmt = $conn->prepare($t_query);
+    $stmt->bind_param("iss", $con_user_id, $start_date, $end_date);
 }
 
 $stmt->execute();
@@ -410,7 +431,7 @@ foreach ($transactions as $transaction) {
     <div class="form-group">
         <label for="user-select">المستخدم:</label>
         <select style="padding-right: 30px" id="user-select" class="form-select" name="user_id" onchange="updateUsername()">
-            <option value="">جميع المستخدمين</option> <!-- New Option for All Users -->
+            <option value="all">جميع المستخدمين</option> <!-- New Option for All Users -->
             <?php
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
