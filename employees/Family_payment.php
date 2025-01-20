@@ -95,7 +95,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      if ($result->num_rows > 0) {
          $agent_data = $result->fetch_assoc();
  
-         $sql_students = "SELECT * FROM students WHERE agent_id = ?";
+         $sql_students = "SELECT s.id, s.registration_date, s.student_name, b.branch_name, c.class_name, s.fees, s.remaining
+            FROM students s
+            LEFT JOIN branches b ON s.branch_id = b.branch_id
+            LEFT JOIN levels l ON s.level_id = l.id
+            LEFT JOIN classes c ON s.class_id = c.class_id
+            WHERE s.agent_id = ?";
          $stmt_students = $conn->prepare($sql_students);
          $stmt_students->bind_param('i', $agent_data['agent_id']);
          $stmt_students->execute();
@@ -107,6 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'id' => $row['id'],
                 'student_name' => $row['student_name'],
                 'fees' => $row['fees'],
+                'registration_date' => $row['registration_date'],
+                'branch_name' => $row['branch_name'],
+                'class_name' => $row['class_name'],
                 'remaining' => $row['remaining']
             ];
 
@@ -332,7 +340,6 @@ $conn->close();
             align-items: center;
         }
         .months-card .month-option label {
-            margin-left: 5px;
             font-weight: bold;
             color: #1a73e8;
             font-size: 0.8rem;
@@ -461,24 +468,31 @@ $conn->close();
 
 <div class="container-main">
  <!-- Header Section -->
+<div class="container">
     <div class="row mb-3">
-        <div class="col-12 d-flex justify-content-between align-items-center">
+        <!-- Header Title -->
+        <div class="col-12 col-lg-6 d-flex align-items-center">
             <h1 class="header-title">
                 <i class="icon-left bi bi-file-earmark-text"></i> تسديد رسوم الطالب عن طريق الوكيل
             </h1>
+        </div>
+        <!-- Actions -->
+        <div class="col-12 col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center mt-3 mt-lg-0">
+            <!-- Home Button with Icon -->
+            <a href="home.php" class="btn btn-primary d-flex align-items-center mb-2 mb-lg-0 me-lg-3">
+                <i class="bi bi-house-door-fill ms-2"></i> الرئيسية
+            </a>
+            <!-- Financial Year Select -->
             <div class="d-flex align-items-center">
-                <!-- Home Button with Icon -->
-                <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i>
-                    الرئيسية
-                </a>
-                <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
-                <select id="financial-year" class="form-select w-100">
+                <label class="form-label mb-0 me-2 w-25" for="financial-year">السنة المالية</label>
+                <select id="financial-year" class="form-select w-auto">
                     <option><?php echo $last_year; ?></option>
                 </select>
             </div>
         </div>
     </div>
+</div>
+
 
 
     
@@ -504,14 +518,27 @@ $conn->close();
             <div class="col-md-8">
                 <div class="linked-students">
                     <div class="section-title">الطلبة المرتبطين:</div>
-                    <div class="students-grid">
-                        <?php foreach ($students_data as $student): ?>
-                            <div class="student-option">
-                                <div class="btn student-btn">
-                                    <?php echo $student['student_name']; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                    <div class=" col-auto">
+                        <table class="table table-bordered rounded">
+                            <thead>
+                                <tr class="thead-light">
+                                    <th scope="col">#</th>
+                                    <th scope="col">الاسم</th>
+                                    <th scope="col">الفرع</th>
+                                    <th scope="col">القسم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($students_data as $index => $student): ?>
+                                    <tr class="text-2">
+                                        <th scope="row"><?php echo $index + 1; ?></th>
+                                        <td><?php echo $student['student_name']; ?></td>
+                                        <td><?php echo $student['branch_name']; ?></td>
+                                        <td><?php echo $student['class_name']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                            </table>
                     </div>
                 </div>
             </div>
@@ -543,28 +570,55 @@ $conn->close();
     <input type="hidden" id="remaining" name="remaining" readonly>
     <input type="hidden" id="months_s" name="monthss[]" readonly>
     <div class="row form-section">
-        <div class="col-6">
-            <div class="payment-info">
-                <div>
-                    <label for="due-amount">المستحقات</label>
-                    <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
+        <div class="row align-align-items-baseline">
+            <div class="col-12 col-lg-6">
+                <div class="payment-info">
+                    <div>
+                        <label for="due-amount">المستحقات</label>
+                        <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
+                    </div>
+                    <div>
+                        <label for="paid-amount">المبلغ المسدد</label>
+                        <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
+                    </div>
+                    <div>
+                        <label for="remaining-amount">الباقي</label>
+                        <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
+                    </div>
                 </div>
-                <div>
-                    <label for="paid-amount">المبلغ المسدد</label>
-                    <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
-                </div>
-                <div>
-                    <label for="remaining-amount">الباقي</label>
-                    <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
+                <div style="margin-bottom: 20px;">
+                    <div id="total-remaining-container" style="background-color: #f1f1f1; padding: 12px; border-radius: 5px; color: #555; font-size: 1.1rem;">
+                        <label for="total-remaining">  المتأخرات </label>
+                        <input type="text" id="total-remaining" name="due_amount" value="0.00" disabled style="border: none; background-color: transparent; outline: none; color: #555; font-size: 1.1rem;">
+                    </div>
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div id="total-remaining-container" style="background-color: #f1f1f1; padding: 12px; border-radius: 5px; color: #555; font-size: 1.1rem;">
-                    <label for="total-remaining">  المتأخرات </label>
-                    <input type="text" id="total-remaining" name="due_amount" value="0.00" disabled style="border: none; background-color: transparent; outline: none; color: #555; font-size: 1.1rem;">
+
+            <!-- HTML to Display Checkboxes and Total Amount Due -->
+            
+                <div class="col-12 col-lg-6 months-card border border-light  bg-light">
+                    <div class="section-title">الأشهر</div>
+                    <div class="months-grid" id="months-grid">
+                    <?php foreach ($allMonths as $monthKey => $monthName):
+                        $isPaid = in_array($monthName, $commonMonths);
+                    ?>
+                        <div class="month-option">
+                            <input type="checkbox"
+                                name="months[]"
+                                value="<?php echo $monthName; ?>"
+                                id="month-<?php echo $monthKey; ?>"
+                                <?php echo $isPaid ? 'checked readonly' : ''; ?>
+                                data-month-fee="<?php echo $monthly_fee; ?>"
+                                onclick="updateDueAmount(<?php echo $agent_data['agent_id']; ?>)"/>
+                            <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
+                        </div>
+
+                    <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
-                    <!-- Payment Info Sections -->
+            
+        </div>
+        <div class="">
             <div class="payment-info" >
                 <label><input type="checkbox" id="toggleRegFee" onclick="toggleVisibility('reg-fee')">  رسوم الاتسجيل</label>
                 <label><input type="checkbox" id="togglePFee" onclick="toggleVisibility('p-fee')">رسوم اخرى</label>
@@ -585,9 +639,9 @@ $conn->close();
                     <label for="p-paid">المبلغ المسدد</label>
                     <input type="text" name="p_paid" id="p-paid" placeholder="0,00">
                 </div>
-                </div>
-
-            <div class="method-section mt-3">
+            </div>
+        </div>
+        <div class="method-section mt-3">
                 <div>
                     <label for="method">طريقة الدفع</label>
                     <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
@@ -600,40 +654,15 @@ $conn->close();
                 <input type="hidden" id="selected-bank-id" name="bank">
                 <button type="submit" class="confirm-button">تأكيد العملية</button>
             </div>
-        </div>
-
-        <!-- HTML to Display Checkboxes and Total Amount Due -->
-        <div class="col-6">
-            <div class="months-card">
-                <div class="section-title">الأشهر</div>
-                <div class="months-grid" id="months-grid">
-                <?php foreach ($allMonths as $monthKey => $monthName):
-                    $isPaid = in_array($monthName, $commonMonths);
-                ?>
-                    <div class="month-option">
-                        <input type="checkbox"
-                            name="months[]"
-                            value="<?php echo $monthName; ?>"
-                            id="month-<?php echo $monthKey; ?>"
-                            <?php echo $isPaid ? 'checked readonly' : ''; ?>
-                            data-month-fee="<?php echo $monthly_fee; ?>"
-                            onclick="updateDueAmount(<?php echo $agent_data['agent_id']; ?>)"/>
-                        <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
-                    </div>
-
-                <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
 
     </div>
 </form>
-    <div class="row">
-        <div class="col-3">
-            <button id="pay-arrears-button" onclick="openArrearsModal()" class="styled-button">تسديد المتأخرات</button>
+    <div class="d-flex d-inline justify-content-between">
+        <div class="">
+            <button id="pay-arrears-button" onclick="openArrearsModal()" class="btn btn-secondary py-2">تسديد المتأخرات</button>
 
         </div>
-        <div class="col-3">
+        <div class="">
             
             <form action="agent_receipt_all_pay.php" method="POST">
                 <input type="hidden" name="id_agent" value="<?php echo $agent_data['agent_id']; ?>">

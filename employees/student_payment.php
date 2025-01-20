@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
         $monthsBefore2 = [];
 
         foreach ($academicMonths as $month) {
-            $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;        
+            $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;
             if ($month <= $registrationMonth ) {
                 $monthsBefore1[] = $monthsArabic[$month];
             }
@@ -147,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
                 $monthsBefore2[] = $monthsArabic[$month];
 
             }
-        } 
+        }
         $monthsBefore = array_merge($monthsBefore1, $monthsBefore2);
 
     
@@ -155,13 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
         // $monthsBefore[] = $monthsArabic[$registrationMonth];
 
        
-        // Fetch paid months for both the student and the agent associated with the student
-        $paidMonthsQuery = "
-            SELECT month 
-            FROM payments 
-            WHERE student_id = ? ";
-
-        // Prepare and execute the statement
+        $paidMonthsQuery = "SELECT month FROM payments WHERE student_id = ? ";
         $stmt2 = $conn->prepare($paidMonthsQuery);
         $stmt2->bind_param('i', $student_data['id']);
         $stmt2->execute();
@@ -512,20 +506,24 @@ $conn->close();
 <div class="container-main">
      <!-- Header Section -->
     <div class="row mb-3">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>تسديد رسوم الطلاب عن طريق الطالب</h1>
-            <div class="d-flex align-items-center">
+        <!-- <div class="col-12 d-flex justify-content-between align-items-center"> -->
+            <div class="col-12 col-lg-6 d-flex align-items-center">
+                <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>تسديد رسوم الطلاب عن طريق الطالب</h1>
+            </div>
+            <div class="col-12 col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center mt-3 mt-lg-0">
                 <!-- Home Button with Icon -->
                 <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
                     <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i> 
                     الرئيسية
                 </a>
-                <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
-                <select id="financial-year" class="form-select w-100">
-                <option><?php echo $last_year; ?></option>
-                </select>
+                <div class="d-flex align-items-center">
+                    <label class="form-label mb-0 me-2 w-25" for="financial-year">السنة المالية</label>
+                    <select id="financial-year" class="form-select w-auto">
+                        <option><?php echo $last_year; ?></option>
+                    </select>
+                </div>
             </div>
-        </div>
+        <!-- </div> -->
     </div>
     
     <!-- Search Section -->
@@ -547,38 +545,57 @@ $conn->close();
 
     <!-- Student Info Section -->
     <?php if (isset($student_data)): ?>
+        <div class="container">
     <div class="row form-section">
+        <!-- Section Title -->
         <div class="col-12 row-underline">
-            <h2 class="section-title"> بيانات الطالب (ة):</h2>
+            <h2 class="section-title">بيانات الطالب (ة):</h2>
         </div>
-        <div class="col-12 d-flex justify-content-between text-center">
-            <div>
-                <label> رقم التعريف</label>
-                <div><?php echo $student_data['id']; ?></div>
-            </div>
-            <div>
-                <label>الاسم الكامل</label>
-                <div><?php echo $student_data['student_name']; ?></div>
-            </div>
-            <div>
-                <label>القسم</label>
-                <div><?php echo $student_data['class_name']; ?></div>
-            </div>
-            <div>
-                <label>الرسوم الشهرية</label>
-                <div id="due-amount"><?php echo $student_data['remaining']; ?> أوقية جديدة</div>
-            </div>
-            <div>
-                <label> المستحقات </label>
-                <div id="due-amounte">0 أوقية جديدة</div>
-                <input type="hidden" name="due_amounte" id="due-amount-hidden" value="0">
-            </div>
-            <div>
-                <label>المتأخرات</label>
-                <div><?php echo number_format($total_remaining, 2); ?> أوقية جديدة</div>
+
+        <!-- Student Data -->
+            <div class="col-12">
+                <div class="row gy-3 text-center">
+                    <!-- Student ID -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>رقم التعريف</label>
+                        <div><?php echo $student_data['id']; ?></div>
+                    </div>
+
+                    <!-- Student Full Name -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>الاسم الكامل</label>
+                        <div><?php echo $student_data['student_name']; ?></div>
+                    </div>
+
+                    <!-- Class Name -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>القسم</label>
+                        <div><?php echo $student_data['class_name']; ?></div>
+                    </div>
+
+                    <!-- Monthly Fees -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>الرسوم الشهرية</label>
+                        <div id="due-amount"><?php echo $student_data['remaining']; ?> أوقية جديدة</div>
+                    </div>
+
+                    <!-- Dues -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>المستحقات</label>
+                        <div id="due-amounte">0 أوقية جديدة</div>
+                        <input type="hidden" name="due_amounte" id="due-amount-hidden" value="0">
+                    </div>
+
+                    <!-- Arrears -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <label>المتأخرات</label>
+                        <div><?php echo number_format($total_remaining, 2); ?> أوقية جديدة</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!-- Payment Information Section -->
     <form method="POST" action="process_payment.php">
@@ -587,7 +604,7 @@ $conn->close();
         <input type="hidden" name="due_amounte" id="due-amounte-hidden" value="0">
 
         <div class="row form-section">
-            <div class="col-6">
+            <div class="col-12 col-lg-6">
                 <div class="payment-info">
                     <div>
                         <label for="arrears-paid">المبلغ المسدد</label>
@@ -627,22 +644,9 @@ $conn->close();
                     </div>
 
 
-                <div class="method-section mt-3">
-                    <div>
-                        <label for="method">طريقة الدفع</label>
-                        <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
-                            <option value="نقدي">نقدي</option>
-                            <option value="بنكي">بنكي</option>
-                        </select>
-                    </div>
-                    <div id="selected-bank-name"></div>
-                    <input type="hidden" id="selected-bank-id" name="bank">
-                    <button type="submit" class="confirm-button">تأكيد العملية</button>
                 </div>
-            </div>
 
-            <div class="col-6">
-                <div class="months-card">
+                <div class="col-12 col-lg-6 border border-light  bg-light months-card">
                     <div class="section-title">الأشهر</div>
                     <div class="months-grid">
                         <?php foreach ($allMonths as $monthKey => $monthName): ?>
@@ -653,16 +657,28 @@ $conn->close();
                         </div>
                         <?php endforeach; ?>
                     </div>
-                </div>
+            </div>
+
+            <div class="method-section mt-3">
+                    <div>
+                        <label for="method">طريقة الدفع</label>
+                        <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
+                            <option value="نقدي">نقدي</option>
+                            <option value="بنكي">بنكي</option>
+                        </select>
+                    </div>
+                    <div id="selected-bank-name"></div>
+                    <input type="hidden" id="selected-bank-id" name="bank">
+                    <button type="submit" class="confirm-button">تأكيد العملية</button>
             </div>
         </div>
     </form>
 
-    <div class="row">
-        <div class="col-3">
-            <button id="pay-arrears-button" onclick="openArrearsModal()" class="styled-button">تسديد المتأخرات</button>
+    <div class="d-flex d-inline justify-content-between">
+        <div class="">
+            <button id="pay-arrears-button" onclick="openArrearsModal()" class="btn btn-secondary py-2">تسديد المتأخرات</button>
         </div>
-        <div class="col-3">
+        <div class="">
             <form action="student_receipt_all_pay.php" method="POST">
                 <input type="hidden" name="student_id" value="<?php echo $student_data['id']; ?>">
                 <button type="sabmit" id="pay-arrears-button" class="styled-button">وصل</button>

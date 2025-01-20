@@ -5,8 +5,7 @@ error_reporting(E_ALL);
 include 'db_connection.php';
 
 // Fetch student data from the database, including agent phone number
-$sql = "
-    SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place, 
+$sql = "SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name, 
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
