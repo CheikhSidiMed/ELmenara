@@ -1,22 +1,51 @@
 <?php
-// Include database connection http://localhost/ELmenara/employees/Family_payment.php  http://localhost/ELmenara/employees/student_payment.php?student_name=Med+tihiya
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include 'db_connection.php';
 
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
 }
 
+
 $agent_data = [];
 $students_data = [];
 $paidMonths = [];
 $monthly_fee = 0;
+
+$startMonth = 10;
+$endMonth = 9;
+$currentYear = (int)date('Y');
+$currentMonth = (int)date('m');
+
+$starAcademicMonths = [];
+$endaAcademicMonths = [];
+if($currentMonth <= $startMonth){
+    for ($month = $startMonth; $month <= 12; $month++) {
+        $starAcademicMonths[] = $month;
+    }
+} else{
+    for ($month = $startMonth; $month <= $currentMonth; $month++) {
+        $starAcademicMonths[] = $month;
+    }
+}
+
+if ($currentMonth <= $startMonth) {
+    for ($month = 1; $month <= $currentMonth; $month++) {
+        $endaAcademicMonths[] = $month;
+    }
+} else {
+    $endaAcademicMonths[] = [];
+}
+$allAcademicMonths = array_merge($starAcademicMonths, $endaAcademicMonths);
+
+
 $allMonths = [
-    
     'October' => 'أكتوبر',
     'November' => 'نوفمبر',
     'December' => 'ديسمبر',
@@ -30,57 +59,147 @@ $allMonths = [
     'August' => 'أغسطس',
     'September' => 'سبتمبر'
 ];
-$total_remaining = count($allMonths) * $monthly_fee; 
-$remaining = 0;
+
+
+$monthsArabic = [
+    1 => 'يناير',
+    2 => 'فبراير',
+    3 => 'مارس',
+    4 => 'أبريل',
+    5 => 'مايو',
+    6 => 'يونيو',
+    7 => 'يوليو',
+    8 => 'أغسطس',
+    9 => 'سبتمبر',
+    10 => 'أكتوبر',
+    11 => 'نوفمبر',
+    12 => 'ديسمبر'
+];
+
+$commonMonths = [];
+$student_s = [];
+
+$finalMonths = [];
+
+$academicMonths = [];
+$total_due_amount = 0.00;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];
-
+    $agent_idd = null;
      $sql = "SELECT * FROM agents WHERE phone = ?";
      $stmt = $conn->prepare($sql);
      $stmt->bind_param('s', $phone);
      $stmt->execute();
      $result = $stmt->get_result();
- 
      if ($result->num_rows > 0) {
          $agent_data = $result->fetch_assoc();
- 
-         // Fetch the months that have been paid by the agent
-         $sql_paid_months = "SELECT DISTINCT month FROM payments WHERE agent_id = ?";
-         $stmt_paid_months = $conn->prepare($sql_paid_months);
-         $stmt_paid_months->bind_param('i', $agent_data['agent_id']);
-         $stmt_paid_months->execute();
-         $paidMonthsResult = $stmt_paid_months->get_result();
- 
-         while ($row = $paidMonthsResult->fetch_assoc()) {
-             $monthName = $allMonths[$row['month']] ?? $row['month'];
-             $paidMonths[] = $monthName;
-         }
- 
-         $stmt_paid_months->close();
  
          $sql_students = "SELECT * FROM students WHERE agent_id = ?";
          $stmt_students = $conn->prepare($sql_students);
          $stmt_students->bind_param('i', $agent_data['agent_id']);
          $stmt_students->execute();
          $students_result = $stmt_students->get_result();
- 
+         $agent_idd = $agent_data['agent_id'];
          while ($row = $students_result->fetch_assoc()) {
+            $student_s[] = $row;
             $students_data[] = [
                 'id' => $row['id'],
                 'student_name' => $row['student_name'],
                 'fees' => $row['fees'],
                 'remaining' => $row['remaining']
             ];
-             
-             $total_remaining += $row['remaining'];
-             $remaining = $row['remaining'];
+
          }
- 
-         $stmt_students->close();
+        $stmt_students->close();
+
+        $student_ids = array_column($student_s, 'id');
+        $student_reg_dates = array_column($student_s, 'registration_date');
+        $placeholders = implode(',', array_fill(0, count($student_ids), '?'));
+
+        $sql_paid_months = "SELECT student_id, month FROM payments WHERE student_id IN ($placeholders)";
+        $stmt_paid_months = $conn->prepare($sql_paid_months);
+        $stmt_paid_months->bind_param(str_repeat('i', count($student_ids)), ...$student_ids);
+        $stmt_paid_months->execute();
+        $result_paid_months = $stmt_paid_months->get_result();
+
+        $paidMonths_with = [];
+        while ($row = $result_paid_months->fetch_assoc()) {
+            $paidMonths_with[$row['student_id']][] = $row['month'];
+        }
+        $academicMonths = [];
+        foreach ($student_s as $student) {
+            $registrationYear = (int)date('Y', strtotime($student['registration_date']));
+            $registrationMonth = (int)date('m', strtotime($student['registration_date']));
+            $academicMonths = ($registrationMonth <= $endMonth) ? $allAcademicMonths : $starAcademicMonths;
+            
+            $monthsBefore = [];
+            $monthsBefore1 = [];
+            $monthsBefore2 = [];
+        
+            foreach ($academicMonths as $month) {
+                $academicYear = ($month >= $startMonth) ? $currentYear : $currentYear + 1;
+                if ($month <= $registrationMonth ) {
+                    $monthsBefore1[] = $monthsArabic[$month];
+                }
+            }
+            if ($registrationMonth < $startMonth) {
+                foreach ($starAcademicMonths as $month) {
+                    $monthsBefore2[] = $monthsArabic[$month];
+
+                }
+            }
+        
+            $monthsBefore = array_merge($monthsBefore1, $monthsBefore2);
+            $academicMonths[$student['id']] = $monthsBefore;
+
+            $student_id = $student['id'];
+            $monthsBefore = $academicMonths[$student_id] ?? [];
+            $paidMonths = $paidMonths_with[$student_id] ?? [];
+                   
+            $combinedMonths = array_unique(array_merge($monthsBefore, $paidMonths));
+            $finalMonths[$student_id] = $combinedMonths;
+
+        }
+        
+        $commonMonths = array_values(reset($finalMonths));
+        
+        foreach ($finalMonths as $studentID => $months) {
+            $commonMonths = array_intersect($commonMonths, $months);
+            if (empty($commonMonths)) {
+                break;
+            }
+        }
+
      } else {
          echo "Agent not found.";
      }
+
+
+    if ($agent_idd) {
+        $sql_students = "SELECT id, remaining FROM students WHERE agent_id = ? AND remaining != 0.00";
+        $stmt_students = $conn->prepare($sql_students);
+        $stmt_students->bind_param("i", $agent_idd);
+        $stmt_students->execute();
+        $result_students = $stmt_students->get_result();
+
+        if ($result_students->num_rows > 0) {
+            while ($student = $result_students->fetch_assoc()) {
+                $student_id = $student['id'];
+
+                $sql_check_payment = "SELECT SUM(remaining_amount) AS total_remaining FROM payments WHERE student_id = ?";
+                $stmt_check_payment = $conn->prepare($sql_check_payment);
+                $stmt_check_payment->bind_param("i", $student_id);
+                $stmt_check_payment->execute();
+                $result = $stmt_check_payment->get_result();
+
+                if ($result) {
+                    $row = $result->fetch_assoc();
+                    $total_due_amount += (float) ($row['total_remaining'] ?? 0.00);
+                }
+            }
+        }
+    }
  
      $stmt->close();
  }
@@ -332,7 +451,10 @@ $conn->close();
             transform: translateY(1px); /* Slight push down on click */
         }
 
-    
+        input[readonly] {
+            pointer-events: none;
+            opacity: 0.6;
+            accent-color: red;        }
     </style>
 </head>
 <body>
@@ -347,7 +469,7 @@ $conn->close();
             <div class="d-flex align-items-center">
                 <!-- Home Button with Icon -->
                 <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i> 
+                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i>
                     الرئيسية
                 </a>
                 <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
@@ -378,61 +500,54 @@ $conn->close();
 
 
     <?php if (!empty($agent_data)): ?>
-    <!-- Linked Students and Agent Info Section -->
-    <div class="row mb-3">
-        <div class="col-md-8">
-            <div class="linked-students">
-                <div class="section-title">الطلبة المرتبطين:</div>
-                <div class="students-grid">
-                    <?php foreach ($students_data as $student): ?>
-                        <div class="student-option">
-                            <button 
-                                class="btn student-btn" 
-                                data-remaining="<?php echo $student['remaining']; ?>"
-                                data-student-id="<?php echo $student['id']; ?>" 
-                                data-fee="<?php echo $student['fees']; ?>" 
-                                onclick="fetchPaidMonths(<?php echo $agent_data['agent_id']; ?>, <?php echo $student['id']; ?>, <?php echo $student['remaining']; ?>)">
-                                <?php echo $student['student_name']; ?>
-                            </button>
-                        </div>
-                    <?php endforeach; ?>
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <div class="linked-students">
+                    <div class="section-title">الطلبة المرتبطين:</div>
+                    <div class="students-grid">
+                        <?php foreach ($students_data as $student): ?>
+                            <div class="student-option">
+                                <div class="btn student-btn">
+                                    <?php echo $student['student_name']; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="agent-info">
+                    <div class="section-title">معلومات الوكيل:</div>
+                    <p>رقم التعريف: <?php echo $agent_data['agent_id']; ?></p>
+                    <p>الاسم: <?php echo $agent_data['agent_name']; ?></p>
+                    <p>رقم الهاتف: <?php echo $agent_data['phone']; ?></p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="agent-info">
-                <div class="section-title">معلومات الوكيل:</div>
-                <p>رقم التعريف: <?php echo $agent_data['agent_id']; ?></p>
-                <p>الاسم: <?php echo $agent_data['agent_name']; ?></p>
-                <p>رقم الهاتف: <?php echo $agent_data['phone']; ?></p>
-            </div>
-        </div>
-    </div>
-    <script>
-        function clearFormFields() {
-            // Get the form element
-            const form = document.querySelector('form');
+    <?php if (!empty($agent_data)): ?>
+        <script>
+            function fetchPaidMonths(totalRemaining) {
+                document.getElementById('total-remaining').value = totalRemaining.toFixed(2);
+                document.getElementById('total-remaining-input').value = totalRemaining.toFixed(2);
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                fetchPaidMonths(<?php echo json_encode($total_due_amount); ?>);
+            });
+        </script>
+    <?php endif ?>
 
-            form.querySelectorAll('input[type="text"], input[type="hidden"]').forEach(input => input.value = '');
-
-            form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-            window.location.reload(true);
-
-        }
-    </script>
     <!-- Payment Information Section -->
-<form method="POST" action="process_agent_payment.php">
+<form method="POST" action="process_agent_payment_all.php">
 
     <input type="hidden" name="id" value="<?php echo $agent_data['agent_id']; ?>">
-    <input type="hidden" id="selected-student-id" name="student_id">
-    <label for="remaining"></label>
     <input type="hidden" id="remaining" name="remaining" readonly>
+    <input type="hidden" id="months_s" name="monthss[]" readonly>
     <div class="row form-section">
         <div class="col-6">
             <div class="payment-info">
                 <div>
                     <label for="due-amount">المستحقات</label>
-                    <input type="text" name="due_amount" id="due-amount" value="<?php echo $total_remaining; ?>" readonly>
+                    <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
                 </div>
                 <div>
                     <label for="paid-amount">المبلغ المسدد</label>
@@ -492,14 +607,21 @@ $conn->close();
             <div class="months-card">
                 <div class="section-title">الأشهر</div>
                 <div class="months-grid" id="months-grid">
-                    <?php foreach ($allMonths as $monthKey => $monthName): ?>
-                        <div class="month-option">
-                            <input type="checkbox" name="months[]" value="<?php echo $monthName; ?>" id="month-<?php echo $monthKey; ?>" 
-                                data-month-fee="<?php echo $monthly_fee; ?>" 
-                                onclick="updateDueAmount()" disabled>
-                            <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
-                        </div>
-                    <?php endforeach; ?>
+                <?php foreach ($allMonths as $monthKey => $monthName):
+                    $isPaid = in_array($monthName, $commonMonths);
+                ?>
+                    <div class="month-option">
+                        <input type="checkbox"
+                            name="months[]"
+                            value="<?php echo $monthName; ?>"
+                            id="month-<?php echo $monthKey; ?>"
+                            <?php echo $isPaid ? 'checked readonly' : ''; ?>
+                            data-month-fee="<?php echo $monthly_fee; ?>"
+                            onclick="updateDueAmount(<?php echo $agent_data['agent_id']; ?>)"/>
+                        <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
+                    </div>
+
+                <?php endforeach; ?>
                 </div>
             </div>
         </div>
@@ -556,9 +678,7 @@ $conn->close();
     <div class="modal-content" style="max-width: 700px; background-color: #f9f9f9; border-radius: 10px; padding: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);">
         <h2 style="text-align: center; color: #333;">تسديد المتأخرات</h2>
 
-        <form id="arrears-form" method="POST" action="process_family.php">
-            <input type="hidden" id="student-id-id" name="student_d">
-            <input type="hidden" value="<?php echo $agent_data['agent_name']; ?>" name="agent_name">
+        <form id="arrears-form" method="POST" action="process_family_all.php">
             <input type="hidden" value="<?php echo $agent_data['agent_id']; ?>" name="agent_id">
             <div style="margin-bottom: 20px;">
                 <label style="font-weight: bold;">المتأخرات</label>
@@ -645,117 +765,18 @@ $conn->close();
 </script>
 <script>
     function calculateRemaining() {
-    // Extract the due amount from the input field with id "due-"
-    var dueAmount = parseFloat(document.getElementById('due-amount').value) || 0;
-    
-    // Get the paid amount from the input field
-    var paidAmount = parseFloat(document.getElementById('arrears-paid').value) || 0;
-    
-    // Calculate the remaining amount
-    var remainingAmount = dueAmount - paidAmount;
-    
-    // Update the remaining amount field
-    document.getElementById('arrears-remaining').value = remainingAmount.toFixed(2);
+        var dueAmount = parseFloat(document.getElementById('due-amount').value) || 0;
+        var paidAmount = parseFloat(document.getElementById('arrears-paid').value) || 0;
+        var remainingAmount = dueAmount - paidAmount;
+        document.getElementById('arrears-remaining').value = remainingAmount.toFixed(2);
     }
-
 </script>
 
-<script>
-    let selectedStudentFee = 0; // Variable to store the selected student's fee
-    const dueAmountField = document.getElementById('due-amount');
-    const checkboxes = document.querySelectorAll('#months-grid input[type="checkbox"]');
-function fetchPaidMonths(agentId, studentId, studentFee) {
-    selectedStudentFee = studentFee;
-    console.log("Remaining:", studentFee);
 
-    document.getElementById('remaining').value = studentFee;
-    document.getElementById('student-id-id').value = studentId;
-    
-    fetch('fetch_total_remaining.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ student_id: studentId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('total-remaining').value = data.total_remaining;
-        document.getElementById('total-remaining-input').value = data.total_remaining;
-    })
-    .catch(error => console.error('Error fetching total remaining:', error));
-
-    // Fetch the paid months from the server
-    fetch('get_paid_months.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `agent_id=${agentId}&student_id=${studentId}`
-    })
-    .then(response => response.json())
-    .then(paidMonths => {
-        console.log("Paid months response:", paidMonths);
-
-        // Ensure the response is an array
-        if (!Array.isArray(paidMonths)) {
-            console.error('Paid months is not an array:', paidMonths);
-            return;
-        }
-
-        // Reset all checkboxes and enable them
-        const checkboxes = document.querySelectorAll('#months-grid input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-            checkbox.disabled = false;
-        });
-
-        // Disable checkboxes for paid months
-        paidMonths.forEach(month => {
-            const checkbox = document.querySelector(`#months-grid input[value="${month}"]`);
-            if (checkbox) {
-                checkbox.checked = true;
-                checkbox.disabled = true;
-            }
-        });
-
-        // Update the due amount based on the new student's fee
-        updateDueAmount();
-    })
-    .catch(error => console.error('Error fetching paid months:', error));
-}
-
-
-    // Function to update the due amount based on selected months and selected student's fee
-    function updateDueAmount() {
-        let selectedMonths = 0;
-
-        // Count only selected months that are enabled and unchecked
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked && !checkbox.disabled) {
-                selectedMonths++;
-            }
-        });
-
-        // Calculate the total due based on selected months and the selected student's fee
-        const totalDue = selectedStudentFee * selectedMonths;
-
-        // Update the due amount field
-        dueAmountField.value = totalDue.toFixed(2);
-    }
-
-    // Add event listeners to the checkboxes to update due amount on change
-    checkboxes.forEach(checkbox => {
-        if (!checkbox.disabled) {
-            checkbox.addEventListener('change', updateDueAmount);
-        }
-    });
-</script>
 
 <script>
 
-        // Function to toggle bank modal inside the arrears modal
-        function toggleBankModalInArrears(paymentMethod) {
+    function toggleBankModalInArrears(paymentMethod) {
         if (paymentMethod === 'بنكي') {
             var bankModal = new bootstrap.Modal(document.getElementById('bankModall'), {
                 keyboard: false
@@ -773,17 +794,11 @@ function fetchPaidMonths(agentId, studentId, studentFee) {
         const bankSelect = document.getElementById('bankk');
         const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
         const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
-        
-        // Set the hidden input with the selected bank ID in arrears modal
         document.getElementById('selected-bank-id-arrears').value = selectedBankId;
-        
-        // Update the display with the selected bank name in the arrears modal
         document.getElementById('selected-bank-name-arrears').innerText = 'البنك المحدد: ' + selectedBankName;
     }
 
     function calculer() {
-        
-
             const totalArrears = parseFloat(document.getElementById('total-remaining').value)  || 0;
             const amountPaid = parseFloat(document.getElementById('amount-paidd').value) || 0;
             const remaining = totalArrears - amountPaid;
@@ -791,11 +806,11 @@ function fetchPaidMonths(agentId, studentId, studentFee) {
             document.getElementById('remaining_amountt').innerText = remaining >= 0 
                 ? remaining.toFixed(2) + ' أوقية جديدة' 
                 : '0.00 أوقية جديدة';
-        }
+    }
 
-        function openArrearsModal() {
+    function openArrearsModal() {
         const modal = document.getElementById('arrears-modal');
-        modal.style.display = 'flex'; // Set display to flex to enable centering
+        modal.style.display = 'flex';
     }
 
     function closeArrearsModal() {
@@ -812,68 +827,6 @@ function fetchPaidMonths(agentId, studentId, studentFee) {
     }
 </script>
 
-
-
-<!-- JavaScript to handle the student selection and update months -->
-<script>
-        // Sample data that could be returned from an AJAX call (replace with real data)
-        const studentsData = {
-            <?php foreach ($students_data as $student): ?>
-            "<?php echo $student['id']; ?>": {
-                "paidMonths": <?php echo json_encode($paidMonths); ?>,  // Replace with actual paid months per student
-                "remainingAmount": <?php echo $student['remaining']; ?>
-            },
-            <?php endforeach; ?>
-        };
-        
-
-        // Function to handle student selection
-        document.querySelectorAll('.student-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            // If the same student is clicked, do nothing
-            if (this.classList.contains('selected')) return;
-
-            // Remove 'selected' class from all buttons
-            document.querySelectorAll('.student-btn').forEach(btn => btn.classList.remove('selected'));
-
-            // Add 'selected' class to the clicked button
-            this.classList.add('selected');
-            // Get the student ID from the data attribute
-            const studentI = this.getAttribute('data-student-id');
-
-            // Set the selected student ID in the input field to display
-            // Set the selected student ID in both display and hidden input fields
-            document.getElementById('selected-student-id').value = studentI;
-
-
-            // Clear previously selected months
-            document.querySelectorAll('.month-option input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = false;
-                checkbox.disabled = false;
-            });
-
-            // Get the student ID
-            const studentId = this.getAttribute('data-student-id');
-
-            // Get the student data (e.g., paid months)
-            const studentData = studentsData[studentId];
-
-            // Disable and check the months that have been paid
-            studentData.paidMonths.forEach(month => {
-                const checkbox = document.querySelector(`input[value="${month}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                    checkbox.disabled = true;
-                }
-            });
-
-            // Optional: Update any other student-specific info like remaining amount
-            console.log("Remaining amount for student", studentData.remainingAmount, studentId);
-        });
-    });
-</script>
-
-<!-- Add some styles for better UX -->
 <style>
     .student-btn {
         margin: 5px;
@@ -905,16 +858,13 @@ function fetchPaidMonths(agentId, studentId, studentFee) {
     }
 
     function selectBank() {
-    const bankSelect = document.getElementById('bank');
-    const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
-    const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
-    
-    // Set the hidden input with the selected bank ID
-    document.getElementById('selected-bank-id').value = selectedBankId;
-    
-    // Update the display with the selected bank name
-    document.getElementById('selected-bank-name').innerText = 'البنك المحدد: ' + selectedBankName;
-}
+        const bankSelect = document.getElementById('bank');
+        const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
+        const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
+        
+        document.getElementById('selected-bank-id').value = selectedBankId;        
+        document.getElementById('selected-bank-name').innerText = 'البنك المحدد: ' + selectedBankName;
+    }
 
 
     function clearSelectedBankName() {
@@ -924,45 +874,51 @@ function fetchPaidMonths(agentId, studentId, studentFee) {
 
 
 <script>
-    const initialTotalRemaining = <?php echo $total_remaining; ?>; // Initial total amount for all unpaid months
-    const initialRemaining = <?php echo $remaining; ?>; // Initial total amount for all unpaid months
-    const monthlyFee = 100; // Define the monthly fee here
-    const dueAmountField = document.getElementById('due-amount');
-    const duAmountField = document.getElementById('du-amount');
-    const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
 
-    // Function to update the due amount based on selected months
-    function updateDueAmount() {
-        let selectedMonths = 0;
+    function updateDueAmount(agent_id) {
+        const checkboxes = document.querySelectorAll('input[name="months[]"]');
+        const selectedMonths = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked && !checkbox.hasAttribute('readonly'))
+            .map(checkbox => checkbox.value);
 
-        checkboxes.forEach(function(checkbox) {
-            if (checkbox.checked && !checkbox.disabled) {
-                selectedMonths++;
-            }
-        });
-
-        // Calculate the new total due based on selected months
-        const totalDue = initialTotalRemaining - (selectedMonths * monthlyFee);
-        const newRemaining = initialRemaining - selectedMonthFee;
-
-        // Update the du-amount field with the calculated value
-        duAmountField.value = newRemaining.toFixed(2);
-        // Update the due amount field
-        dueAmountField.value = totalDue.toFixed(2);
-    }
-
-    // Add event listeners to the checkboxes
-    checkboxes.forEach(function(checkbox) {
-        if (!checkbox.disabled) {
-            checkbox.addEventListener('change', updateDueAmount);
+        if (selectedMonths.length === 0) {
+            newT = 0;
+            document.getElementById('due-amount').value = 0.00;
+            document.getElementById('arrears-paid').value = 0.00;
+            calculateRemaining();
+            return;
         }
-    });
+        document.getElementById('months_s').value = selectedMonths.join(',');
 
-    // Initial call to set the amount correctly
-    updateDueAmount();
+        fetch('get_due_aount.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ months: selectedMonths, agent_id: agent_id })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.total_due !== undefined) {
+                    document.getElementById('due-amount').value = data.total_due.toFixed(2);
+                    document.getElementById('arrears-paid').value = data.total_due.toFixed(2);
+                    calculateRemaining();
+                } else if (data.error) {
+                    console.error('Erreur serveur:', data.error);
+                } else {
+                    console.error('Réponse inattendue:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la requête:', error);
+            });
+    }
 </script>
-
-
 
 
 </body>
