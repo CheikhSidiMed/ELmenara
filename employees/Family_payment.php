@@ -537,7 +537,7 @@ $conn->close();
     <?php endif ?>
 
     <!-- Payment Information Section -->
-<form method="POST" action="process_agent_payment_all.php">
+<form method="POST" action="process_agent_payment.php">
 
     <input type="hidden" name="id" value="<?php echo $agent_data['agent_id']; ?>">
     <input type="hidden" id="remaining" name="remaining" readonly>
@@ -803,8 +803,8 @@ $conn->close();
             const amountPaid = parseFloat(document.getElementById('amount-paidd').value) || 0;
             const remaining = totalArrears - amountPaid;
 
-            document.getElementById('remaining_amountt').innerText = remaining >= 0 
-                ? remaining.toFixed(2) + ' أوقية جديدة' 
+            document.getElementById('remaining_amountt').innerText = remaining >= 0
+                ? remaining.toFixed(2) + ' أوقية جديدة'
                 : '0.00 أوقية جديدة';
     }
 
@@ -862,7 +862,7 @@ $conn->close();
         const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
         const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
         
-        document.getElementById('selected-bank-id').value = selectedBankId;        
+        document.getElementById('selected-bank-id').value = selectedBankId;
         document.getElementById('selected-bank-name').innerText = 'البنك المحدد: ' + selectedBankName;
     }
 
@@ -891,32 +891,64 @@ $conn->close();
         document.getElementById('months_s').value = selectedMonths.join(',');
 
         fetch('get_due_aount.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ months: selectedMonths, agent_id: agent_id })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.total_due !== undefined) {
-                    document.getElementById('due-amount').value = data.total_due.toFixed(2);
-                    document.getElementById('arrears-paid').value = data.total_due.toFixed(2);
-                    calculateRemaining();
-                } else if (data.error) {
-                    console.error('Erreur serveur:', data.error);
-                } else {
-                    console.error('Réponse inattendue:', data);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur lors de la requête:', error);
-            });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ months: selectedMonths, agent_id: agent_id })
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json().catch(() => {
+            throw new Error('Invalid JSON response from server');
+        });
+    })
+    .then(data => {
+        if (data.total_due !== undefined) {
+            document.getElementById('due-amount').value = data.total_due.toFixed(2);
+            document.getElementById('arrears-paid').value = data.total_due.toFixed(2);
+            calculateRemaining();
+        } else if (data.error) {
+            console.error('Server Error:', data.error);
+        } else {
+            console.error('Unexpected Response:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Request Error:', error);
+        alert('An error occurred. Check the console for details.');
+    });
+
+
+        // fetch('get_due_aount.php', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({ months: selectedMonths, agent_id: agent_id })
+        // })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error(`Erreur HTTP ${response.status}`);
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         if (data.total_due !== undefined) {
+        //             document.getElementById('due-amount').value = data.total_due.toFixed(2);
+        //             document.getElementById('arrears-paid').value = data.total_due.toFixed(2);
+        //             calculateRemaining();
+        //         } else if (data.error) {
+        //             console.error('Erreur serveur:', data.error);
+        //         } else {
+        //             console.error('Réponse inattendue:', data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Erreur lors de la requête:', error);
+        //     });
     }
 </script>
 

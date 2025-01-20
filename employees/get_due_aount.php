@@ -2,6 +2,8 @@
 include 'db_connection.php';
 
 header('Content-Type: application/json');
+error_reporting(0);
+ini_set('display_errors', 0);
 
 $startMonth = 10; // Mois de début de l'année académique
 $endMonth = 9; // Mois de fin de l'année académique
@@ -98,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['months'])) {
             }
         }
     }
+    error_log('Total Due: ' . $total_due_amount);
+error_log('Selected Months: ' . print_r($selected_months_arabic, true));
 
     echo json_encode(['total_due' => $total_due_amount, 'selected_months' => $selected_months_arabic]);
 } else {
