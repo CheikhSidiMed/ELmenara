@@ -11,7 +11,7 @@ $branch_name = "";
 $class_name = "";
 $students = [];
 $classes = [];
-$month = "";
+$month = 0;
 $branch_id = null;
 $class_id = null;
 
@@ -63,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];
     $year = $_POST['year'];
-echo $month;
     
      // Fetch class name and branch name
      $sql = "SELECT classes.class_name, branches.branch_name
@@ -337,7 +336,7 @@ echo $month;
         <div class="sheet-header receipt-header">
             <img src="../images/header.png" width="100%" alt="Header Image">
             <h3>تقرير الحصيلة الشهرية</h3>
-            <p>الشهر: <?php echo $arabic_months[$month-1]; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
+            <p>الشهر: <?php echo $arabic_months[$month-1]??''; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
             <p>الفرع: <?php echo $branch_name; ?></p>
             <p>القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
