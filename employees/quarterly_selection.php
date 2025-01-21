@@ -43,6 +43,9 @@ if ($resultBranches->num_rows > 0) {
 
 // Initialize variables
 $classes = [];
+$branch_name = '';
+$class_name = '';
+
 $branch_id = $selectedBranch;
 
 // Fetch classes based on selected branch
@@ -248,6 +251,7 @@ if (!empty($selectedClass)) {
             .print-date {
             display: none; /* Hide by default */
         }
+
         /* Print-specific adjustments */
         @media print {
             /* Hide unnecessary elements */
@@ -357,7 +361,7 @@ if (!empty($selectedClass)) {
                     <select name="branch" id="branch" class="form-control" onchange="this.form.submit()" required>
                         <option value="">اختر الفرع</option>
                         <?php foreach ($branches as $branch): ?>
-                            <option value="<?php echo $branch['branch_id']; ?>" <?php if ($selectedBranch == $branch['branch_id']) echo 'selected'; ?>>
+                            <option value="<?php echo $branch['branch_id']; ?>" <?php if ($selectedBranch == $branch['branch_id']){  $branch_name=$branch['branch_name']; echo 'selected';} ?>>
                                 <?php echo $branch['branch_name']; ?>
                             </option>
                         <?php endforeach; ?>
@@ -368,7 +372,7 @@ if (!empty($selectedClass)) {
                     <select name="class" id="class" class="form-control" required>
                         <option value="">اختر الصف</option>
                         <?php foreach ($classes as $class): ?>
-                            <option value="<?php echo $class['class_id']; ?>" <?php if ($selectedClass == $class['class_id']) echo 'selected'; ?>>
+                            <option value="<?php echo $class['class_id']; ?>" <?php if ($selectedClass == $class['class_id']){$class_name=$class['class_name']; echo 'selected';} ?>>
                                 <?php echo $class['class_name']; ?>
                             </option>
                         <?php endforeach; ?>
@@ -415,9 +419,9 @@ if (!empty($selectedClass)) {
     <div class="sheet-header receipt-header">
         <img src="../images/header.png" width="100%" alt="Header Image">
         <h3 style="margin-top: 3px; margin-bottom: -1px;"> الحصيلة الفصلية </h3>
-        <P>إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> |
-        الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : 'غير محدد'; ?> </P>
-        <P class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></P> <!-- Print date only visible during print -->
+        <p style="font-size: 16px !important;">إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> <span style="font-size: 22px !important; color: #109686 ; font-weight: bold;">|</span> <strong> الفرع: </strong><?php echo $branch_name; ?> <span style="font-size: 28px !important; color: #109686; font-weight: bold;">_</span> <strong> الصف: </strong><?php echo $class_name; ?> <span style="font-size: 22px !important; color: #109686; font-weight: bold;">|</span>
+        الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : 'غير محدد'; ?> </p>
+        <p style="font-size: 16px !important;" class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
 
     </div>
     <div class="for-container">

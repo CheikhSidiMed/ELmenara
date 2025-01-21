@@ -54,6 +54,9 @@ $months = $selectedMonth !== '' ? $quarterlyMonths_number[$selectedMonth] : '';
 
 $selectedYear = date('Y');
 $branch = '';
+$class_name = '';
+$branch_name = '';
+
 $className = '';
 $students = [];
 $studentAbsences = [];
@@ -83,7 +86,8 @@ if (!empty($_POST['id'])) {
         $id = $row['id'];
         $month = $row['absence_month'];
         $absences = $row['absences'];
-    
+        $class_name = $row['class_name'];
+        $branch_name = $row['branch_name'];
         $students[$id] = [
             'id' => $id,
             'student_name' => $row['student_name'],
@@ -218,84 +222,84 @@ if (!empty($_POST['id'])) {
                 display: none;
         }
 
-    /* General body adjustments for print */
-    body {
-        font-size: 10px; /* Smaller font to fit more content */
-        margin: 0;
-        margin-top: 10px;
-        padding: 0;
-    }
-
-    /* Ensure table width fits the A5 page and is centered */
-    table {
-        width: 100%;
-        table-layout: fixed; 
-        transform: scale(0.85); /* Slight scaling to reduce overall table size */
-        transform-origin: top center; /* Centers scaling from the top */
-        margin: auto;
-        color: black;
-    }
-     .sheet {
-        width: 90%;
-        table-layout: fixed;
-        transform: scale(0.85);
-        transform-origin: top right;
-        margin: auto;
-    }
-
-
-    @page {
-        size: A5;
-        margin: 0; 
-    }
-    input.no-border {
-            border: none;              
-            outline: none;             
-            padding: 1px;              
-            font-size: 11px;  
-            width: 94%;       
+        /* General body adjustments for print */
+        body {
+            font-size: 10px; /* Smaller font to fit more content */
+            margin: 0;
+            margin-top: 10px;
+            padding: 0;
         }
-    /* Column and table styling */
-    th, td {
-        font-size: 11px; /* Smaller font for table cells */
-        padding: 1px; /* Minimal padding to save space */
-        border: 1px solid black;
-        word-wrap: break-word; /* Allows words to wrap within the cell */
-        white-space: normal; /* Allows text to wrap to multiple lines */
-        text-align: start; /* Center-align content for readability */
-    }
 
-    th {
-        font-size: 12px; /* Smaller font for table cells */
+        /* Ensure table width fits the A5 page and is centered */
+        table {
+            width: 100%;
+            table-layout: fixed; 
+            transform: scale(0.85); /* Slight scaling to reduce overall table size */
+            transform-origin: top center; /* Centers scaling from the top */
+            margin: auto;
+            color: black;
+        }
+        .sheet {
+            width: 90%;
+            table-layout: fixed;
+            transform: scale(0.85);
+            transform-origin: top right;
+            margin: auto;
+        }
 
-        font-weight: bold;
-        white-space: nowrap;
-        text-align: center; /* Center-align content for readability */
 
-    }
+        @page {
+            size: A5;
+            margin: 0; 
+        }
+        input.no-border {
+                border: none;              
+                outline: none;             
+                padding: 1px;              
+                font-size: 11px;  
+                width: 94%;       
+            }
+        /* Column and table styling */
+        th, td {
+            font-size: 11px; /* Smaller font for table cells */
+            padding: 1px; /* Minimal padding to save space */
+            border: 1px solid black;
+            word-wrap: break-word; /* Allows words to wrap within the cell */
+            white-space: normal; /* Allows text to wrap to multiple lines */
+            text-align: start; /* Center-align content for readability */
+        }
 
-    /* Bold styling for header sections */
-    .sheet-header h3,
-    .sheet-header p,
-    .signature-section p {
-        font-weight: bold;
-        font-size: 11px; 
-        margin-left: 52px;
-    }
+        th {
+            font-size: 12px; /* Smaller font for table cells */
 
-    /* Handling for large tables, allowing page breaks within rows */
-    tr {
-        page-break-inside: avoid;
-    }
-    .all {
-        width: 100%;
-        table-layout: fixed; /* Forces table to fit the page width */
-        transform: scale(0.85); 
-        transform-origin: top right; 
-        margin: auto; 
-        margin-right: -52px;
-    }
-    }
+            font-weight: bold;
+            white-space: nowrap;
+            text-align: center; /* Center-align content for readability */
+
+        }
+
+        /* Bold styling for header sections */
+        .sheet-header h3,
+        .sheet-header p,
+        .signature-section p {
+            font-weight: bold;
+            font-size: 11px; 
+            margin-left: 52px;
+        }
+
+        /* Handling for large tables, allowing page breaks within rows */
+        tr {
+            page-break-inside: avoid;
+        }
+        .all {
+            width: 100%;
+            table-layout: fixed; /* Forces table to fit the page width */
+            transform: scale(0.85); 
+            transform-origin: top right; 
+            margin: auto; 
+            margin-right: -52px;
+        }
+        }
 
 
     </style>
@@ -363,9 +367,9 @@ if (!empty($_POST['id'])) {
         <div class="sheet-header">
         <h3 style="margin-top: 3px; margin-bottom: -1px;"> الحصيلة الفصلية </h3>
 
-        <p>إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> | 
-        <p>الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : ''; ?> </p>
-        <p class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
+        <p style="font-size: 16px !important;">إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> <span style="font-size: 22px !important; color: #109686 ; font-weight: bold;">|</span> <strong> الفرع: </strong><?php echo $branch_name; ?> <span style="font-size: 28px !important; color: #109686; font-weight: bold;">_</span> <strong> الصف: </strong><?php echo $class_name; ?> <span style="font-size: 22px !important; color: #109686; font-weight: bold;">|</span>
+        <p style="font-size: 16px !important;">الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : ''; ?> </p>
+        <p style="font-size: 16px !important;" class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
 
     </div>
     <div class="for-container">
@@ -373,7 +377,7 @@ if (!empty($_POST['id'])) {
 
             <table>
                 <tr>
-                <td rowspan="2" style="width: 11%;">اسم الطالب (ة)</td>
+                <td rowspan="2" style="width: 17%;">اسم الطالب (ة)</td>
                 <?php if (!empty($selectedMonth) && in_array($selectedMonth, $arabic_quarterly)): ?>
                     <?php if (isset($quarterlyMonths[$selectedMonth])): ?>
                         <?php foreach (array_reverse($quarterlyMonths[$selectedMonth]) as $month): ?>
@@ -385,13 +389,6 @@ if (!empty($_POST['id'])) {
                 <?php else: ?>
                     <p>يرجى اختيار فصل صحيح.</p>
                 <?php endif; ?>
-
-                    <td rowspan="2">مجموع الحصيلة</td>
-                    <td rowspan="2">مجموع الغياب</td>
-                    <td rowspan="2">عدد الأحزاب إجمالا</td>
-                    <td rowspan="2">زيادة المتون و التربية</td>
-
-                    <td rowspan="2">الملاحظات</td>
 
                 </tr>
                 <tr>
@@ -444,6 +441,54 @@ if (!empty($_POST['id'])) {
                     <!-- <td><input type="text" name="student_data[<?php //echo $student['id']; ?>][month_2_absence]" value="<?php //echo htmlspecialchars($studentAbsences[$student['id']][$months[1]]??0); ?>" class="no-border" /></td> -->
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_income]" value="<?php echo htmlspecialchars($month3Income); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($studentAbsences[$student['id']][$months[0]]??0); ?>" class="no-border" /></td>
+
+                </tr>
+                <?php } ?> 
+            </table>
+
+            <table style="margin-top: 2px;">
+                <tr>
+
+
+                    <td rowspan="1">مجموع الحصيلة</td>
+                    <td rowspan="1">مجموع الغياب</td>
+                    <td rowspan="1">عدد الأحزاب إجمال</td>
+                    <td rowspan="1">زيادة المتون و التربية</td>
+
+                    <td rowspan="1">الملاحظات</td>
+
+                </tr>
+                
+                
+            <tr>
+            <?php foreach ($students as $studentId => $student) {
+                    $tot_ab =
+                    ($studentAbsences[$student['id']][$months[0]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[1]] ?? 0) +
+                    ($studentAbsences[$student['id']][$months[2]] ?? 0);
+                    $stmt = $conn->prepare("SELECT month_1_income, month_1_absence, month_2_income, month_2_absence,
+                            month_3_income, month_3_absence, total_income, total_absence,
+                            total_groups, extra, notes
+                        FROM student_performance
+                        WHERE student_id = ? AND quarter = ?");
+                    $stmt->bind_param('is', $student['id'], $selectedMonth);
+                    $stmt->execute();
+                    $stmt->store_result();
+
+                    if ($stmt->num_rows > 0) {
+                        $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence,
+                                        $month3Income, $month3Absence, $totalIncome, $totalAbsence,
+                                        $totalGroups, $extra, $notes);
+                        $stmt->fetch();
+                    } else {
+                        // Set variables to empty if no data exists
+                        $month1Income = $month1Absence = $month2Income = $month2Absence =
+                        $month3Income = $month3Absence = $totalIncome = $totalAbsence =
+                        $totalGroups = $extra = $notes = '';
+                    }
+                    $stmt->close();
+                ?>
+                <tr>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_income]" value="<?php echo htmlspecialchars($totalIncome); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_ab); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_groups]" value="<?php echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td>
