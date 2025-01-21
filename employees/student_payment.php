@@ -353,11 +353,11 @@ $conn->close();
             margin-left: 5px;
             font-weight: bold;
             color: #1a73e8;
-            font-size: 0.8rem;
+            font-size: 1rem;
         }
 
         .confirm-button {
-            background-color: #28a745;
+            background-color: #1a73e8;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -605,7 +605,7 @@ $conn->close();
 
         <div class="row form-section">
             <div class="col-12 col-lg-6">
-                <div class="payment-info">
+                <div class="payment-info" style="border: 1px solid #ddd;" >
                     <div>
                         <label for="arrears-paid">المبلغ المسدد</label>
                         <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
@@ -616,37 +616,33 @@ $conn->close();
                     </div>
                 </div>
 
+                <div style="border: 1px solid #ddd;" class="payment-info" >
+                    <label><input type="checkbox" id="toggleRegFee" onclick="toggleVisibility('reg-fee')">  رسوم الاتسجيل</label>
+                    <label><input type="checkbox" id="togglePFee" onclick="toggleVisibility('p-fee')">رسوم اخرى</label>
+                </div>
 
-                    <!-- Payment Info Sections -->
-                    <div class="payment-info" >
-                        <label><input type="checkbox" id="toggleRegFee" onclick="toggleVisibility('reg-fee')">  رسوم الاتسجيل</label>
-
-                        <label><input type="checkbox" id="togglePFee" onclick="toggleVisibility('p-fee')">رسوم اخرى</label>
+                <div class="payment-info" id="reg-fee" style="display: none; border: 1px solid #ddd;" >
+                    <div>
+                        <label for="registuration-fee">المبلغ المسدد</label>
+                        <input type="text" name="registuration_fee" id="registuration-fee" placeholder="0٫00">
                     </div>
+                </div>
 
-                    <!-- Payment Info Sections -->
-                    <div class="payment-info" id="reg-fee" style="display: none;">
-                        <div>
-                            <label for="registuration-fee">المبلغ المسدد</label>
-                            <input type="text" name="registuration_fee" id="registuration-fee" placeholder="0٫00">
-                        </div>
+                <div class="payment-info" id="p-fee" style="display: none; border: 1px solid #ddd;" >
+                    <div>
+                        <label for="description-p">الوصف</label>
+                        <input type="text" name="description_p" id="description-p" placeholder="الوصف">
                     </div>
-
-                    <div class="payment-info" id="p-fee" style="display: none;">
-                        <div>
-                            <label for="description-p">الوصف</label>
-                            <input type="text" name="description_p" id="description-p" placeholder="الوصف">
-                        </div>
-                        <div>
-                            <label for="p-paid">المبلغ المسدد</label>
-                            <input type="text" name="p_paid" id="p-paid" placeholder="0,00">
-                        </div>
+                    <div>
+                        <label for="p-paid">المبلغ المسدد</label>
+                        <input type="text" name="p_paid" id="p-paid" placeholder="0,00">
                     </div>
+                </div>
 
 
                 </div>
 
-                <div class="col-12 col-lg-6 border border-light  bg-light months-card">
+                <div style="border: 1px solid #ddd;" class="col-12 col-lg-6 border border-light bg-light months-card">
                     <div class="section-title">الأشهر</div>
                     <div class="months-grid">
                         <?php foreach ($allMonths as $monthKey => $monthName): ?>
@@ -659,7 +655,7 @@ $conn->close();
                     </div>
             </div>
 
-            <div class="method-section mt-3">
+            <div  style="border: 1px solid blue;"  class="method-section mt-3">
                     <div>
                         <label for="method">طريقة الدفع</label>
                         <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">

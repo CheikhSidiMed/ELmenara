@@ -222,7 +222,6 @@ if (!empty($_POST['id'])) {
                 display: none;
         }
 
-        /* General body adjustments for print */
         body {
             font-size: 10px; /* Smaller font to fit more content */
             margin: 0;
@@ -230,7 +229,6 @@ if (!empty($_POST['id'])) {
             padding: 0;
         }
 
-        /* Ensure table width fits the A5 page and is centered */
         table {
             width: 100%;
             table-layout: fixed; 
@@ -352,12 +350,12 @@ if (!empty($_POST['id'])) {
 
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="bi bi-printer-fill" style="margin-left: 8px;"></i> 
+            طباعة <i class="bi bi-printer-fill" style="margin-left: 8px;"></i>
         </button>
 
 
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-        الصفحة الرئيسية <i class="bi bi-home" style="margin-right: 8px;"></i> 
+        الصفحة الرئيسية <i class="bi bi-home" style="margin-right: 8px;"></i>
         </button>
 
     </div>

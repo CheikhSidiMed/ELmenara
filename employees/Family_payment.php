@@ -342,10 +342,10 @@ $conn->close();
         .months-card .month-option label {
             font-weight: bold;
             color: #1a73e8;
-            font-size: 0.8rem;
+            font-size: 1rem;
         }
         .confirm-button {
-            background-color: #28a745;
+            background-color: #1a73e8;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -572,7 +572,7 @@ $conn->close();
     <div class="row form-section">
         <div class="row align-align-items-baseline">
             <div class="col-12 col-lg-6">
-                <div class="payment-info">
+                <div style="border: 1px solid #ddd;" class="payment-info">
                     <div>
                         <label for="due-amount">المستحقات</label>
                         <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
@@ -586,7 +586,7 @@ $conn->close();
                         <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
                     </div>
                 </div>
-                <div style="margin-bottom: 20px;">
+                <div  style="border: 1px solid #ddd; margin-bottom: 20px; border-radius: 4px;">
                     <div id="total-remaining-container" style="background-color: #f1f1f1; padding: 12px; border-radius: 5px; color: #555; font-size: 1.1rem;">
                         <label for="total-remaining">  المتأخرات </label>
                         <input type="text" id="total-remaining" name="due_amount" value="0.00" disabled style="border: none; background-color: transparent; outline: none; color: #555; font-size: 1.1rem;">
@@ -596,12 +596,10 @@ $conn->close();
 
             <!-- HTML to Display Checkboxes and Total Amount Due -->
             
-                <div class="col-12 col-lg-6 months-card border border-light  bg-light">
-                    <div class="section-title">الأشهر</div>
-                    <div class="months-grid" id="months-grid">
-                    <?php foreach ($allMonths as $monthKey => $monthName):
-                        $isPaid = in_array($monthName, $commonMonths);
-                    ?>
+            <div  style="border: 1px solid #ddd;" class="col-12 col-lg-6 months-card border bg-light">
+                <div class="section-title">الأشهر</div>
+                <div class="months-grid" id="months-grid">
+                    <?php foreach ($allMonths as $monthKey => $monthName): $isPaid = in_array($monthName, $commonMonths); ?>
                         <div class="month-option">
                             <input type="checkbox"
                                 name="months[]"
@@ -612,25 +610,24 @@ $conn->close();
                                 onclick="updateDueAmount(<?php echo $agent_data['agent_id']; ?>)"/>
                             <label for="month-<?php echo $monthKey; ?>"><?php echo $monthName; ?></label>
                         </div>
-
                     <?php endforeach; ?>
-                    </div>
                 </div>
-            
+            </div>
         </div>
-        <div class="">
-            <div class="payment-info" >
+
+        <div>
+            <div style="border: 1px solid #ddd;" class="payment-info" >
                 <label><input type="checkbox" id="toggleRegFee" onclick="toggleVisibility('reg-fee')">  رسوم الاتسجيل</label>
                 <label><input type="checkbox" id="togglePFee" onclick="toggleVisibility('p-fee')">رسوم اخرى</label>
             </div>
                     <!-- Payment Info Sections -->
-            <div class="payment-info" id="reg-fee" style="display: none;">
+            <div class="payment-info" id="reg-fee" style="display: none; border: 1px solid #ddd;">
                 <div>
                     <label for="registuration-fee">المبلغ المسدد</label>
                     <input type="text" name="registuration_fee" id="registuration-fee" placeholder="0٫00">
                 </div>
             </div>
-            <div class="payment-info" id="p-fee" style="display: none;">
+            <div class="payment-info" id="p-fee" style="display: none; border: 1px solid #ddd;">
                 <div>
                     <label for="description-p">الوصف</label>
                     <input type="text" name="description_p" id="description-p" placeholder="الوصف">
@@ -641,7 +638,7 @@ $conn->close();
                 </div>
             </div>
         </div>
-        <div class="method-section mt-3">
+        <div style="border: 1px solid blue;" class="method-section mt-3">
                 <div>
                     <label for="method">طريقة الدفع</label>
                     <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
