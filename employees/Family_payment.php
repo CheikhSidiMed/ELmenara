@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             LEFT JOIN branches b ON s.branch_id = b.branch_id
             LEFT JOIN levels l ON s.level_id = l.id
             LEFT JOIN classes c ON s.class_id = c.class_id
-            WHERE s.agent_id = ?";
+            WHERE s.agent_id = ? AND remaining != 0.00";
          $stmt_students = $conn->prepare($sql_students);
          $stmt_students->bind_param('i', $agent_data['agent_id']);
          $stmt_students->execute();
@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             while ($student = $result_students->fetch_assoc()) {
                 $student_id = $student['id'];
 
-                $sql_check_payment = "SELECT SUM(remaining_amount) AS total_remaining FROM payments WHERE student_id = ?";
+                $sql_check_payment = "SELECT SUM(remaining_amount) AS total_remaining FROM payments WHERE student_id = ? ";
                 $stmt_check_payment = $conn->prepare($sql_check_payment);
                 $stmt_check_payment->bind_param("i", $student_id);
                 $stmt_check_payment->execute();

@@ -11,6 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+UPDATE `payments` SET `remaining_amount` = 0.00 WHERE student_id = 869
 session
 
 
