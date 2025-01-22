@@ -235,74 +235,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <div class="form-body">
-        <form id="studentRegistrationForm" enctype="multipart/form-data" method="POST" accept-charset="UTF-8">
-                
-                <!-- Section 1: تعريف الوكيل -->
+            <!-- <form action="student.php" method="POST" enctype="multipart/form-data"> -->
+            <form id="studentRegistrationForm" enctype="multipart/form-data" method="POST">
+                    <!-- Section 1: تعريف الوكيل -->
                 <div id="agentSection" class="form-row">
-                    
-                    
-                <div class="form-group col-md-6" id="agentPhoneGroup">
-                    <h3 class="col-12">تعريف الوكيل(ة)</h3>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="agentPhone" name="agentPhone" placeholder="أدخل رقم الاسم,الهاتف" required autocomplete="off">
-                        <input type="hidden" class="form-control" id="agentId" name="agentId">
-                        <div id="agentDropdown" class="dropdown-menu" style="display: none;"></div>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-primary" id="searchAgentButton">بحث</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group col-md-6 d-flex align-items-end">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="noAgentCheckbox" name="noAgentCheckbox" onclick="toggleAgentPhone()">
-                        <label class="form-check-label" for="noAgentCheckbox">بدون وكيل(ة)</label>
-                    </div>
-                </div>
-
-
-
-
-                <div class="form-group col-md-12">
-                    <div class="card" id="agentInfoCard" style="display: none;">
-                        <div class="card-body bg-info-subtle p-4 rounded shadow">
-                            <div>
-                                <h2 class="card-title text-start text-primary mb-3" id="agentName">
-                                    اسم الوكيل(ة):
-                                </h2>
+                    <div class="form-group col-md-6" id="agentPhoneGroup">
+                        <h3 class="col-12">تعريف الوكيل(ة)</h3>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="agentPhone" name="agentPhone" placeholder="أدخل رقم الاسم,الهاتف" required autocomplete="off">
+                            <input type="hidden" class="form-control" id="agentId" name="agentId">
+                            <div id="agentDropdown" class="dropdown-menu" style="display: none;"></div>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" id="searchAgentButton">بحث</button>
                             </div>
-                            <h3 class="card-text text-end alert-light bg-white border border-primary rounded p-2 mb-3">
-                                <strong>الطلاب المرتبطين</strong>
-                            </h3>
-                            <ul id="relatedStudentsList" class="list-group list-group-flush">
-                                <!-- Liste des étudiants sera ajoutée ici -->
-                            </ul>
                         </div>
-
                     </div>
-                </div>
+                    <div class="form-group col-md-6 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="noAgentCheckbox" name="noAgentCheckbox" onclick="toggleAgentPhone()">
+                            <label class="form-check-label" for="noAgentCheckbox">بدون وكيل(ة)</label>
+                        </div>
+                    </div>
 
-                <div class="section-separator"></div>
+                    <div class="form-group col-md-12">
+                        <div class="card" id="agentInfoCard" style="display: none;">
+                            <div class="card-body bg-info-subtle p-4 rounded shadow">
+                                <div>
+                                    <h2 class="card-title text-start text-primary mb-3" id="agentName">
+                                        اسم الوكيل(ة):
+                                    </h2>
+                                </div>
+                                <h3 class="card-text text-end alert-light bg-white border border-primary rounded p-2 mb-3">
+                                    <strong>الطلاب المرتبطين</strong>
+                                </h3>
+                                <ul id="relatedStudentsList" class="list-group list-group-flush">
+                                    <!-- Liste des étudiants sera ajoutée ici -->
+                                </ul>
+                            </div>
 
-                <!-- Other form sections go here as per your original code -->
+                        </div>
+                    </div>
 
-                    <!-- Section 2: تعريف الطالب -->
-
-                    
-
-
+                    <div class="section-separator"></div>
                         <div class="form-group col-md-4">
                             <label for="studentName">الاسم الكامل</label>
                             <input type="text" class="form-control" id="studentName" name="studentName" placeholder="أدخل االاسم الكامل" required>
                         </div>
-
                         <div class="form-group col-md-4">
-
                             <label for="partCount">عدد الأحزاب</label>
-
                             <input type="text" class="form-control" id="partCount" name="partCount" placeholder="أدخل عدد الأحزاب" min="0" required>
-
                         </div>
-
                         <div class="form-group col-md-4">
                             <label for="gender">الجنس</label>
                             <select class="form-control" id="gender" name="gender" required>
@@ -311,70 +293,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <option value="أنثى">أنثى</option>
                             </select>
                         </div>
-
                         <div class="form-group col-md-4">
                             <label for="birthDate">تاريخ الميلاد</label>
                             <input type="date" class="form-control" id="birthDate" name="birthDate">
                         </div>
-
                         <div class="form-group col-md-4">
                             <label for="birthPlace">مكان الميلاد</label>
                             <input type="text" class="form-control" id="birthPlace" name="birthPlace" placeholder="أدخل مكان الميلاد" >
                         </div>
-
                         <div class="form-group col-md-4">
                             <label for="branch">الفرع</label>
                             <select class="form-control" id="branch" name="branch" required>
                                 <option value="">اختر الفرع</option>
                             </select>
                         </div>
-
                         <div class="form-group col-md-2 amazing-box">
                             <div class="number-display" id="studentCountDiv">0</div>
                         </div>
-
                         <div class="form-group col-md-3">
                             <label for="class">القسم</label>
                             <select class="form-control" id="class" name="class" required>
                                 <option value="">اختر القسم</option>
                             </select>
                         </div>
-
                         <div class="form-group col-md-3">
                             <label for="studentPhoto">الصورة</label>
                             <input type="file" class="form-control" id="studentPhoto" name="studentPhoto" >
                         </div>
-
                         <div class="form-group col-md-4">
                             <label for="level">المستوى</label>
                             <select class="form-control" id="level" name="level" required>
                                 <option value="">اختر المستوى</option>
                                 <?php
-                                while ($level = $levelsResult->fetch_assoc()) {
-                                    echo '<option value="' . $level['id'] . '">' . htmlspecialchars($level['level_name']) . '</option>';
-                                }
+                                    while ($level = $levelsResult->fetch_assoc()) {
+                                        echo '<option value="' . $level['id'] . '">' . htmlspecialchars($level['level_name']) . '</option>';
+                                    }
                                 ?>
                             </select>
                         </div>
-
                     </div>
 
                     <div class="row">
-                    <div class="form-group col-md-6" id="studentPhoneContainer" style="display: none;">
-                        <label for="studentphone">رقم هاتف تلميذ</label>
-                        <input type="text" class="form-control" id="studentphone" name="studentphone" placeholder="أدخل رقم الهاتف">
+                        <div class="form-group col-md-6" id="studentPhoneContainer" style="display: none;">
+                            <label for="studentphone">رقم هاتف تلميذ</label>
+                            <input type="text" class="form-control" id="studentphone" name="studentphone" placeholder="أدخل رقم الهاتف">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="date_din">تاريخ التسجيل</label>
+                            <input type="date" class="form-control" id="date_din" name="date_din" require>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="date_din">تاريخ التسجيل</label>
-                        <input type="date" class="form-control" id="date_din" name="date_din" require>
-                    </div>
-                </div>
-                <div class="section-separator"></div>
-
+                    <div class="section-separator"></div>
                     <div id="paymentNatureSection" class="form-row">
                         <h5 class="col-12">طبيعة التسديد</h5>
-                        
                         <div class="form-group col-md-6 d-flex justify-content-between">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentNature" id="naturalPayment" value="طبيعي" required Checked>
@@ -390,29 +362,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </div>
 
-                <div class="section-separator"></div>
-
-                <!-- Section for الرسوم الشهرية -->
-                <div id="monthlyFeesSection" class="form-row">
-                    <h5 class="col-12">الرسوم الشهرية</h5>
-                    <div class="form-group col-md-4">
-                        <label for="fees">الرسوم</label>
-                        <input type="number" class="form-control" id="fees" name="fees" placeholder="أدخل الرسوم" min="0" required>
+                    <div class="section-separator"></div>
+                    <!-- Section for الرسوم الشهرية -->
+                    <div id="monthlyFeesSection" class="form-row">
+                        <h5 class="col-12">الرسوم الشهرية</h5>
+                        <div class="form-group col-md-4">
+                            <label for="fees">الرسوم</label>
+                            <input type="number" class="form-control" id="fees" name="fees" placeholder="أدخل الرسوم" min="0" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="discount">الخصم</label>
+                            <input type="number" class="form-control" id="discount" name="discount" placeholder="أدخل الخصم" min="0">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="remaining">المتبقي </label>
+                            <input type="number" class="form-control" id="remaining" name="remaining" placeholder="أدخل المتبقي " min="0" readonly>
+                        </div>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="discount">الخصم</label>
-                        <input type="number" class="form-control" id="discount" name="discount" placeholder="أدخل الخصم" min="0">
+                    
+                    <div class="form-footer text-right">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='home.php';">إغلاق</button>
+                        <button type="submit" class="btn btn-primary">حفظ</button>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="remaining">المتبقي </label>
-                        <input type="number" class="form-control" id="remaining" name="remaining" placeholder="أدخل المتبقي " min="0" readonly>
-                    </div>
-                </div>
-                
-                <div class="form-footer text-right">
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='home.php';">إغلاق</button>
-                <button type="submit" class="btn btn-primary">حفظ</button>
-                </div>
                 </div>
             </form>
         </div>
@@ -468,72 +439,92 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var response = <?php echo json_encode($response); ?>;
-        if (response.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '',
-                text: response.message,
 
-                confirmButtonText: 'موافق'
-            }).then(function() {
-                
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: '',
-                text: response.message
-
-            }).then(function() {
-                // Optionally redirect or do something after error message
-                // window.location.href = 'some_other_page.php';
-            });
-        }
-    });
-</script>
-
-    
-    <script src="js/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
-    <script src="js/sweetalert2.min.js"></script>
     <script>
-        document.getElementById('studentRegistrationForm').addEventListener('submit', function(event) {
+            
+        document.getElementById('studentRegistrationForm').addEventListener('submit', function (event) {
             event.preventDefault();
             let formData = new FormData(this);
-            
+
             fetch('student.php', {
                 method: 'POST',
                 body: formData,
             })
-            .then(response => response.json())
-            .then(data => {
-                Swal.fire({
-                    icon: data.success ? 'success' : 'error',
-                    title: data.success ? 'تم التسجيل بنجاح' : 'حدث خطأ',
-                    text: data.message + (data.success ? '\nID: ' + data.student_id : ''),
-                    confirmButtonText: 'حسنًا',
+                .then(response => response.text())
+                .then(text => {
+                    try {
+                        let jsonString = text.substring(text.indexOf('{'));
+                        let json = JSON.parse(jsonString);
+
+                        Swal.fire({
+                            icon: json.success ? 'success' : 'error',
+                            title: json.success ? 'تم التسجيل بنجاح' : 'حدث خطأ',
+                            text: json.message + (json.success ? '\nID: ' + json.student_id : ''),
+                            confirmButtonText: 'حسنًا',
+                        });
+                        if (json.success) this.reset();
+                    } catch (error) {
+                        console.error('Erreur de parsing JSON:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'حدث خطأ غير متوقع',
+                            text: 'يرجى المحاولة مرة أخرى لاحقًا',
+                            confirmButtonText: 'حسنًا',
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de requête:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'حدث خطأ متوقع',
+                        text: 'يرجى المحاولة مرة أخرى لاحقًا',
+                        confirmButtonText: 'حسنًا',
+                    });
                 });
-                if (data.success) this.reset();
-            })
-            .catch(() => {
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var response = <?php echo json_encode($response); ?>;
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '',
+                    text: response.message,
+
+                    confirmButtonText: 'موافق'
+                }).then(function() {
+                    
+                });
+            } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'حدث خطأ غير متوقع',
-                    text: 'يرجى المحاولة مرة أخرى لاحقًا',
-                    confirmButtonText: 'حسنًا',
+                    title: '',
+                    text: response.message
+
+                }).then(function() {
+                    // Optionally redirect or do something after error message
+                    // window.location.href = 'some_other_page.php';
                 });
-            });
+            }
         });
     </script>
+
+    
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="css/sweetalert2.css">
+    <script src="js/sweetalert2.min.js"></script>
+
+
 
 <script>
     $(document).ready(function() {
         $('#searchAgentButton').on('click', function() {
             var agentPhone = $('#agentPhone').val();
-            $('#phone').text(agentPhone); 
+            $('#phone').text(agentPhone);
 
             if (agentPhone.length > 0) {
                 $.ajax({
@@ -543,8 +534,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     dataType: 'json',
                     success: function(response) {
                         if (response.exists) {
-                            $('#agentName').text('اسم الوكيل(ة):' +  ' ' + response.agent_name); 
-                            $('#agentId').val(response.agent_id); 
+                            $('#agentName').text('اسم الوكيل(ة):' +  ' ' + response.agent_name);
+                            $('#agentId').val(response.agent_id);
                             $('#relatedStudentsList').empty();
                             // Create a table for displaying related students
                             var tableHtml = '<table class="table table-bordered"><thead><tr><th  scope="col">الفرع</th><th  scope="col">الفصل</th><th  scope="col">اسم الطالب</th><th  scope="col">#</th></tr></thead><tbody>';
@@ -655,91 +646,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </script>
 
 
-<script>
-$(document).ready(function() {
-    $('#noAgentCheckbox').change(function() {
-        // Toggle visibility of the agent phone group based on the checkbox state
-        $('#agentPhoneGroup').toggle(!this.checked);
-    });
-
-    // Initialize the visibility based on checkbox state
-    $('#agentPhoneGroup').toggle(!$('#noAgentCheckbox').is(':checked'));
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            $('#noAgentCheckbox').change(function() {
+                $('#agentPhoneGroup').toggle(!this.checked);
+            });
+            $('#agentPhoneGroup').toggle(!$('#noAgentCheckbox').is(':checked'));
+        });
+    </script>
 
 
 <script>
 
-function updateStudentCount(count) {
-    const studentCountDiv = document.getElementById('studentCountDiv');
+    function updateStudentCount(count) {
+        const studentCountDiv = document.getElementById('studentCountDiv');
+        studentCountDiv.textContent = count;
+        studentCountDiv.classList.remove('color-blue', 'color-orange', 'color-red');
 
-    // Update the count display
-    studentCountDiv.textContent = count;
-
-    // Clear any existing color classes
-    studentCountDiv.classList.remove('color-blue', 'color-orange', 'color-red');
-
-    // Apply color based on count
-    if (count < 25) {
-        studentCountDiv.classList.add('color-blue');
-    } else if (count >= 25 && count <= 28) {
-        studentCountDiv.classList.add('color-orange');
-    } else {
-        studentCountDiv.classList.add('color-red');
+        if (count < 25) {
+            studentCountDiv.classList.add('color-blue');
+        } else if (count >= 25 && count <= 28) {
+            studentCountDiv.classList.add('color-orange');
+        } else {
+            studentCountDiv.classList.add('color-red');
+        }
     }
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('fetch_branches_classes.php')
-        .then(response => response.json())
-        .then(data => {
-            const branches = data.branches;
-            const classes = data.classes;
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('fetch_branches_classes.php')
+            .then(response => response.json())
+            .then(data => {
+                const branches = data.branches;
+                const classes = data.classes;
 
-            const branchSelect = document.getElementById('branch');
-            const classSelect = document.getElementById('class');
-            const studentCountDiv = document.getElementById('studentCountDiv'); // Ensure you have a div for showing the count
+                const branchSelect = document.getElementById('branch');
+                const classSelect = document.getElementById('class');
+                const studentCountDiv = document.getElementById('studentCountDiv');
 
-            branches.forEach(branch => {
-                const option = document.createElement('option');
-                option.value = branch.branch_id;
-                option.textContent = branch.branch_name;
-                branchSelect.appendChild(option);
-            });
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.branch_id;
+                    option.textContent = branch.branch_name;
+                    branchSelect.appendChild(option);
+                });
 
-            branchSelect.addEventListener('change', function() {
-                const selectedBranchId = this.value;
-                classSelect.innerHTML = '<option value="">اختر القسم</option>';
+                branchSelect.addEventListener('change', function() {
+                    const selectedBranchId = this.value;
+                    classSelect.innerHTML = '<option value="">اختر القسم</option>';
 
-                classes.filter(classItem => classItem.branch_id == selectedBranchId)
-                    .forEach(classItem => {
-                        const option = document.createElement('option');
-                        option.value = classItem.class_id;
-                        option.textContent = classItem.class_name;
-                        classSelect.appendChild(option);
-                    });
-            });
+                    classes.filter(classItem => classItem.branch_id == selectedBranchId)
+                        .forEach(classItem => {
+                            const option = document.createElement('option');
+                            option.value = classItem.class_id;
+                            option.textContent = classItem.class_name;
+                            classSelect.appendChild(option);
+                        });
+                });
 
-            classSelect.addEventListener('change', function() {
-                const selectedClassId = this.value;
+                classSelect.addEventListener('change', function() {
+                    const selectedClassId = this.value;
 
-                if (selectedClassId) {
-                    fetch(`fetch_branches_classes.php?class_id=${selectedClassId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            studentCountDiv.textContent = `${data.student_count}`;
-                            updateStudentCount(data.student_count);
-                        })
-                        .catch(error => console.error('Error fetching student count:', error));
-                } else {
-                    studentCountDiv.textContent = '';
-                }
-            });
-        })
-        .catch(error => console.error('Error fetching branch and class data:', error));
-});
-
-
+                    if (selectedClassId) {
+                        fetch(`fetch_branches_classes.php?class_id=${selectedClassId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                studentCountDiv.textContent = `${data.student_count}`;
+                                updateStudentCount(data.student_count);
+                            })
+                            .catch(error => console.error('Error fetching student count:', error));
+                    } else {
+                        studentCountDiv.textContent = '';
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching branch and class data:', error));
+    });
 
 </script>
 
@@ -773,20 +754,17 @@ document.addEventListener('DOMContentLoaded', function() {
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.4.0.0.min.js"></script>
 
-<script>
-    // Calculate remaining when the modal is loaded
+    <script>
         $('#studentRegistrationModal').on('shown.bs.modal', function () {
             var fees = parseFloat(document.getElementById('fees').value) || 0;
-            var discount = 0;  // Set discount to 0 initially
+            var discount = 0;
             var remaining = fees - discount;
             document.getElementById('remaining').value = remaining.toFixed(2);
         });
 
-        // Add event listeners for fees and discount inputs
         document.getElementById('fees').addEventListener('input', calculateRemaining);
         document.getElementById('discount').addEventListener('input', calculateRemaining);
 
-        // Function to calculate the remaining amount
         function calculateRemaining() {
             var fees = parseFloat(document.getElementById('fees').value) || 0;
             var discount = parseFloat(document.getElementById('discount').value) || 0;
@@ -795,272 +773,237 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
 
-    document.getElementById('naturalPayment').addEventListener('change', toggleMonthlyFeesSection);
-    document.getElementById('exemptPayment').addEventListener('change', toggleMonthlyFeesSection);
+        document.getElementById('naturalPayment').addEventListener('change', toggleMonthlyFeesSection);
+        document.getElementById('exemptPayment').addEventListener('change', toggleMonthlyFeesSection);
 
-    function toggleMonthlyFeesSection() {
-        var exemptPayment = document.getElementById('exemptPayment').checked;
-        var monthlyFeesSection = document.getElementById('monthlyFeesSection');
-        var feesInput = document.getElementById('fees');
-        var discountInput = document.getElementById('discount');
-        var remainingInput = document.getElementById('remaining');
+        function toggleMonthlyFeesSection() {
+            var exemptPayment = document.getElementById('exemptPayment').checked;
+            var monthlyFeesSection = document.getElementById('monthlyFeesSection');
+            var feesInput = document.getElementById('fees');
+            var discountInput = document.getElementById('discount');
+            var remainingInput = document.getElementById('remaining');
 
-        if (exemptPayment) {
-            monthlyFeesSection.style.display = 'none';
-            // Clear and disable the fees and discount inputs when exempt
-            feesInput.value = '';
-            discountInput.value = '';
-            remainingInput.value = '';
-            feesInput.disabled = true;
-            discountInput.disabled = true;
-            remainingInput.disabled = true;
-        } else {
-            monthlyFeesSection.style.display = 'flex';
-            feesInput.disabled = false;
-            discountInput.disabled = false;
-            remainingInput.disabled = false;
+            if (exemptPayment) {
+                monthlyFeesSection.style.display = 'none';
+                feesInput.value = '';
+                discountInput.value = '';
+                remainingInput.value = '';
+                feesInput.disabled = true;
+                discountInput.disabled = true;
+                remainingInput.disabled = true;
+            } else {
+                monthlyFeesSection.style.display = 'flex';
+                feesInput.disabled = false;
+                discountInput.disabled = false;
+                remainingInput.disabled = false;
+            }
         }
-    }
 
-    // Initialize the monthly fees section display based on the default selected payment nature
-    window.addEventListener('load', function() {
-        toggleMonthlyFeesSection();
-    });
+        window.addEventListener('load', function() {
+            toggleMonthlyFeesSection();
+        });
 
-    document.getElementById('noAgentCheckbox').addEventListener('change', toggleAgentPhone);
+        document.getElementById('noAgentCheckbox').addEventListener('change', toggleAgentPhone);
 
-    function toggleAgentPhone() {
-        var noAgentCheckbox = document.getElementById('noAgentCheckbox').checked;
-        var agentPhoneGroup = document.getElementById('agentPhoneGroup');
-        var agentPhone = document.getElementById('agentPhone');
-        var studentPhoneGroup = document.getElementById('studentPhoneGroup');
-        var studentPhone = document.getElementById('studentPhone');
+        function toggleAgentPhone() {
+            var noAgentCheckbox = document.getElementById('noAgentCheckbox').checked;
+            var agentPhoneGroup = document.getElementById('agentPhoneGroup');
+            var agentPhone = document.getElementById('agentPhone');
+            var studentPhoneGroup = document.getElementById('studentPhoneGroup');
+            var studentPhone = document.getElementById('studentPhone');
 
-        if (noAgentCheckbox) {
-            // Hide the entire agent phone group
-            agentPhoneGroup.style.display = 'none';
-            agentPhone.disabled = true; // Disable the agent phone input
-            agentPhone.value = ''; // Clear the agent phone input
+            if (noAgentCheckbox) {
+                agentPhoneGroup.style.display = 'none';
+                agentPhone.disabled = true;
+                agentPhone.value = '';
 
-            // Show and require student phone
-            studentPhoneGroup.style.display = 'block';
-            studentPhone.required = true;
-        } else {
-            // Show the entire agent phone group
-            agentPhoneGroup.style.display = 'block';
-            agentPhone.disabled = false; // Enable the agent phone input
-
-            // Hide student phone and remove its requirement
-            studentPhoneGroup.style.display = 'none';
-            studentPhone.required = false;
-            studentPhone.value = ''; // Clear student phone input
+                studentPhoneGroup.style.display = 'block';
+                studentPhone.required = true;
+            } else {
+                agentPhoneGroup.style.display = 'block';
+                agentPhone.disabled = false;
+                studentPhoneGroup.style.display = 'none';
+                studentPhone.required = false;
+                studentPhone.value = '';
+            }
         }
-    }
-    // Initialize the agent phone display based on the default state of the checkbox
-    window.addEventListener('load', function() {
-        toggleAgentPhone();
-    });
+        window.addEventListener('load', function() {
+            toggleAgentPhone();
+        });
 
-</script>
-<script>
-    $(document).ready(function() {
-        $('#class').on('change', function() {
-            var classId = $(this).val();
-            if (classId) {
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#class').on('change', function() {
+                var classId = $(this).val();
+                if (classId) {
+                    $.ajax({
+                        url: 'get_class_price.php',
+                        type: 'POST',
+                        data: { class_id: classId },
+                        success: function(response) {
+                            var data = JSON.parse(response);
+                            if (data.success) {
+                                $('#fees').val(data.price);
+                            } else {
+                                $('#fees').val('');
+                            }
+                        },
+                        error: function() {
+                            alert('Error retrieving class price');
+                        }
+                    });
+                } else {
+                    $('#fees').val('');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noAgentCheckbox = document.getElementById('noAgentCheckbox');
+            const studentPhoneContainer = document.getElementById('studentPhoneContainer');
+            const studentPhoneInput = document.getElementById('studentphone');
+
+            function toggleStudentPhoneField() {
+                if (noAgentCheckbox.checked) {
+                    studentPhoneContainer.style.display = 'block';
+                    studentPhoneInput.setAttribute('required', 'required');
+                } else {
+                    studentPhoneContainer.style.display = 'none';
+                    studentPhoneInput.removeAttribute('required');
+                    studentPhoneInput.value = '';
+                }
+            }
+
+            toggleStudentPhoneField();
+            noAgentCheckbox.addEventListener('change', toggleStudentPhoneField);
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('fetch_levels.php')
+                .then(response => response.json())
+                .then(data => {
+                    const levels = data.levels;
+                    const levelSelect = document.getElementById('level');
+                    const feesInput = document.getElementById('fees');
+                    const discountInput = document.getElementById('discount');
+                    const remainingInput = document.getElementById('remaining');
+                    levelSelect.innerHTML = '<option value="">اختر المستوى</option>';
+
+                    if (levels.length > 0) {
+                        levels.forEach(level => {
+                            const option = document.createElement('option');
+                            option.value = level.id;
+                            option.textContent = level.level_name;
+                            option.setAttribute('data-price', level.price);
+                            levelSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'لا توجد مستويات متاحة';
+                        levelSelect.appendChild(option);
+                    }
+
+                    levelSelect.addEventListener('change', function() {
+                        const selectedLevel = this.options[this.selectedIndex];
+                        const price = selectedLevel.getAttribute('data-price');
+
+                        if (price) {
+                            feesInput.value = price;
+                            remainingInput.value = price;
+                            discountInput.value = 0;
+                        } else {
+                            feesInput.value = '';
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching levels data:', error));
+        });
+    </script>
+
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+
+    <script>
+        $(document).ready(function() {
+            $('#name_student').autocomplete({
+            source: function(request, response) {
                 $.ajax({
-                    url: 'get_class_price.php', // PHP script to fetch the price
+                url: 'fetchh.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    term: request.term
+                },
+                success: function(data) {
+                    response(data);
+                }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                $('#name_student').val(ui.item.value);
+            }
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('agentPhone').addEventListener('input', function() {
+            var agentPhone = this.value;
+
+            if (agentPhone.length >= 2) {
+                $.ajax({
+                    url: 'fetch_agent_info.php',
                     type: 'POST',
-                    data: { class_id: classId },
+                    data: { phone: agentPhone },
                     success: function(response) {
                         var data = JSON.parse(response);
+                        
                         if (data.success) {
-                            $('#fees').val(data.price);
+                            document.getElementById('agentName').textContent = 'اسم الوكيل: ' + data.agent_name;
+                            var relatedStudentsList = document.getElementById('relatedStudentsList');
+                            relatedStudentsList.innerHTML = '';
+                            data.related_students.forEach(function(student) {
+                                var listItem = document.createElement('li');
+                                listItem.textContent = student;
+                                relatedStudentsList.appendChild(listItem);
+                            });
+
+                            document.getElementById('agentInfoCard').style.display = 'block';
                         } else {
-                            $('#fees').val(''); // Clear the field if no price is found
+                            document.getElementById('agentName').textContent = 'لم يتم العثور على وكيل.';
+                            document.getElementById('relatedStudentsList').innerHTML = '';
+                            document.getElementById('agentInfoCard').style.display = 'block';
                         }
                     },
                     error: function() {
-                        alert('Error retrieving class price');
+                        document.getElementById('agentName').textContent = 'حدث خطأ أثناء جلب معلومات الوكيل.';
+                        document.getElementById('relatedStudentsList').innerHTML = '';
+                        document.getElementById('agentInfoCard').style.display = 'block';
                     }
                 });
             } else {
-                $('#fees').val(''); // Clear the field if no class is selected
+                document.getElementById('agentInfoCard').style.display = 'none';
+                document.getElementById('agentName').textContent = '';
+                document.getElementById('relatedStudentsList').innerHTML = '';
             }
         });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const noAgentCheckbox = document.getElementById('noAgentCheckbox');
-        const studentPhoneContainer = document.getElementById('studentPhoneContainer');
-        const studentPhoneInput = document.getElementById('studentphone');
-
-        // Function to toggle the student phone field based on checkbox
-        function toggleStudentPhoneField() {
-            if (noAgentCheckbox.checked) {
-                studentPhoneContainer.style.display = 'block';  // Show the phone field
-                studentPhoneInput.setAttribute('required', 'required');  // Add required attribute
-            } else {
-                studentPhoneContainer.style.display = 'none';   // Hide the phone field
-                studentPhoneInput.removeAttribute('required');  // Remove required attribute
-                studentPhoneInput.value = '';  // Clear the input value if it's hidden
-            }
-        }
-
-        // Call the function on page load
-        toggleStudentPhoneField();
-
-        // Attach the event listener to the checkbox
-        noAgentCheckbox.addEventListener('change', toggleStudentPhoneField);
-    });
-</script>
+    </script>
 
 
+    <script src="js/bootstrap.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Fetch levels data
-        fetch('fetch_levels.php')
-            .then(response => response.json())
-            .then(data => {
-                const levels = data.levels;
-                const levelSelect = document.getElementById('level'); // The level dropdown
-                const feesInput = document.getElementById('fees'); 
-                const discountInput = document.getElementById('discount'); 
-                const remainingInput = document.getElementById('remaining'); 
-
-
-
-                // Ensure the select is empty before populating (optional)
-                levelSelect.innerHTML = '<option value="">اختر المستوى</option>';
-
-                // Check if levels are returned
-                if (levels.length > 0) {
-                    // Populate the level dropdown
-                    levels.forEach(level => {
-                        const option = document.createElement('option');
-                        option.value = level.id; // Use 'level.id' instead of 'level.level_id'
-                        option.textContent = level.level_name; // Only display the level name
-                        option.setAttribute('data-price', level.price); // Store price in data attribute
-                        levelSelect.appendChild(option);
-                    });
-                } else {
-                    // If no levels, show a message in the dropdown (optional)
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'لا توجد مستويات متاحة';
-                    levelSelect.appendChild(option);
-                }
-
-                // Populate the fees input based on selected level
-                levelSelect.addEventListener('change', function() {
-                    const selectedLevel = this.options[this.selectedIndex]; // Get selected option
-                    const price = selectedLevel.getAttribute('data-price'); // Get price from data attribute
-
-                    if (price) {
-                        feesInput.value = price; 
-                        remainingInput.value = price; 
-
-                        discountInput.value = 0; 
-                    } else {
-                        feesInput.value = ''; // Clear the fees input if no level is selected
-                    }
-                });
-            })
-            .catch(error => console.error('Error fetching levels data:', error));
-    });
-
-
-</script>
-
-<script src="js/jquery-3.5.1.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="css/jquery-ui.min.css">
-
-<script>
-  $(document).ready(function() {
-    // Enable autocomplete for the student name field
-    $('#name_student').autocomplete({
-      source: function(request, response) {
-        $.ajax({
-          url: 'fetchh.php', // Path to the server script that searches for students
-          type: 'GET',
-          dataType: 'json',
-          data: {
-            term: request.term // Send the term to the server for searching
-          },
-          success: function(data) {
-            response(data); // Pass the matched student names to the autocomplete list
-          }
-        });
-      },
-      minLength: 2, // Minimum number of characters before the search starts
-      select: function(event, ui) {
-        // Set the selected student name in the input field
-        $('#name_student').val(ui.item.value);
-      }
-    });
-  });
-</script>
-
-<script>
-    document.getElementById('agentPhone').addEventListener('input', function() {
-        var agentPhone = this.value;
-
-        // Proceed only if the phone number has 8 or more digits
-        if (agentPhone.length >= 2) {
-            $.ajax({
-                url: 'fetch_agent_info.php',
-                type: 'POST',
-                data: { phone: agentPhone },
-                success: function(response) {
-                    var data = JSON.parse(response);
-                    
-                    // Check if agent is found
-                    if (data.success) {
-                        // Display agent's name
-                        document.getElementById('agentName').textContent = 'اسم الوكيل: ' + data.agent_name;
-
-                        // Populate the list of related students
-                        var relatedStudentsList = document.getElementById('relatedStudentsList');
-                        relatedStudentsList.innerHTML = ''; // Clear any previous data
-                        data.related_students.forEach(function(student) {
-                            var listItem = document.createElement('li');
-                            listItem.textContent = student;
-                            relatedStudentsList.appendChild(listItem);
-                        });
-
-                        // Show the card with agent info
-                        document.getElementById('agentInfoCard').style.display = 'block';
-                    } else {
-                        // Agent not found, show message and clear the related students list
-                        document.getElementById('agentName').textContent = 'لم يتم العثور على وكيل.';
-                        document.getElementById('relatedStudentsList').innerHTML = ''; // Clear the list
-                        
-                        // Show the card with the message
-                        document.getElementById('agentInfoCard').style.display = 'block';
-                    }
-                },
-                error: function() {
-                    // Handle error, show error message
-                    document.getElementById('agentName').textContent = 'حدث خطأ أثناء جلب معلومات الوكيل.';
-                    document.getElementById('relatedStudentsList').innerHTML = ''; // Clear the list
-                    document.getElementById('agentInfoCard').style.display = 'block';
-                }
-            });
-        } else {
-            // If the phone number is less than 8 digits, hide the card
-            document.getElementById('agentInfoCard').style.display = 'none';
-            document.getElementById('agentName').textContent = ''; // Clear agent name
-            document.getElementById('relatedStudentsList').innerHTML = ''; // Clear the related students list
-        }
-    });
-</script>
-
-
-<script src="js/bootstrap.min.js"></script>
-<script>
+<!-- <script>
     $(document).ready(function() {
         console.log("jQuery version:", $.fn.jquery);
 
@@ -1087,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-</script>
+</script> -->
 
 
 
@@ -1095,7 +1038,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 </html>
 
-<?php
-    $levelsResult->free(); 
-    $conn->close();
-?>
+<?php $levelsResult->free(); $conn->close(); ?>

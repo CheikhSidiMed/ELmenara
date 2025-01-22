@@ -171,9 +171,9 @@ $result = $conn->query($sql);
                 <?php
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $photoSrc = !is_null($row['student_photo']) ? 
-                                        'data:image/jpeg;base64,' . base64_encode($row['student_photo']) : 
-                                        './assets/images/avatar.jpg'; // Provide a default image path
+                            $photoSrc = $row['student_photo'] !== '' ?
+                                        $row['student_photo'] :
+                                        'uploads/avatar.png';
                             echo "<tr>
                                     <td>{$row['id']}</td>
                                     <td>{$row['student_name']}</td>
@@ -186,7 +186,7 @@ $result = $conn->query($sql);
                                     <td>{$row['branch_name']}</td>
                                     <td>{$row['class_name']}</td>
                                     <td>{$row['level_name']}</td>
-                                    <td><img src='{$photoSrc}' alt='student_photo' width='100'></td>
+                                    <td><img src='{$photoSrc}' alt='student_photo' width='50' height='50' style='border-radius: 50%'></td>
                                     <td>{$row['agent_phone']}</td>
                                     <td><a href='modify_student.php?id={$row['id']}' class='btn btn-primary'><i class='bi bi-pencil-square'></i> تعديل</a></td>
                                   </tr>";
