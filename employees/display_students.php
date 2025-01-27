@@ -28,10 +28,10 @@ $result = $conn->query($sql);
     <title>بيانات الطلاب</title>
     <link rel="shortcut icon" type="image/png" href="../images/menar.png">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
     <link href="css/bootstrap-icons.css" rel="stylesheet">
-    <link href="fonts/bootstrap-icons.css" rel="stylesheet">    
+    <link href="fonts/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
     <style>
@@ -114,13 +114,24 @@ $result = $conn->query($sql);
             border-radius: 8px;
             transition: background-color 0.3s ease;
         }
+        a {
+            font-size: 1.6rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 5px 20px !important;
+        }
+        .navbar-brand{
+            font-size: 1.8rem;
+            cursor: default;
+            border: none;
+        }
 
         .home-btn .btn:hover {
             background-color: #155bb5;
         }
         .header-row .home-btn .btn {
-            padding: 0.5rem 1rem; /* Adjusts padding for button */
-            border-radius: 5px; /* Optional border radius for rounded button */
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
         }
 
         .home-btn .btn i {
@@ -131,14 +142,10 @@ $result = $conn->query($sql);
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">منصة البيانات الطلابية</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="home.php"><i class="bi bi-house-up-fill"></i> الصفحة الرئيسية</a>
-                    </li>
-                </ul>
+            <div class="">
+                <a class="nav-link" href="home.php"><i class="bi bi-house-up-fill"></i> الصفحة الرئيسية</a>
             </div>
+            <a class="navbar-brand" href="#">منصة البيانات الطلابية</a>
         </div>
     </nav>
     

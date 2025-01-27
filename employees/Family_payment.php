@@ -252,7 +252,7 @@ $conn->close();
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            max-width: 1100px;
+            max-width: 1200px;
             margin: auto;
         }
         .header-title {
@@ -571,7 +571,7 @@ $conn->close();
     <input type="hidden" id="months_s" name="monthss[]" readonly>
     <div class="row form-section">
         <div class="row align-align-items-baseline">
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-7">
                 <div style="border: 1px solid #ddd;" class="payment-info">
                     <div>
                         <label for="due-amount">المستحقات</label>
@@ -596,7 +596,7 @@ $conn->close();
 
             <!-- HTML to Display Checkboxes and Total Amount Due -->
             
-            <div  style="border: 1px solid #ddd;" class="col-12 col-lg-6 months-card border bg-light">
+            <div  style="border: 1px solid #ddd;" class="col-12 col-lg-5 months-card border bg-light">
                 <div class="section-title">الأشهر</div>
                 <div class="months-grid" id="months-grid">
                     <?php foreach ($allMonths as $monthKey => $monthName): $isPaid = in_array($monthName, $commonMonths); ?>

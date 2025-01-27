@@ -409,7 +409,7 @@ $conn->close();
         طباعة <i class="fas fa-print" style="margin-right: 8px;"></i> 
         </button>
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-        الصفحة الرئيسية <i class="fas fa-home mr-2"></i> 
+        الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
         </button>
 
     </div>

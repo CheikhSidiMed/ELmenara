@@ -58,18 +58,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_id']))
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
+            background: #f9f9f9;
+
         }
         .table-container {
             margin: 30px auto;
-            max-width: 80%;
-            background: #f9f9f9;
+            max-width: 99%;
+            background: #fff;
             border-radius: 8px;
+            font-size: 22px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
         .table-title {
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        .btn-edit {
+            background-color: orange;
+            color: white;
+            font-size: 22px;
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background-color: darkorange;
+        }
+
+        .btn-delete {
+            background-color: red;
+            text-align: center;
+            color: white;
+            font-size: 22px;
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        input{
+            font-size: 21px;
+        }
+        td{
+            background-color: #f9f9f9 !important;
+            align-items: center !important;
+            vertical-align: middle;
+        }
+
+        .btn-delete:hover {
+            background-color: darkred;
+        }
+        .head{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-head{
+            text-align: center;
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -81,14 +134,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_id']))
             <h1 class="table-title"><i class="bi bi-currency-dollar"></i> إدارة حسابات مداخيل</h1>
 
             <!-- Add Expense Account -->
-             <div class="row">
-                <div class="col-md-8">
-                    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+             <div class="head">
+                <div class="">
+                    <button class="btn btn-success mb-3 h1" data-bs-toggle="modal" data-bs-target="#addAccountModal">
                         <i class="bi bi-plus"></i> إضافة حساب جديد
                     </button>
                 </div>
-                <div class="col-md-4">
-                    <button class="btn btn-primary home" onclick="window.location.href='home.php'">العودة إلى الصفحة الرئيسية</button>
+                <div class="">
+                    <button class="btn btn-primary home" onclick="window.location.href='home.php'"> الصفحة الرئيسية</button>
                     
                 </div>
 
@@ -125,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_id']))
                                 <td>{$row['account_balance']}</td>
                                 <td>
                                     <button 
-                                        class='btn btn-warning btn-sm edit-button' 
+                                        class='btn btn-warning btn-sm edit-button btn-edit' 
                                         data-id='{$row['id']}'
                                         data-name='{$row['account_name']}' 
                                         data-category='{$row['category']}' 
@@ -133,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_id']))
                                         <i class='bi bi-pencil-square'></i> تعديل
                                     </button>
                                     
-                                    <button class='btn btn-danger btn-sm' onclick='confirmDelete({$row['id']})'>
+                                    <button class='btn-delete' onclick='confirmDelete({$row['id']})'>
                                         <i class='bi bi-trash'></i> حذف
                                     </button>
                                 </td>
