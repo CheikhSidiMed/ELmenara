@@ -1,10 +1,9 @@
 <?php
-// Activer l'affichage des erreurs
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-include '../db_connection.php';
+    include '../db_connection.php';
 
 if ($conn->connect_error) {
     die("Échec de connexion : " . $conn->connect_error);
@@ -19,24 +18,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = trim($_POST['name'] ?? '');
     $balance = trim($_POST['balance'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
+    $donate_id = trim($_POST['donate_id'] ?? '');
+    $selectedDonation = '';
+    $amount_sponsored = trim($_POST['amount_sponsored'] ?? '');
     $parrainer_id = $_POST['parrainer_id'] ?? null;
 
     if ($action == 'add') {
         if (!empty($name) && is_numeric($balance)) {
-            $stmt = $conn->prepare("INSERT INTO parrainers (name, balance, phone) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $name, $balance, $phone);
-            if ($stmt->execute()) {
-                $message = "تمت إضافة الكافل(ة) بنجاح.";
+
+            $checkStmt = $conn->prepare("SELECT COUNT(*) FROM garants WHERE phone = ?");
+            $checkStmt->bind_param("s", $phone);
+            $checkStmt->execute();
+            $checkStmt->bind_result($count);
+            $checkStmt->fetch();
+            $checkStmt->close();
+
+            if ($count > 0) {
+                $message = "رقم الهاتف موجود بالفعل. الرجاء إدخال رقم هاتف آخر.";
             } else {
-                $message = "حدث خطأ أثناء إضافة الكافل(ة).";
+                $stmt = $conn->prepare("INSERT INTO garants (name, balance, phone, amount_sponsored, donate_id) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $name, $balance, $phone, $amount_sponsored, $donate_id);
+                if ($stmt->execute()) {
+                    $message = "تمت إضافة الكافل(ة) بنجاح.";
+                } else {
+                    $message = "حدث خطأ أثناء إضافة الكافل(ة).";
+                }
+                $stmt->close();
             }
-            $stmt->close();
         } else {
             $message = "الرجاء إدخال جميع البيانات بشكل صحيح.";
         }
     } elseif ($action == 'delete') {
         if (is_numeric($parrainer_id)) {
-            $stmt = $conn->prepare("DELETE FROM parrainers WHERE id=?");
+            $stmt = $conn->prepare("DELETE FROM garants WHERE id=?");
             $stmt->bind_param("i", $parrainer_id);
             if ($stmt->execute()) {
                 $message = "تم حذف الكافل(ة) بنجاح.";
@@ -46,20 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->close();
         }
     } elseif ($action == 'edit') {
-        // Load data for editing
         if (is_numeric($parrainer_id)) {
-            $stmt = $conn->prepare("SELECT * FROM parrainers WHERE id = ?");
+            $stmt = $conn->prepare("SELECT * FROM garants WHERE id = ?");
             $stmt->bind_param("i", $parrainer_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $editParrainer = $result->fetch_assoc();
+            $selectedDonation = $editParrainer['donate_id'];
             $stmt->close();
         }
     } elseif ($action == 'update') {
-        // Update record in the database
         if (is_numeric($parrainer_id) && !empty($name) && is_numeric($balance)) {
-            $stmt = $conn->prepare("UPDATE parrainers SET name = ?, balance = ?, phone = ? WHERE id = ?");
-            $stmt->bind_param("sssi", $name, $balance, $phone, $parrainer_id);
+            $stmt = $conn->prepare("UPDATE garants SET donate_id = ?, name = ?, balance = ?, phone = ?, amount_sponsored = ? WHERE id = ?");
+            $stmt->bind_param("sssssi", $donate_id, $name, $balance, $phone, $amount_sponsored, $parrainer_id);
             if ($stmt->execute()) {
                 $message = "تم تحديث بيانات الكافل(ة) بنجاح.";
             } else {
@@ -72,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Récupération des parrainers
-$result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
+$result_dons = $conn->query("SELECT * FROM donate_accounts ORDER BY created_at DESC");
+$result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
 ?>
 
 <!DOCTYPE html>
@@ -83,14 +96,9 @@ $result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة الرعاة</title>
     <link rel="stylesheet" href="../css/tajawal.css">
+    <link href="../css/bootstrap-5.3.1.min.css" rel="stylesheet">
 
     <style>
-        /* body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        } */
         body {
             font-family: 'Tajawal', sans-serif;
             background-color: #f2f2f2;
@@ -133,15 +141,15 @@ $result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
             display: block;
             margin-bottom: 5px;
         }
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, select option {
             width: 100%;
-            padding: 8px;
+            padding: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
             text-align: right;
         }
         .btn-head, .form-group button {
-            padding: 15px 25px;
+            padding: 11px 23px;
             background-color: #007BFF;
             color: #fff;
             border: none;
@@ -207,15 +215,63 @@ $result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
         .btn-head:hover {
             background-color: #0056b3;
         }
+        .form{
+            margin-left: 0px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: right;
+            appearance: none; /* Supprime l'apparence par défaut */
+            background-color: white;
+        }
+
+        select option {
+            font-size: 18px;
+            padding: 10px;
+        }
 
         @media (max-width: 768px) {
-            table, table th, table td {
-                font-size: 14px;
-            }
-            .form-group button {
+            .container {
                 width: 100%;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 25px;
+            }
+
+            table {
+                font-size: 14px;
+                overflow-x: auto;
+                display: block;
+                white-space: nowrap;
+            }
+
+            .btn-delete, .btn-edit, .btn-head {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+
+            .form-group input, .form-group select, .form-group button {
+                font-size: 18px;
+            }
+
+            .head {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .btn-head {
+                width: 100%;
+                margin-top: 10px;
             }
         }
+
     </style>
 </head>
 <body>
@@ -233,43 +289,65 @@ $result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
     <?php endif; ?>
 
     <!-- Formulaire pour ajouter ou modifier un parrainer -->
-    <form method="POST" action="">
+    <form method="POST" action="" class="form row">
         <input type="hidden" name="parrainer_id" value="<?= $editParrainer['id'] ?? '' ?>">
-        <div class="form-group">
+        <div class="form-group col-12 col-lg-6">
             <label for="name">اسم الكافل(ة)</label>
             <input type="text" id="name" name="name" value="<?= htmlspecialchars($editParrainer['name'] ?? '') ?>" required>
         </div>
-        <div class="form-group">
+        <div class="form-group col-12 col-lg-6">
+            <label for="amount_sponsored"> المبلغ المتكفل به</label>
+            <input type="number" step="0.01" id="amount_sponsored" name="amount_sponsored" value="<?= htmlspecialchars($editParrainer['amount_sponsored'] ?? '') ?>" required>
+        </div>
+        <div class="form-group col-12 col-lg-6">
             <label for="balance">رصيد حساب</label>
             <input type="number" step="0.01" id="balance" name="balance" value="<?= htmlspecialchars($editParrainer['balance'] ?? '') ?>" required>
         </div>
-        <div class="form-group">
+        <div class="form-group col-12 col-lg-6">
             <label for="phone">رقم الهاتف</label>
-            <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($editParrainer['phone'] ?? '') ?>">
+            <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($editParrainer['phone'] ?? '') ?>" required>
         </div>
+        <div class="form-group col-12">
+            <label for="donate_id">إسم الحساب</label>
+            <select class="form-control" name="donate_id" id="donate_id">
+                <option value="">--إسم الحساب--</option>
+                <?php while ($row = $result_dons->fetch_assoc()): ?>
+                    <option value="<?= $row['id']; ?>" <?= $selectedDonation == $row['id'] ? 'selected' : '' ?>>
+                        <?= $row['account_name']; ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
         <div class="form-group">
-            <button type="submit" name="action" value="<?= $editParrainer ? 'update' : 'add' ?>">
+            <button type="submit" class="btn-head" name="action" value="<?= $editParrainer ? 'update' : 'add' ?>">
                 <?= $editParrainer ? 'تحديث الكافل(ة)' : 'إضافة الكافل(ة)' ?>
             </button>
         </div>
     </form>
 
-    <!-- Liste des parrainers -->
+    <!-- Liste des garants -->
+     <hr>
+    <div class="search-box mb-1 mt-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الكافل(ة)...">
+    </div>
     <table>
         <thead>
         <tr>
             <th>المعرف</th>
-            <th>اسم الراعي</th>
+            <th>اسم الكافل(ة)</th>
+            <th> المبلغ المتكفل به</th>
             <th>رصيد حساب</th>
             <th>رقم الهاتف</th>
             <th class="cnt">الإجراءات</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody  id="garantsTableBody">
         <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= $row['id'] ?></td>
                 <td><?= htmlspecialchars($row['name']) ?></td>
+                <td><?= htmlspecialchars($row['amount_sponsored']) ?></td>
                 <td><?= htmlspecialchars($row['balance']) ?></td>
                 <td><?= htmlspecialchars($row['phone']) ?></td>
                 <td class="cnt">
@@ -285,5 +363,17 @@ $result = $conn->query("SELECT * FROM parrainers ORDER BY created_at DESC");
         </tbody>
     </table>
 </div>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#searchInput').on('input', function() {
+            const value = $(this).val().toLowerCase();
+            $('#garantsTableBody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(value));
+            });
+        });
+    });
+</script>
 </body>
 </html>

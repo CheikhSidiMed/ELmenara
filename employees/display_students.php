@@ -207,7 +207,7 @@ $result = $conn->query($sql);
         </div>
     </div>
 
-<script src="JS/jquery-3.5.1.min.js"></script>
+<script src="js/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#searchInput').on('input', function() {

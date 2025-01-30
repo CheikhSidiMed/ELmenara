@@ -480,7 +480,7 @@
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                     <ul class="collapse list-unstyled">
                         <li><a href="Employee_registration.php" ><i class="fa fa-user-plus"></i> إنشاء حساب موظف</a></li>
-                        <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i> إنشاء حساب مصاريف</a></li>
+                        <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                         <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                         <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
                         <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li>
@@ -565,7 +565,7 @@
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                             <ul class="collapse list-unstyled">
                                 <li><a href="Employee_registration.php" ><i class="fa fa-user-plus"></i> إنشاء حساب موظف</a></li>
-                                <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i> إنشاء حساب مصاريف</a></li>
+                                <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                                 <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                                 <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
                                 <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li>

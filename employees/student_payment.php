@@ -653,9 +653,9 @@ $conn->close();
                         </div>
                         <?php endforeach; ?>
                     </div>
-            </div>
+                </div>
 
-            <div  style="border: 1px solid blue;"  class="method-section mt-3">
+                <div style="border: 1px solid blue;"  class="method-section mt-3">
                     <div>
                         <label for="method">طريقة الدفع</label>
                         <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
@@ -797,8 +797,8 @@ $conn->close();
                     // Prepare the response data to include names and phones
                     response($.map(data, function(item) {
                         return {
-                            label: item.student_name, 
-                            id: item.student_id, 
+                            label: item.student_name,
+                            id: item.student_id,
                             value: item.student_name
                         };
                     }));
@@ -810,10 +810,9 @@ $conn->close();
         },
         minLength: 1,
         select: function(event, ui) {
-            // Optional: What to do when an item is selected
-            $('#student_name').val(ui.item.value); 
-            $('#student_id').val(ui.item.id); 
-            console.log('Selected: ', ui.item.label); 
+            $('#student_name').val(ui.item.value);
+            $('#student_id').val(ui.item.id);
+            console.log('Selected: ', ui.item.label);
         }
     });
     });
@@ -838,39 +837,26 @@ $conn->close();
 </script>
 
 <script>
-    // Fetch the student's remaining balance
     const remainingFee = <?php echo $student_data['remaining']; ?>;
-    // Element where the due amount is displayed
     const dueAmountDisplay = document.getElementById('due-amounte');
-    // Hidden input field for passing due amount in the form
     const dueAmountHidden = document.getElementById('due-amounte-hidden');
-    // Get all the checkboxes for the months
     const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
 
-    // Function to calculate total due based on selected months
     function calculateTotalDue() {
         let selectedMonths = 0;
-
-        // Loop through each checkbox to check if it's selected
         checkboxes.forEach(function(checkbox) {
             if (checkbox.checked && !checkbox.disabled) {
                 selectedMonths++;
             }
         });
 
-        // Calculate the total due amount based on the number of selected months
         const totalDue = remainingFee * selectedMonths;
-
-        // Update the displayed due amount in the div
         dueAmountDisplay.innerText = totalDue + ' أوقية جديدة';
-
-        // Update the hidden input field value for due_amounte
         dueAmountHidden.value = totalDue;
     }
 
-    // Add event listeners to checkboxes for the click event
     checkboxes.forEach(function(checkbox) {
-        if (!checkbox.disabled) { // Only add event listeners to checkboxes that are not disabled
+        if (!checkbox.disabled) {
             checkbox.addEventListener('click', calculateTotalDue);
         }
     });

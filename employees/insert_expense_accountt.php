@@ -22,14 +22,14 @@ if ($result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فتح حساب مصاريف</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <!-- Google Font -->
+    <link rel="stylesheet" href="css/bootstrap-4-5-2.min.css">
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Amiri', serif;
             background-color: #f8f9fa;
+            direction: rtl;
         }
         .container {
             background: #ffffff;
@@ -71,15 +71,15 @@ if ($result->num_rows > 0) {
         <form id="ExpenseAccountForm">
             <div class="form-group">
                 <label for="Nbr">رقم الحساب</label>
-                <input 
-                    type="number" 
-                    class="form-control" 
-                    id="Nbr" 
-                    name="Nbr" 
-                    value="<?php echo $nextAccountNumber; ?>" 
-                    min="0" 
-                    placeholder="أدخل رقم الحساب" 
-                    readonly 
+                <input
+                    type="number"
+                    class="form-control"
+                    id="Nbr"
+                    name="Nbr"
+                    value="<?php echo $nextAccountNumber; ?>"
+                    min="0"
+                    placeholder="أدخل رقم الحساب"
+                    readonly
                     required
                 >
             </div>
@@ -99,6 +99,8 @@ if ($result->num_rows > 0) {
     </div>
 
     <!-- Include SweetAlert2 -->
+    <script src="js/sweetalert2.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         document.getElementById('ExpenseAccountForm').addEventListener('submit', function (e) {
