@@ -14,6 +14,7 @@ CREATE TABLE stock_monthly_payments (
     month VARCHAR(20) NULL,
     des VARCHAR(255) NULL,
     amount_paid DECIMAL(10, 2) NOT NULL,
+    due_amount DECIMAL(10,2) NULL DEFAULT '0.00',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (garant_id) REFERENCES garants(id)
 );

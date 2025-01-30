@@ -19,6 +19,45 @@ $allMonths = [
     'August' => 'أغسطس',
     'September' => 'سبتمبر'
 ];
+
+$paidMonths = [];
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['garant_id'])) {
+    $garant_id = $_GET['garant_id'];
+
+    $sql1 = "SELECT g.id, g.name, g.phone, g.amount_sponsored, g.balance, g.donate_id, d.account_name, d.account_number
+    FROM garants AS g
+    LEFT JOIN donate_accounts AS d ON g.donate_id = d.id
+    WHERE g.id = ?";
+    $stmt1 = $conn->prepare($sql1);
+    $stmt1->bind_param('s', $garant_id);
+    $stmt1->execute();
+
+    $result1 = $stmt1->get_result()->fetch_assoc();
+    $stmt1->close();
+
+    
+
+    $sql = "SELECT payment_id, month, des FROM stock_monthly_payments WHERE garant_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $garant_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $paidMonths[] = $row['month'];
+    }
+    $paidMonths = array_unique($paidMonths);
+
+
+    if ($result1) {
+        json_encode($result1);
+    }
+    $stmt->close();
+}
+
+
+
+
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
@@ -49,7 +88,7 @@ $conn->close();
     <link href="../css/bootstrap-icons.css" rel="stylesheet">
     <link href="../fonts/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/jquery-base-ui.css">
-    <link rel="stylesheet" href="../css/sweetalert2.css"> 
+    <link rel="stylesheet" href="../css/sweetalert2.css">
     <script src="../js/sweetalert2.min.js"></script>
     <style>
         body {
@@ -232,10 +271,12 @@ $conn->close();
     </div>
 </div>
 
-  <div class="row mb-4">
+    <div class="row mb-4">
         <div class="col-12">
             <h4 class="header-titlee">البحث عن الكافل(ة)</h4>
             <form method="GET" action="">
+            <input type="hidden" name="garant_id" class="form-control" id="garant-id">
+
                 <div class="input-group">
                     <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكافل(ة)">
                     <button class="btn btn-outline-secondary border-2" type="submit">
@@ -255,19 +296,19 @@ $conn->close();
         <div class="row text-center">
             <div class="col-6 col-lg-3">
                 <label>إسم الكافل(ة)</label>
-                <div id="category_display"></div>
+                <div id=""><?php echo $result1['name']; ?></div>
             </div>
             <div class="col-6 col-lg-3">
                 <label>رقم الهاتف</label>
-                <div id="account_number_display"></div>
+                <div id=""><?php echo $result1['phone']; ?></div>
             </div>
             <div class="col-6 col-lg-3">
                 <label>الرصيد</label>
-                <div id="account_balance_display"></div>
+                <div id=""><?php echo $result1['balance']; ?></div>
             </div>
             <div class="col-6 col-lg-3">
                 <label>الحساب المتكفل به</label>
-                <div id="account_name_display"></div>
+                <div><?php echo $result1['account_name']; ?></div>
             </div>
         </div>
         <hr class="mt-3">
@@ -286,7 +327,7 @@ $conn->close();
                     <?php foreach ($allMonths as $monthKey => $monthName): ?>
                     <div class="month-option text-center">
                         <input type="checkbox" name="month[]" style="margin-left: 5px; margin-bottom: 4px;" value="<?php echo $monthName; ?>"
-                        <?php //if (in_array($monthName, $paidMonths)) echo 'checked disabled'; ?>>
+                        <?php if (in_array($monthName, $paidMonths)) echo 'checked disabled'; ?>>
                         <label><?php echo $monthName; ?></label>
                     </div>
                     <?php endforeach; ?>
@@ -397,7 +438,7 @@ $conn->close();
 <script src="../js/jquery-ui.min.js"></script>
 
 <script>
-   $(function() {
+$(function() {
     $("#account_search").autocomplete({
         source: function(request, response) {
             console.log("Recherche envoyée:", request.term);
@@ -406,7 +447,6 @@ $conn->close();
                 dataType: 'json',
                 data: { term: request.term },
                 success: function(data) {
-                    // console.log("Réponse reçue:", data); // Voir la réponse JSON ici
                     response(data);
                 },
                 error: function(xhr, status, error) {
@@ -417,45 +457,53 @@ $conn->close();
         },
         minLength: 1,
         select: function(event, ui) {
-            $('#account_number_display').text(ui.item.account_number);
-            $('#account_name_display').text(ui.item.account_name);
-            $('#expense_account_name').val(ui.item.name);
-            $('#category_display').text(ui.item.category);
-            $('#account_balance_display').text(ui.item.account_balance);
-            document.getElementById('due-amount').value = (parseFloat(ui.item.amount_sponsored) || 0).toFixed(2);
-            document.getElementById('remaining-fee').value = (parseFloat(ui.item.amount_sponsored) || 0).toFixed(2);
-            console.log("Selected id: ", ui.item.id);
-            $('#expense_account_id').val(ui.item.id);
+            $('#garant-id').val(ui.item.id);
+            $("#account_search").closest("form").submit();
         }
     });
 });
 
 
+document.getElementById('due-amount').value = (parseFloat(<?php echo $result1['amount_sponsored']; ?>) || 0).toFixed(2);
+document.getElementById('remaining-fee').value = (parseFloat(<?php echo $result1['amount_sponsored']; ?>) || 0).toFixed(2);
+document.addEventListener('DOMContentLoaded', function () {
 
-    const dueAmountDisplay = document.getElementById('due-amounte').value;
-    const dueAmountHidden = document.getElementById('due-amounte-hidden').value;
+    const dueAmountDisplay = document.getElementById('due-amount'); // Ensure this is a span or div
     const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
 
     function calculateTotalDue() {
         let selectedMonths = 0;
-        checkboxes.forEach(function(checkbox) {
+        checkboxes.forEach(function (checkbox) {
             if (checkbox.checked && !checkbox.disabled) {
                 selectedMonths++;
             }
         });
-        const remainingFee = document.getElementById('remaining-fee').value;
-        console.log(remainingFee);
 
+        const remainingFeeElement = document.getElementById('remaining-fee');
+        if (!remainingFeeElement) return; // Ensure the element exists
+
+        const remainingFee = parseFloat(remainingFeeElement.value) || 0; // Convert to number
         const totalDue = remainingFee * selectedMonths;
-        dueAmountDisplay.innerText = totalDue + ' أوقية جديدة';
-        dueAmountHidden.value = totalDue;
+console.log(totalDue);
+        if (dueAmountDisplay) {
+            // dueAmountDisplay.value = totalDue;
+            document.getElementById('due-amount').value = (parseFloat(totalDue) || 0).toFixed(2);
+
+        }
+        // if (dueAmountHidden) {
+        //     dueAmountHidden.value = totalDue;
+        // }
     }
 
-    checkboxes.forEach(function(checkbox) {
+    checkboxes.forEach(function (checkbox) {
         if (!checkbox.disabled) {
-            checkbox.addEventListener('click', calculateTotalDue);
+            checkbox.addEventListener('change', calculateTotalDue); // Use 'change' instead of 'click'
         }
     });
+
+    calculateTotalDue(); // Call once on page load
+});
+
 
 </script>
 
