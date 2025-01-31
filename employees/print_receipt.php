@@ -22,12 +22,6 @@ if ($result->num_rows > 0) {
 }
 
 
-session_start();
-
-if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    exit;
-}
 $name_connect = $_SESSION['username'];
 
 // Fetch payment IDs from URL parameters

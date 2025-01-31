@@ -2,15 +2,6 @@
 // Include database connection
 include 'db_connection.php';
 
-session_start();
-
-if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    header("Location: home.php");
-    exit;
-}
-
-
 $response = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isssisss", $employee_number, $full_name, $balance, $phone, $job_id, $salary, $subscriptionDate, $id_number);
+    $stmt->bind_param("isdsisss", $employee_number, $full_name, $balance, $phone, $job_id, $salary, $subscriptionDate, $id_number);
 
     if ($stmt->execute()) {
         $response = ['success' => true, 'message' => 'تمت العملية بنجاح'];

@@ -19,6 +19,7 @@ if (!isset($_SESSION['userid'])) {
 
 $message = "";
 $editParrainer = null;
+$selectedDonation = 'v';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
@@ -26,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $balance = trim($_POST['balance'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $donate_id = trim($_POST['donate_id'] ?? '');
-    $selectedDonation = '';
     $amount_sponsored = trim($_POST['amount_sponsored'] ?? '');
     $parrainer_id = $_POST['parrainer_id'] ?? null;
 
@@ -284,7 +284,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
 <body>
 <div class="container">
     <div class="head">
-        <h1>إدارة الكفله</h1>
+        <h1>إدارة الكافون</h1>
         <button class="btn-head" onclick="window.location.href='../home.php'">الصفحة الرئيسية</button>
     </div>
 

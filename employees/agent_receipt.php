@@ -23,13 +23,6 @@ if ($result->num_rows > 0) {
     $last_year = $row['year_name'];
 }
 
-
-session_start();
-
-if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    exit;
-}
 $name_connect = $_SESSION['username'];
 
 $receiptId = isset($_GET['payment_ids']) ? $_GET['payment_ids'] : '';

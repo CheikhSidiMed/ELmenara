@@ -38,7 +38,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="../images/menar.png">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
@@ -63,6 +63,14 @@
             font-size: 1.2rem;
             height: 100%;
             margin: 0;
+        }
+        li a {
+            white-space: nowrap;
+            /* overflow: hidden; */
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 100%;
+            margin-left: -12px;
         }
         .metismenu li a {
             position: relative;
@@ -111,6 +119,24 @@
             border-top: 1px solid #ddd;
             margin: 20px 0;
         }
+        .sidebar-menu {
+            width: 20% !important;
+
+        }
+        /* .clo{
+            padding: 8px;
+            padding-left: 12px;
+            padding-left: 20px;
+            margin-top: -3px;
+            margin-left: 1.2% !important;
+            background: #000;
+        } */
+
+        @media (max-width: 768px) {
+            .sidebar-menu {
+                width: 87% !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -121,7 +147,7 @@
     <!-- page container area start -->
     <div class="page-container">
         <!-- sidebar menu area start -->
-        <div class="sidebar-menu">
+        <div class="sidebar-menu" >
             <div class="sidebar-header">
                 <div class="logo">
                     <a href="home.php"><img src="../images/menar.png" alt="logo"></a>
@@ -184,10 +210,10 @@
             <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                 <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
                 <ul class="collapse">
-                    <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> استمارة المتابعة الأسبوعية </a></li>
-                    <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> استمارة الحصيلة الشهرية</a></li>
+                    <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i>المتابعة الأسبوعية </a></li>
+                    <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
                     <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة تقييم </a></li>
-                    <li><a href="Teheji.php"><i class="fa fa-user-check"></i> استمارة تقييم أقسام التهجي</a></li>
+                    <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
                     <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                     <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                     <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
@@ -265,10 +291,10 @@
                         <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
                             <ul class="collapse">
-                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> استمارة المتابعة الأسبوعية </a></li>
-                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> استمارة الحصيلة الشهرية</a></li>
+                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
+                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
                                 <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> استمارة تقييم أقسام التهجي</a></li>
+                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
                                 <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                                 <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                                 <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
@@ -384,10 +410,10 @@
                         <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
                             <ul class="collapse">
-                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> استمارة المتابعة الأسبوعية </a></li>
-                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> استمارة الحصيلة الشهرية</a></li>
+                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
+                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
                                 <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> استمارة تقييم أقسام التهجي</a></li>
+                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
                                 <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                                 <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                                 <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
@@ -457,10 +483,10 @@
                 <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
                     <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
                     <ul class="collapse">
-                        <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> استمارة المتابعة الأسبوعية </a></li>
-                        <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> استمارة الحصيلة الشهرية</a></li>
+                        <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
+                        <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
                         <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> استمارة تقييم أقسام التهجي</a></li>
+                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
                         <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                         <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
@@ -473,12 +499,13 @@
                 <ul class="collapse">
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                 <ul class="collapse list-unstyled">
-                    <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
-                    <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
-                    <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
-                    <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>
-                    <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
-                    <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>     تسجيل عملية تبرع </a></li>
+                    <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>  تسديد رسوم التلاميذ </a></li>
+                    <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>  التسديد الأسري</a></li>
+                    <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>  تسديد رسوم الأنشطة </a></li>
+                    <li><a href="operation.php"><i class="fa fa-calculator"></i>  تسجيل عملية حسابية</a></li>
+                    <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>  عمليات المصاريف </a></li>
+                    <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية تبرع </a></li>
+                    <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكافون </a></li>
                 </ul>
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                     <ul class="collapse list-unstyled">
@@ -486,7 +513,8 @@
                         <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                         <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                         <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
-                        <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li>
+                        <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكافون</a></li>
+                        <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> النقل بين الحسابات البنكيه</a></li>
                         <li><a href="up_payment_nature.php"><i class="fa fa-tags"></i>إدارة طبيعة الدفع</a></li>
                         <li><a href="#" data-toggle="modal" data-target="#c"><i class="fa fa-credit-card"></i> إنشاء حساب بنكي جديد</a></li>
                         <li class="dropdown">
@@ -564,6 +592,7 @@
                             <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>
                             <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
                             <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>     تسجيل عملية تبرع </a></li>
+                            <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكافون </a></li>
                         </ul>
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                             <ul class="collapse list-unstyled">
@@ -571,7 +600,10 @@
                                 <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                                 <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                                 <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
-                                <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li>
+                                <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكافون</a></li>
+                                <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> النقل بين الحسابات البنكيه</a></li>
+
+                                <!-- <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li> -->
                                 <li><a href="up_payment_nature.php"><i class="fa fa-tags"></i>إدارة طبيعة الدفع</a></li>
                                 <li><a href="#" data-toggle="modal" data-target="#c"><i class="fa fa-credit-card"></i> إنشاء حساب بنكي جديد</a></li>
                                 <li class="dropdown">
@@ -651,13 +683,13 @@
         <!-- main content area start -->
         <div class="main-content">
             <div class="header-area">
-                <div class="nav-btn pull-left">
+                <div class="nav-btn pull-left clo">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
             </div>
-    </div> 
+        </div>
 
     <!-- offset area start -->
     <div class="offset-area">

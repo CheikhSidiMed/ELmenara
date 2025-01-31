@@ -25,13 +25,6 @@ if ($result->num_rows > 0) {
     $last_year = $row['year_name'];
 }
 
-
-session_start();
-
-if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    exit;
-}
 $name_connect = $_SESSION['username'];
 
 
@@ -47,26 +40,26 @@ $created_by = '';
 
 if (!empty($receipt_id)) {
     // Prepare placeholders for SQL IN clause
-    $sql = "SELECT 
+    $sql = "SELECT
         r.receipt_id AS payment_id,
         r.receipt_date,
         u.username AS created_by,
-        c.description AS transaction_description, 
+        c.description AS transaction_description,
         IFNULL(b.bank_name, 'نقدي') AS bank_name,
         SUM(c.paid_amount) AS paid_amount
-        FROM 
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             users u ON u.id = r.created_by
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-        WHERE 
+        WHERE
             r.receipt_id = ?
-        GROUP BY 
+        GROUP BY
             r.receipt_id;";
 
     $stmt = $conn->prepare($sql);

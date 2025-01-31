@@ -16,31 +16,9 @@ while ($row = $result->fetch_assoc()) {
     $branches[] = $row;
 }
 
-// Close the connection
-$conn->close();
-?>
 
-
-<?php
-// Include database connection
-include 'db_connection.php';
-// Start the session
-session_start();
-
-// Check if the session variable 'userid' is set
-if (!isset($_SESSION['userid'])) {
-    // If the user is not logged in, redirect them to the login page
-    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-    exit(); // Stop further execution
-}
-
-// Access session variables safely
 $userid = $_SESSION['userid'];
-$role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; // Use role_id instead of role_name
-
-// Now you can proceed with the rest of your page logic
-
-// Fetch the list of activities for the dropdown
+$role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null;
 $activities = [];
 $activity_result = $conn->query("SELECT id, activity_name FROM activities");
 
@@ -49,7 +27,6 @@ if ($activity_result->num_rows > 0) {
         $activities[] = $row;
     }
 }
-// Fetch job list from the jobs table
 $jobList = [];
 $sql = "SELECT id, job_name FROM jobs";
 $result = $conn->query($sql);

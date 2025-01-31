@@ -44,12 +44,11 @@ if ($result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اكتتاب الموظفين</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <!-- Google Font: Amiri -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap-4-5-2.min.css">
+    <link rel="stylesheet" href="css/tajawal.css">
     <style>
         body {
-            font-family: 'Amiri', serif;
+            font-family: 'Tajawal', serif;
             background-color: #f8f9fa;
         }
         .container {
@@ -136,7 +135,7 @@ if ($result->num_rows > 0) {
                 </div>
                 <div class="form-group col-md-6">
                     <label for="salary">الراتب</label>
-                    <input type="number" class="form-control form-control-lg" id="salary" name="salary" placeholder="الراتب" min="0" required>
+                    <input type="number" class="form-control form-control-lg" step="0.01" id="salary" name="salary" placeholder="الراتب" min="0" required>
                 </div>
             </div>
             <div class="form-row">
@@ -155,8 +154,6 @@ if ($result->num_rows > 0) {
     </div>
         </form>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

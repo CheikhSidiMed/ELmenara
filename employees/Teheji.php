@@ -23,7 +23,6 @@ if ($result->num_rows > 0) {
     $last_year = $row['year_name'];
 }
 
-session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['branch'] = $_POST['branch'];

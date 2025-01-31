@@ -81,13 +81,6 @@ $months1 = [
 ];
 
 
-session_start(); 
-
-// Ensure user is logged in
-if (!isset($_SESSION['userid'])) {
-    die("Error: User is not logged in.");
-}
-
 // Retrieve the connected user ID from the session
 $user_id = $_SESSION['userid'];
 

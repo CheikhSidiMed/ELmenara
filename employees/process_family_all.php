@@ -38,9 +38,9 @@ try {
     $agent_phone = $agent['phone'] ?? 'Unknown';
 
     // Query to select students with remaining balance
-    $query_count = "SELECT s.id, s.student_name 
-                    FROM students s 
-                    WHERE s.agent_id = ? 
+    $query_count = "SELECT s.id, s.student_name
+                    FROM students
+                    WHERE s.agent_id = ?
                       AND s.remaining > 0.00";
     $stmt_count = $conn->prepare($query_count);
     $stmt_count->bind_param("i", $agent_id);

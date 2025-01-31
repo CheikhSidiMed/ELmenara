@@ -487,11 +487,9 @@ $conn->close();
         </div>
         <!-- Actions -->
         <div class="col-12 col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center mt-3 mt-lg-0">
-            <!-- Home Button with Icon -->
             <a href="home.php" class="btn btn-primary d-flex align-items-center mb-2 mb-lg-0 me-lg-3">
                 <i class="bi bi-house-door-fill ms-2"></i> الرئيسية
             </a>
-            <!-- Financial Year Select -->
             <div class="d-flex align-items-center">
                 <label class="form-label mb-0 me-2 w-25" for="financial-year">السنة المالية</label>
                 <select id="financial-year" class="form-select w-auto">

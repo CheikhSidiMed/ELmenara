@@ -15,29 +15,29 @@ if (!isset($_SESSION['userid'])) {
 if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
     $sql = "SELECT
-            p.student_id, 
-            p.payment_date, 
-            s.student_name, 
-            GROUP_CONCAT(DISTINCT p.month ORDER BY p.month DESC SEPARATOR ' - ') AS months, 
-            SUM(p.due_amount) AS total_due_amount, 
-            SUM(p.paid_amount) AS total_paid_amount, 
-            SUM(p.remaining_amount) AS total_remaining_amount, 
-            p.payment_method, 
+            p.student_id,
+            p.payment_date,
+            s.student_name,
+            GROUP_CONCAT(DISTINCT p.month ORDER BY p.month DESC SEPARATOR ' - ') AS months,
+            SUM(p.due_amount) AS total_due_amount,
+            SUM(p.paid_amount) AS total_paid_amount,
+            SUM(p.remaining_amount) AS total_remaining_amount,
+            p.payment_method,
             b.bank_name
-        FROM 
+        FROM
             payments p
-        JOIN 
+        JOIN
             students s ON p.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON p.bank_id = b.account_id
-        WHERE 
+        WHERE
             s.id = ?
-        GROUP BY 
-            s.student_name, 
-            p.payment_date, 
-            p.payment_method, 
+        GROUP BY
+            s.student_name,
+            p.payment_date,
+            p.payment_method,
             b.bank_name
-        ORDER BY 
+        ORDER BY
             p.payment_date DESC;
         ";
     $stmt = $conn->prepare($sql);

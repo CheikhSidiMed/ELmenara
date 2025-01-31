@@ -13,6 +13,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
+
 $allMonths = [
     'October' => 'أكتوبر',
     'November' => 'نوفمبر',
@@ -33,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['garant_id'])) {
     $garant_id = $_GET['garant_id'];
 
     $sql1 = "SELECT g.id, g.name, g.phone, g.amount_sponsored, g.balance, g.donate_id, d.account_name, d.account_number
-    FROM garants AS g
-    LEFT JOIN donate_accounts AS d ON g.donate_id = d.id
-    WHERE g.id = ?";
+        FROM garants AS g
+        LEFT JOIN donate_accounts AS d ON g.donate_id = d.id
+        WHERE g.id = ?";
     $stmt1 = $conn->prepare($sql1);
     $stmt1->bind_param('s', $garant_id);
     $stmt1->execute();
@@ -90,7 +91,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Transaction</title>
+    <title> تسجيل عملية حسابية للتبرعات الكافون</title>
     <link href="../css/bootstrap-5.3.1.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link href="../css/bootstrap-icons.css" rel="stylesheet">
@@ -98,6 +99,8 @@ $conn->close();
     <link rel="stylesheet" href="../css/jquery-base-ui.css">
     <link rel="stylesheet" href="../css/sweetalert2.css">
     <script src="../js/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="../js/jquery-base-ui.css">
+
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
@@ -134,14 +137,32 @@ $conn->close();
         }
         .container-main {
             background-color: #ffffff;
-            border-radius: 12px;
+            border-radius: 8px;
+            border: 1px solid blue;
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             max-width: 1100px;
             margin: auto;
         }
+        .ser{
+            border-radius: 8px 0px 0px 8px !important;
+            margin-right: -2px;
+            border: 1px solid blue !important;
+            text-align: center !important;
+        }
+        #account_search:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 2px solid blue !important; /* Optional: Keeps a normal border */
+        }
+        input{
+            padding-right: 5px;
+        }
+        textarea{
+            padding-right: 7px;
+        }
+        
         .header-title {
-            font-family: 'Amiri', serif;
             font-size: 1.8rem;
             font-weight: bold;
             color: #1a73e8;
@@ -257,153 +278,227 @@ $conn->close();
             font-size: 2rem;
             margin: 0 10px;
         }
+
+        @media (max-width: 768px) {
+            body {
+            padding: 4px;
+        }
+            .container-main {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .method-section label {
+                font-size: .5rem;
+            }
+            .form-section label, #lbd {
+                font-weight: normal;
+                font-size: 1rem;
+            }
+            h4 {
+                font-size: 16px !important;
+            }
+            .months-card, .snd{
+                margin-right: -.5rem !important;
+                width: 100% !important;
+            }
+
+            h1 {
+                font-size: 19px !important;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="container-main">
-    <!-- Header Section -->
-<div class="row mb-3">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-    <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>   تسجيل عملية حسابية للتبرعات </h1>
-        <div class="d-flex align-items-center">
-            <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                <i class="bi bi-house-door-fill" style="margin-right: 5px;"></i>
-                الرئيسية
-            </a>
-            <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
-            <select id="financial-year" class="form-select w-100">
-                <option><?php echo $last_year; ?></option>
-            </select>
-        </div>
-    </div>
-</div>
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <h4 class="header-titlee">البحث عن الكافل(ة)</h4>
-            <form method="GET" action="">
-            <input type="hidden" name="garant_id" class="form-control" id="garant-id">
-                <div class="input-group">
-                    <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكافل(ة)">
-                    <button class="btn btn-outline-secondary border-2" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Account Info Section -->
-    <div class="row form-section">
-        <div class="col-12 row-underline">
-            <h4 class="section-title">معلومات الكافل(ة):</h4>
-        </div>
-        <hr>
-        <div class="row text-center">
-            <div class="col-6 col-lg-3">
-                <label>إسم الكافل(ة)</label>
-                <div id=""><?php echo $result1['name']; ?></div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <label>رقم الهاتف</label>
-                <div id=""><?php echo $result1['phone']; ?></div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <label>الرصيد</label>
-                <div id=""><?php echo $result1['balance']; ?></div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <label>الحساب المتكفل به</label>
-                <div><?php echo $result1['account_name']; ?></div>
-            </div>
-        </div>
-        <hr class="mt-3">
-    </div>
-
-
-    <form method="POST" action="process_donation.php">
-        <input type="hidden" name="garant_id" id="garant_id" value="<?php echo $result1['id']; ?>">
-        <input type="hidden" name="account_name" id="account_name" value="<?php echo $result1['account_name']; ?>">
-        <input type="hidden" name="name" id="name" value="<?php echo $result1['name']; ?>">
-
-        <div class="row form-section">
-    
-            <div style="border: 1px solid #ddd;" class="col-12 col-lg-5  text-center  border border-light bg-light months-card">
-                <div class="section-title" style="font-size: 22px;">الأشهر</div>
-                <div class="months-grid text-center">
-                    <?php foreach ($allMonths as $monthKey => $monthName): ?>
-                    <div class="month-option text-center">
-                        <input type="checkbox" name="month[]" style="margin-left: 5px; margin-bottom: 4px;" value="<?php echo $monthName; ?>"
-                        <?php if (in_array($monthName, $paidMonths)) echo 'checked disabled'; ?>>
-                        <label><?php echo $monthName; ?></label>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            
-            <div class="col-12 col-lg-7">
-                <div style="border: 1px solid #ddd;" class="payment-info">
-                    <div class="">
-                    <div class="form-group">
-                        <label for="due-amount">المستحقات</label>
-                        <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
-                        <input type="hidden" id="remaining-fee" value="0.00">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="paid-amount">المبلغ المسدد</label>
-                        <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
-                    </div>
-                    <div class="form-group">
-                        <label for="remaining-amount">الباقي</label>
-                        <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
-                    </div>
-                    </div>
-                    <div  class="payment-info">
-                        <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label>
-                        <select id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
-                            <option value="">اختر طريقة الدفع</option>
-                            <option value="نقدي">نقدي</option>
-                            <option value="بنكي">بنكي</option>
+    <div class="container-main">
+        <!-- Header Section -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <h1 class="header-title text-center text-md-start mb-3 mb-md-0">
+                        <i class="icon-left bi bi-file-earmark-text"></i> تسجيل عملية حسابية للتبرعات الكافون
+                    </h1>
+                    <div class="d-flex flex-row flex-sm-row align-items-center">
+                        <a href="../home.php" class="btn btn-primary d-flex align-items-center mb-2 mb-sm-0 me-0 me-sm-3">
+                            <i class="bi bi-house-door-fill me-2"></i> الرئيسية
+                        </a>
+                        <label class="form-select-title me-2" for="financial-year" style="width: 50px;">السنة المالية</label>
+                        <select id="financial-year" class="form-select w-auto">
+                            <option><?php echo $last_year; ?></option>
                         </select>
                     </div>
                 </div>
             </div>
-
-        <div class="text-center mt-4">
-            <button class="btn btn-primary" type="submit">تأكيد العملية</button>
         </div>
-    </form>
 
 
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="header-titlee">البحث عن الكافل(ة)</h4>
+                <form method="GET" action="">
+                    <input type="hidden" name="garant_id" class="form-control" id="garant-id">
+                    <div class="input-group">
+                        <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكافل(ة)">
+                        <button class="btn btn-outline-secondary border-2 ser" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    <!-- Bank Modal -->
-    <div class="modal fade" id="bankModal" tabindex="-1" aria-labelledby="bankModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="bankModalLabel">اختر البنك</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Account Info Section -->
+        <div class="row form-section">
+            <div class="col-12 row-underline">
+                <h4 class="section-title">معلومات الكافل(ة):</h4>
+            </div>
+            <hr>
+            <div class="row text-center">
+                <div class="col-6 col-lg-3">
+                    <label>إسم الكافل(ة)</label>
+                    <div id="lbd"><?php echo $result1['name'] ?? ''; ?></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <label>رقم الهاتف</label>
+                    <div id="lbd"><?php echo $result1['phone'] ?? ''; ?></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <label>الرصيد</label>
+                    <div id="lbd"><?php echo $result1['balance'] ?? ''; ?></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <label>الحساب المتكفل به</label>
+                    <div id="lbd"><?php echo $result1['account_name'] ?? ''; ?></div>
+                </div>
+            </div>
+            <hr class="mt-3">
         </div>
-        <div class="modal-body">
-            <select id="bank" name="bank" class="form-control" onchange="updateSelectedBankName()">
-                <?php foreach ($bankList as $bank): ?>
-                    <option value="<?php echo $bank['account_id']; ?>"><?php echo $bank['bank_name']; ?></option>
-                <?php endforeach; ?>
-            </select>
+
+
+        <form method="POST" action="process_donation.php">
+            <input type="hidden" name="garant_id" id="garant_id" value="<?php echo $result1['id']; ?>">
+            <input type="hidden" name="account_name" id="account_name" value="<?php echo $result1['account_name']; ?>">
+            <input type="hidden" name="name" id="name" value="<?php echo $result1['name']; ?>">
+
+            <div class="row form-section me-1">
+        
+                <div style="border: 1px solid #ddd;" class="col-12 col-lg-5 text-center h-100 bg-light months-card">
+                    <div class="section-title mb-3" style="font-size: 24px;">الأشهر</div>
+                    <div class="months-grid text-center me-4">
+                        <?php foreach ($allMonths as $monthKey => $monthName): ?>
+                        <div class="month-option text-center">
+                            <input type="checkbox" name="month[]" style="margin-left: 5px; margin-bottom: 4px;" value="<?php echo $monthName; ?>"
+                            <?php if (in_array($monthName, $paidMonths)) echo 'checked disabled'; ?>>
+                            <label><?php echo $monthName; ?></label>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-lg-7 snd">
+                    <div style="border: 1px solid #ddd;" class="payment-info d-flex flex-column flex-sm-row justify-content-between align-items-center ">
+                        <div class="me-2">
+                            <div class="form-group">
+                                <label for="due-amount">المستحقات</label>
+                                <input type="text" name="due_amount" id="due-amount" value="0.00" readonly>
+                                <input type="hidden" id="remaining-fee" value="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="paid-amount">المبلغ المسدد</label>
+                                <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
+                            </div>
+                            <div class="form-group">
+                                <label for="remaining-amount">الباقي</label>
+                                <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="payment-info d-flex flex-column w-100">
+                            <div class="d-flex flex-row" style="width: 90% !important;">
+                                <select id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
+                                    <option value="">اختر طريقة الدفع</option>
+                                    <option value="نقدي">نقدي</option>
+                                    <option value="بنكي">بنكي</option>
+                                </select>
+                                <!-- <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label> -->
+                            </div>
+                            <div style="width: 90% !important;">
+                                <div class="month-option d-flex flex-row">
+                                    <input type="checkbox" id="toggle-des" name="check_s" style="margin-left: 5px; margin-bottom: 4px;">
+                                    <label for="toggle-des">رسوم اخرى</label>
+                                </div>
+                                <textarea class="w-100" name="des" id="des" placeholder="اكتب هنا وصف العمليه" style="display: none;"></textarea>
+                                <input type="text" class="w-100 mt-1" name="paid_amount_des" id="arrears-aid" placeholder="المبلغ 0.00" style="display: none;">
+                                <div id="transaction-type" style="display: none; margin-top: 5px;">
+                                    <div class="w-96 d-flex flex-row">
+                                        <label class="me-5">
+                                            <input type="radio" name="transaction_type" value="plus">
+                                            له (+)
+                                        </label>
+                                        <label class="me-5">
+                                            <input type="radio" name="transaction_type" value="minus">
+                                            عليه (-)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-1">
+                <button class="btn btn-primary px-5 pt-2" type="submit">تأكيد العملية</button>
+            </div>
+        </form>
+
+
+
+        <!-- Bank Modal -->
+        <div class="modal fade" id="bankModal" tabindex="-1" aria-labelledby="bankModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bankModalLabel">اختر البنك</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <select id="bank" name="bank" class="form-control" onchange="updateSelectedBankName()">
+                            <?php foreach ($bankList as $bank): ?>
+                                <option value="<?php echo $bank['account_id']; ?>"><?php echo $bank['bank_name']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="selectBank()">تأكيد</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="selectBank()">تأكيد</button>
-        </div>
-        </div>
-    </div>
     </div>
 
 <script src="../js/jquery-3.5.1.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/jquery-ui.min.js"></script>
+
+<script>
+    document.getElementById('toggle-des').addEventListener('change', function() {
+        let desTextarea = document.getElementById('des');
+        let transType = document.getElementById('transaction-type');
+        let paidAmountInput = document.getElementById('arrears-aid');
+        
+        if (this.checked) {
+            desTextarea.style.display = 'block';
+            paidAmountInput.style.display = 'block';
+            transType.style.display = 'block';
+        } else {
+            desTextarea.style.display = 'none';
+            paidAmountInput.style.display = 'none';
+            transType.style.display = 'none';
+
+        }
+    });
+</script>
 
 <script>
     function calculateRemaining() {
@@ -441,76 +536,72 @@ $conn->close();
     }
 </script>
 
-<script src="../js/jquery-3.5.1.min.js"></script>
-<script src="../js/bootstrap.bundle.min.js"></script>
-<script src="../js/jquery-ui.min.js"></script>
 
 <script>
-$(function() {
-    $("#account_search").autocomplete({
-        source: function(request, response) {
-            console.log("Recherche envoyée:", request.term);
-            $.ajax({
-                url: 'fetch_garants.php',
-                dataType: 'json',
-                data: { term: request.term },
-                success: function(data) {
-                    response(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Erreur AJAX:", status, error);
-                    console.log(xhr.responseText);
+
+
+
+    $(function() {
+        $("#account_search").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: 'fetch_garants.php',
+                    dataType: 'json',
+                    data: { term: request.term },
+                    success: function(data) {
+                        response(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur AJAX:", status, error);
+                        console.log(xhr.responseText);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                $('#garant-id').val(ui.item.id);
+                $("#account_search").closest("form").submit();
+            }
+        });
+    });
+
+
+    document.getElementById('due-amount').value = (parseFloat(<?php echo $result1['amount_sponsored'] ?? 0; ?>) || 0).toFixed(2);
+    document.getElementById('remaining-fee').value = (parseFloat(<?php echo $result1['amount_sponsored'] ?? 0; ?>) || 0).toFixed(2);
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const dueAmountDisplay = document.getElementById('due-amount');
+        const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
+
+        function calculateTotalDue() {
+            let selectedMonths = 0;
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox.checked && !checkbox.disabled) {
+                    selectedMonths++;
                 }
             });
-        },
-        minLength: 1,
-        select: function(event, ui) {
-            $('#garant-id').val(ui.item.id);
-            $("#account_search").closest("form").submit();
+
+            const remainingFeeElement = document.getElementById('remaining-fee');
+            if (!remainingFeeElement) return;
+
+            const remainingFee = parseFloat(remainingFeeElement.value) || 0;
+            const totalDue = remainingFee * selectedMonths;
+
+            if (dueAmountDisplay) {
+                document.getElementById('due-amount').value = (parseFloat(totalDue) || 0).toFixed(2);
+                document.getElementById('arrears-paid').value = (parseFloat(totalDue) || 0).toFixed(2);
+                calculateRemaining();
+            }
         }
-    });
-});
 
-
-document.getElementById('due-amount').value = (parseFloat(<?php echo $result1['amount_sponsored']; ?>) || 0).toFixed(2);
-document.getElementById('remaining-fee').value = (parseFloat(<?php echo $result1['amount_sponsored']; ?>) || 0).toFixed(2);
-document.addEventListener('DOMContentLoaded', function () {
-
-    const dueAmountDisplay = document.getElementById('due-amount'); // Ensure this is a span or div
-    const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
-
-    function calculateTotalDue() {
-        let selectedMonths = 0;
         checkboxes.forEach(function (checkbox) {
-            if (checkbox.checked && !checkbox.disabled) {
-                selectedMonths++;
+            if (!checkbox.disabled) {
+                checkbox.addEventListener('change', calculateTotalDue);
             }
         });
 
-        const remainingFeeElement = document.getElementById('remaining-fee');
-        if (!remainingFeeElement) return; // Ensure the element exists
-
-        const remainingFee = parseFloat(remainingFeeElement.value) || 0; // Convert to number
-        const totalDue = remainingFee * selectedMonths;
-console.log(totalDue);
-        if (dueAmountDisplay) {
-            // dueAmountDisplay.value = totalDue;
-            document.getElementById('due-amount').value = (parseFloat(totalDue) || 0).toFixed(2);
-
-        }
-        // if (dueAmountHidden) {
-        //     dueAmountHidden.value = totalDue;
-        // }
-    }
-
-    checkboxes.forEach(function (checkbox) {
-        if (!checkbox.disabled) {
-            checkbox.addEventListener('change', calculateTotalDue); // Use 'change' instead of 'click'
-        }
+        calculateTotalDue();
     });
-
-    calculateTotalDue(); // Call once on page load
-});
 
 
 </script>

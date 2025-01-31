@@ -23,7 +23,6 @@ if ($result->num_rows > 0) {
     $new_account_number = $last_account_number + 1;
 }
 
-session_start();
 
 $message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
 unset($_SESSION['message']);

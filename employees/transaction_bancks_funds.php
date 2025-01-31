@@ -15,11 +15,6 @@ if ($conn->connect_error) {
     die("فشل الاتصال بقاعدة البيانات: " . $conn->connect_error);
 }
 
-session_start();
-
-if (!isset($_SESSION['userid'])) {
-    die("Error: User is not logged in.");
-}
 
 $user_id = $_SESSION['userid'];
 
