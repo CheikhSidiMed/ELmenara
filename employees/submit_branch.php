@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php'; // Include your database connection script
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
     $branch_name = $_POST['branchName'];

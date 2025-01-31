@@ -6,6 +6,13 @@ ini_set('display_errors', 1);
 include '../db_connection.php';
 header('Content-Type: application/json');
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: ../home.php");
+    exit;
+}
 $search = isset($_GET['term']) ? $_GET['term'] : '';
 
 $sql = "SELECT g.id, g.name, g.phone, g.amount_sponsored, g.balance, g.donate_id, d.account_name, d.account_number

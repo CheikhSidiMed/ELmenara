@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Fetch the next account number
 $nextAccountNumber = 6201; // Default starting number
 $sql = "SELECT MAX(account_number) AS last_account_number FROM expense_accounts"; // Adjust table name if needed

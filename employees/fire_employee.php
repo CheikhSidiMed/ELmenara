@@ -3,6 +3,15 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Vérifiez la connexion
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

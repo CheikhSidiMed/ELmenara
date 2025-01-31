@@ -1,6 +1,15 @@
 <?php
-// Include database connection
 include 'db_connection.php';
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 

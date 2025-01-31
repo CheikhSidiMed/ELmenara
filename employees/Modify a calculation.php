@@ -4,6 +4,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 $bankList = [];
 $sql = "SELECT account_id, bank_name FROM bank_accounts";
 $result = $conn->query($sql);

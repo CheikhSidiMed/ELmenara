@@ -1,6 +1,13 @@
 <?php
 // Start session
+
 session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
 
 // Include database connection
 include 'db_connection.php';

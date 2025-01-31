@@ -5,12 +5,14 @@ error_reporting(E_ALL);
 // Include database connection
 include 'db_connection.php';
 
-session_start();  // Ensure the session is started
 
-// Ensure user is logged in
+session_start();
+
 if (!isset($_SESSION['userid'])) {
-    die("Error: User is not logged in.");
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
 }
+
 
 // Retrieve the connected user ID from the session
 $user_id = $_SESSION['userid'];

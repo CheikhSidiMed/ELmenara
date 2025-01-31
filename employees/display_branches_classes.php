@@ -1,6 +1,15 @@
 <?php
 include 'db_connection.php'; // Include your database connection script
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Fetch branches and their associated classes
 $sql = "
     SELECT b.branch_id, b.branch_name, GROUP_CONCAT(c.class_id, ':', c.class_name ORDER BY c.class_name SEPARATOR ', ') AS classes

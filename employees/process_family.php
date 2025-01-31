@@ -9,13 +9,15 @@ error_reporting(E_ALL);
 // Set headers for JSON response
 header('Content-Type: application/json');
 
-session_start(); // Ensure the session is started
 
-// Ensure user is logged in
+session_start();
+
 if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    exit;
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
 }
+
+
 
 $receipts_id = '';
 $user_id = $_SESSION['userid'];

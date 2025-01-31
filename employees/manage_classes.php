@@ -5,6 +5,14 @@ error_reporting(E_ALL);
 
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 $message = '';
 
 // Handle Add/Update Class

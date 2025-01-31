@@ -2,6 +2,15 @@
 // Include the database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 try {
     // Query to get the last student ID
     $query = "SELECT id FROM students ORDER BY id DESC LIMIT 1";

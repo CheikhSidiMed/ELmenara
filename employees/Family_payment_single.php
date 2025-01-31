@@ -2,6 +2,15 @@
 // Include database connection http://localhost/ELmenara/employees/Family_payment.php  http://localhost/ELmenara/employees/student_payment.php?student_name=Med+tihiya
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 

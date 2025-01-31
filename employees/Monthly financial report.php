@@ -6,6 +6,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 
 $selectedMonth = $_GET['month'] ?? null;
 $year = $_GET['year'] ?? null;

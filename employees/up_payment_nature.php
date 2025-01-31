@@ -2,6 +2,14 @@
 // Database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Database connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

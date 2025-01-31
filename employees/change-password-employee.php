@@ -1,5 +1,13 @@
 <?php
-    session_start();
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
     error_reporting(0);
     include('../includes/dbconn.php');
     if(strlen($_SESSION['emplogin'])==0){   

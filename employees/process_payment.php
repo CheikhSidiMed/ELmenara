@@ -4,11 +4,15 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include 'db_connection.php';
 
+
 session_start();
 
 if (!isset($_SESSION['userid'])) {
-    die("Error: User is not logged in.");
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
 }
+
+
 
 $user_id = $_SESSION['userid'];
 $response = [];
@@ -184,11 +188,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $student_name = $stmt_student->get_result()->fetch_assoc()['student_name'];
         $stmt_student->close();
 
-        $months_paid = []; 
+        $months_paid = [];
 
         $tot_paid = ((float)$paid_amount  ?? 0 ) + ((float)$p_paid  ?? 0 )+ ((float)$registuration_fee  ?? 0 );
         
-        $m_h = implode(', ', $months); 
+        $m_h = implode(', ', $months);
         $d_n =  'الطالب(ة) سدد(ت)  ' . $student_name . ' الأشهر: { ' . $m_h .  ' } ';
 
         $stmt = $conn->prepare("

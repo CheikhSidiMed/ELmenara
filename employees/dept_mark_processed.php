@@ -1,10 +1,14 @@
 <?php
+
 session_start();
 
-// Vérifier si la session des étudiants traités est initialisée
-if (!isset($_SESSION['dept_students'])) {
-    $_SESSION['dept_students'] = [];
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
 }
+
+
 
 // Lire les données JSON de la requête POST
 $data = json_decode(file_get_contents('php://input'), true);

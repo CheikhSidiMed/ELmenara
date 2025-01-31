@@ -1,7 +1,13 @@
 <?php
 include 'db_connection.php';
+
 session_start();
 
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
 // Initialize processed students array in the session if not set
 if (!isset($_SESSION['processed_students'])) {
     $_SESSION['processed_students'] = [];

@@ -2,6 +2,15 @@
 // Include the database connection file
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Retrieve the selected year and filter type from the URL parameters
 $filterType = isset($_GET['filter']) ? $_GET['filter'] : 'class';
 $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';

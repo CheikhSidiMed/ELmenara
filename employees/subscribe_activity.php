@@ -5,7 +5,15 @@ error_reporting(E_ALL);
 
 include 'db_connection.php';
 
-$response = []; 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
+$response = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $student_id = $_POST['student_id'];

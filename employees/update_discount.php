@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php'; // Adjust the path as needed
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 $response = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

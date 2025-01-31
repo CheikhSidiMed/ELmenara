@@ -5,6 +5,15 @@ header('Content-Type: application/json');
 error_reporting(0);
 ini_set('display_errors', 0);
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $startMonth = 10; // Mois de début de l'année académique
 $endMonth = 9; // Mois de fin de l'année académique
 $currentYear = (int)date('Y');

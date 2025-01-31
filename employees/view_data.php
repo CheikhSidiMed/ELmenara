@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Fetch total counts for students, branches, classes, and agents
 $total_students = $conn->query("SELECT COUNT(*) AS total FROM students")->fetch_assoc()['total'];
 $total_branches = $conn->query("SELECT COUNT(*) AS total FROM branches")->fetch_assoc()['total'];

@@ -1,13 +1,17 @@
 <?php
 // Start the session and include the database connection
-session_start();
 include 'db_connection.php';
 
-// Check if the user is logged in
+
+session_start();
+
 if (!isset($_SESSION['userid'])) {
-    echo "<script type='text/javascript'> document.location = 'index.php'; </script>";
-    exit();
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
 }
+
+
 
 // Fetch user data based on the user ID passed in the URL
 if (isset($_GET['id'])) {

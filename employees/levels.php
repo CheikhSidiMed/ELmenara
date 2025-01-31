@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Fetch all levels
 $sql = "SELECT id, level_name, price FROM levels";
 $result = $conn->query($sql);

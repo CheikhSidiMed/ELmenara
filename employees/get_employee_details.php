@@ -2,6 +2,15 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 if (isset($_GET['employee_number'])) {
     $employee_number = $_GET['employee_number'];
 

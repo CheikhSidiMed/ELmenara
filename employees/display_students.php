@@ -4,6 +4,15 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Fetch student data from the database, including agent phone number
 $sql = "SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name, 

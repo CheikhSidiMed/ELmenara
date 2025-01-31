@@ -1,6 +1,15 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Fetch job filter from the request
 $job_filter = null;
 if (isset($_GET['job_id'])) {

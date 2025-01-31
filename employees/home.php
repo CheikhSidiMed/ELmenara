@@ -2,10 +2,13 @@
     session_start();
     include 'db_connection.php';
 
+
+
     if (!isset($_SESSION['userid'])) {
         echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-        exit(); 
+        exit();
     }
+    
     $userid = $_SESSION['userid'];
     $role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; 
     $activities = [];

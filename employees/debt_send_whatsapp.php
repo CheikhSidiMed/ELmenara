@@ -4,7 +4,15 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include 'db_connection.php';
+
 session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
 
 if (!isset($_POST['selected_students']) || empty($_POST['selected_students'])) {
     echo "<div style='color: red;'>⚠️ لم يتم اختيار أي طالب.</div>";

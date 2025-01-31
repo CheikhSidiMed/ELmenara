@@ -5,6 +5,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 $sql = "
     SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place, 
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name, 

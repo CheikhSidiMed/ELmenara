@@ -2,11 +2,19 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 
 // Fetch payment history when a specific student is searched
 if ($_SERVER["REQUEST_METHOD"] == "GET" && !empty($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
-    $sql = "SELECT 
+    $sql = "SELECT
             p.student_id, 
             p.payment_date, 
             s.student_name, 

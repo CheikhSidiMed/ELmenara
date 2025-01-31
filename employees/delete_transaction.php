@@ -3,11 +3,16 @@ include 'db_connection.php';
 
 // Response array
 $response = ['success' => false, 'message' => ''];
-session_start(); 
+
+session_start();
 
 if (!isset($_SESSION['userid'])) {
-    die(json_encode(['success' => false, 'message' => 'Error: User is not logged in.']));
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
 }
+
+
 $user_id = $_SESSION['userid'];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

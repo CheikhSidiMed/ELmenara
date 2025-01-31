@@ -6,6 +6,15 @@ error_reporting(E_ALL);
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $payment_ids = isset($_GET['payment_ids']) ? explode(',', $_GET['payment_ids']) : [];
 
 $receipt_data = [];

@@ -5,7 +5,17 @@ include 'db_connection.php';
 if ($conn->connect_error) {
     die("فشل الاتصال: " . $conn->connect_error);
 }
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

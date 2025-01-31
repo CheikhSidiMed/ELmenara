@@ -2,6 +2,14 @@
 include 'db_connection.php'; // Include your database connection script
 
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 $students = $conn->query("SELECT id, student_name, class_id, branch_id, level_id, phone FROM students");
 $classes = $conn->query("SELECT class_id, class_name FROM classes");
 $branches = $conn->query("SELECT branch_id, branch_name FROM branches");

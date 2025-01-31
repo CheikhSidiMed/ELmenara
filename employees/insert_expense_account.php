@@ -2,6 +2,14 @@
 // Include the database connection file
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Get the POST data from the form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $accountNumber = $_POST['Nbr'];

@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Vérifie si 'activity_id' est défini et récupère sa valeur en tant qu'entier
 if (isset($_GET['activity_id'])) {
     $activity_id = intval($_GET['activity_id']);

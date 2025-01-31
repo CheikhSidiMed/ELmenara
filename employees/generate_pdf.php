@@ -2,6 +2,15 @@
 require('../fpdf/fpdf.php'); // Correct path to the FPDF library
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Get data for the PDF
 $transactions = json_decode($_POST['transactions'], true);
 

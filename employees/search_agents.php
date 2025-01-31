@@ -1,7 +1,14 @@
 <?php
 include 'db_connection.php';
 
-// Get the search term from the GET request
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
 $term = isset($_GET['term']) ? $_GET['term'] : '';
 
 // Prepare the query to search agents based on the search term

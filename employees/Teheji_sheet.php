@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];

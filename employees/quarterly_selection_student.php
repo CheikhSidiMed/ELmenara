@@ -4,7 +4,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Start session to store form selections
+
 session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
 
 // Include database connection
 include 'db_connection.php';

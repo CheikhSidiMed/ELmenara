@@ -3,6 +3,14 @@ include 'db_connection.php';
 
 $response = array('success' => false, 'message' => ''); 
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];
     $name = $_POST['name'];

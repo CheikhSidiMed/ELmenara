@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php'; // Include your database connection
+
 session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
 
 // Check if the session variable 'userid' is set
 if (!isset($_SESSION['userid'])) {

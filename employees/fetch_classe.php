@@ -1,6 +1,15 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 if (isset($_POST['branch_id'])) {
     $branch_id = $_POST['branch_id'];
     

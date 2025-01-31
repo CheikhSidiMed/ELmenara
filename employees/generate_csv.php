@@ -1,6 +1,15 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Get data for the CSV
 $transactions = json_decode($_POST['transactions'], true);
 

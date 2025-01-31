@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $level_id = $_POST['level_id'];
     $level_name = $_POST['level_name'];

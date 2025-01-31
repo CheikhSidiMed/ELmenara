@@ -2,6 +2,14 @@
 
 include 'db_connection.php'; 
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 
 if (isset($_POST['student_id'])) {
     $student_id = intval($_POST['student_id']);

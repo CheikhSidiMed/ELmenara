@@ -2,6 +2,14 @@
 // insert_level.php
 include 'db_connection.php';  // Include your database connection file
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $level_name = $_POST['level_name'];
     $price = $_POST['price'];

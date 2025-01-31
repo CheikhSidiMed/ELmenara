@@ -6,13 +6,15 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+
 session_start();
 
-// Ensure user is logged in
 if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    exit;
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
 }
+
+
 
 $user_id = $_SESSION['userid'];
 $student_id = $_POST['id'] ?? null;

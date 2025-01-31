@@ -1,14 +1,16 @@
 <?php
 // Include database connection
 include 'db_connection.php';
-// Start the session
+
 session_start();
 
-// Check if the session variable 'userid' is set
 if (!isset($_SESSION['userid'])) {
-    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-    exit();
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
 }
+
+
 
 // Access session variables safely
 $userid = $_SESSION['userid'];

@@ -1,6 +1,13 @@
 
 <?php
-// Include database connection
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
 include 'db_connection.php';
 // Initialize variables
 $last_year = "";

@@ -2,6 +2,15 @@
 // Include the database connection file
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Retrieve the selected year and filter type from the URL parameters
 $selectedYear = isset($_GET['year']) ? $_GET['year'] : '2024-2023';
 $filterType = isset($_GET['filter']) ? $_GET['filter'] : 'class';

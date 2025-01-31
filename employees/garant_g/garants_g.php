@@ -9,6 +9,13 @@ if ($conn->connect_error) {
     die("Échec de connexion : " . $conn->connect_error);
 }
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: ../home.php");
+    exit;
+}
 
 $message = "";
 $editParrainer = null;

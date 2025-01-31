@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Fetch all activities
 $sql_activities = "SELECT id, activity_name FROM activities";
 $result_activities = $conn->query($sql_activities);

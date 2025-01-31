@@ -2,6 +2,15 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $activity_id = isset($_GET['activity_id']) ? $_GET['activity_id'] : 0;
 
 $sql = "SELECT DISTINCT a.activity_name, 

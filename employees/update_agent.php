@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if (isset($_POST['agent_id'])) {
     $agent_id = $_POST['agent_id'];
     $name = $_POST['name'];

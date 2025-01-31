@@ -1,6 +1,14 @@
 <?php
 require_once 'db_connection.php'; // Include your database connection
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 // Fetch all suspended employees
 $query = "SELECT * FROM suspended_employees";
 $result = $conn->query($query);

@@ -1,6 +1,15 @@
 <?php
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $accountNumber = isset($_GET['account_number']) ? $_GET['account_number'] : null;
 $fromDate = isset($_GET['fromDate']) ? $_GET['fromDate'] : null;
 $toDate = isset($_GET['toDate']) ? $_GET['toDate'] : null;

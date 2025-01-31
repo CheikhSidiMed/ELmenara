@@ -4,6 +4,15 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include 'db_connection.php'; // Include the database connection
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Handle suspension of student
 if (isset($_POST['suspend_student_id'])) {
     $student_id = $_POST['suspend_student_id'];

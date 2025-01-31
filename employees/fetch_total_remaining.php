@@ -3,6 +3,15 @@ include 'db_connection.php';
 
 header('Content-Type: application/json');
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 $data = json_decode(file_get_contents("php://input"), true);
 $student_id = $data['student_id'];
 

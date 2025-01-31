@@ -2,6 +2,15 @@
 // Include database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];

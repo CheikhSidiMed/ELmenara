@@ -3,7 +3,14 @@ include 'db_connection.php'; // Include the database connection
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-// Handle restoration of a suspended student
+
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
 if (isset($_POST['restore_student_id'])) {
     $student_id = $_POST['restore_student_id'];
 

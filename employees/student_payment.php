@@ -3,6 +3,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 
 $startMonth = 10;
 $endMonth = 9;
@@ -788,13 +796,13 @@ $conn->close();
     $("#student_name").autocomplete({
         source: function(request, response) {
             $.ajax({
-                url: "autocomplete.php", // Ensure this path is correct
+                url: "autocomplete.php",
                 dataType: "json",
                 data: {
                     term: request.term
                 },
                 success: function(data) {
-                    // Prepare the response data to include names and phones
+
                     response($.map(data, function(item) {
                         return {
                             label: item.student_name,
@@ -820,17 +828,10 @@ $conn->close();
 
 
     function calculateRemaining() {
-    // Extract the due amount from the div with id "due-amount"
-    var dueAmount = parseFloat(document.getElementById('due-amounte').innerText) || 0;
-    
-    // Get the paid amount from the input field
-    var paidAmount = parseFloat(document.getElementById('arrears-paid').value) || 0;
-    
-    // Calculate the remaining amount
-    var remainingAmount = dueAmount - paidAmount;
-    
-    // Update the remaining amount field
-    document.getElementById('arrears-remaining').value = remainingAmount.toFixed(2);
+        var dueAmount = parseFloat(document.getElementById('due-amounte').innerText) || 0;
+        var paidAmount = parseFloat(document.getElementById('arrears-paid').value) || 0;
+        var remainingAmount = dueAmount - paidAmount;
+        document.getElementById('arrears-remaining').value = remainingAmount.toFixed(2);
     }
 
 
@@ -869,14 +870,14 @@ $conn->close();
 </script>
 
 <script>
+
     function openArrearsModal() {
-        document.getElementById('arrears-modal').style.display = 'flex'; // Change to 'flex' for center alignment
+        document.getElementById('arrears-modal').style.display = 'flex';
     }
 
     function closeArrearsModal() {
         document.getElementById('arrears-modal').style.display = 'none';
     }
-
 
     document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('amount_paid').addEventListener('input', calculer);
@@ -887,8 +888,8 @@ $conn->close();
         const amountPaid = parseFloat(document.getElementById('amount_paid').value) || 0;
         const remaining = totalArrears - amountPaid;
 
-        document.getElementById('remaining_amount').innerText = remaining >= 0 
-            ? remaining.toFixed(2) + ' أوقية جديدة' 
+        document.getElementById('remaining_amount').innerText = remaining >= 0
+            ? remaining.toFixed(2) + ' أوقية جديدة'
             : '0.00 أوقية جديدة';
     }
 
@@ -909,7 +910,6 @@ $conn->close();
             bankSelectElement.setAttribute('data-listener-added', 'true'); // Mark listener as added
         }
     } else if (paymentMethod === 'نقدي') {
-        // Clear selected bank details if the payment method is 'نقدي'
         clearSelectedBankNameInArrears();
     }
     }
@@ -919,28 +919,20 @@ $conn->close();
         const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
         const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
         
-        // Set the hidden input with the selected bank ID in arrears modal
         document.getElementById('selected-bank-id-arrears').value = selectedBankId;
-        
-        // Update the display with the selected bank name in the arrears modal
         document.getElementById('selected-bank-name-arrears').innerText = 'البنك المحدد: ' + selectedBankName;
     }
 
-    // Function to clear bank name in arrears modal
     function clearSelectedBankNameInArrears() {
         document.getElementById('selected-bank-name-arrears').innerText = '';
     }
 
-
-    // General function for other part of the page (outside the modal)
     function toggleBankModal(paymentMethod) {
         if (paymentMethod === 'بنكي') {
             var bankModal = new bootstrap.Modal(document.getElementById('bankModal'), {
                 keyboard: false
             });
             bankModal.show();
-
-            // Add an event listener to ensure the bank selection updates properly
             document.getElementById('bank').addEventListener('change', selectBank);
         } else if (paymentMethod === 'نقدي') {
             clearSelectedBankName();
@@ -951,11 +943,7 @@ $conn->close();
         const bankSelect = document.getElementById('bank');
         const selectedBankName = bankSelect.options[bankSelect.selectedIndex].text;
         const selectedBankId = bankSelect.options[bankSelect.selectedIndex].value;
-        
-        // Set the hidden input with the selected bank ID in the general section
         document.getElementById('selected-bank-id').value = selectedBankId;
-        
-        // Update the display with the selected bank name
         document.getElementById('selected-bank-name').innerText = 'البنك المحدد: ' + selectedBankName;
     }
 

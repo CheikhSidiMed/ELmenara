@@ -5,6 +5,15 @@ error_reporting(E_ALL);
 // Connexion à la base de données
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Vérification de la réception de employee_id
 if (isset($_POST['employee_id'])) {
 

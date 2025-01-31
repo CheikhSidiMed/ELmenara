@@ -4,6 +4,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include '../db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: ../home.php");
+    exit;
+}
+
 
 $allMonths = [
     'October' => 'أكتوبر',
@@ -276,7 +284,6 @@ $conn->close();
             <h4 class="header-titlee">البحث عن الكافل(ة)</h4>
             <form method="GET" action="">
             <input type="hidden" name="garant_id" class="form-control" id="garant-id">
-
                 <div class="input-group">
                     <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكافل(ة)">
                     <button class="btn btn-outline-secondary border-2" type="submit">
@@ -316,8 +323,9 @@ $conn->close();
 
 
     <form method="POST" action="process_donation.php">
-        <input type="hidden" name="expense_account_id" id="expense_account_id" value="">
-        <input type="hidden" name="expense_account_name" id="expense_account_name" value="">
+        <input type="hidden" name="garant_id" id="garant_id" value="<?php echo $result1['id']; ?>">
+        <input type="hidden" name="account_name" id="account_name" value="<?php echo $result1['account_name']; ?>">
+        <input type="hidden" name="name" id="name" value="<?php echo $result1['name']; ?>">
 
         <div class="row form-section">
     

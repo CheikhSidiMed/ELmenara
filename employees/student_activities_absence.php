@@ -2,6 +2,14 @@
 // Connexion à la base de données
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+    exit();
+}
+
+
 if ($conn->connect_error) {
     die("فشل الاتصال: " . $conn->connect_error);
 }

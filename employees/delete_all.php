@@ -1,11 +1,14 @@
 <?php
 include 'db_connection.php';
+
 session_start();
 
-// Ensure the user has permissions (adjust based on your authorization setup)
 if (!isset($_SESSION['userid'])) {
-    die('Access Denied.');
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
 }
+
 
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

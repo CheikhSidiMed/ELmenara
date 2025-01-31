@@ -2,6 +2,14 @@
 // Include database connection
 include 'db_connection.php'; // Adjust the path as needed
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
 // Query to fetch students with a discount and their class names
 $sql = "SELECT s.id, s.student_name, c.class_name, s.fees, s.discount, (s.fees - s.discount) AS remaining 
         FROM students s

@@ -2,6 +2,15 @@
 // Include the database connection
 include 'db_connection.php';
 
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: home.php");
+    exit;
+}
+
+
 // Get the search query from the GET request
 $search = isset($_GET['term']) ? $_GET['term'] : '';
 
