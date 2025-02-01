@@ -70,20 +70,20 @@
             text-overflow: ellipsis;
             display: inline-block;
             max-width: 100%;
-            margin-left: -12px;
+            margin-left: -19px;
         }
         .metismenu li a {
             position: relative;
             display: block;
             color: #8d97ad;
-            font-size: 20px;
+            font-size: 19px;
             text-transform: capitalize;
             padding: 15px 15px;
             letter-spacing: 0;
             font-weight: 400;
         }
         .main-content {
-            height: 110vh;
+            height: 104%;
             background-image: url('../images/menar 2.png');
             background-size: cover;
             background-position: center;
@@ -120,7 +120,7 @@
             margin: 20px 0;
         }
         .sidebar-menu {
-            width: 20% !important;
+            width: 19.5% !important;
 
         }
         /* .clo{

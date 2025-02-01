@@ -13,7 +13,7 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -88,9 +88,21 @@ $conn->close();
             background-color: #ffffff;
             border-radius: 12px;
             padding: 20px;
+            border: 1px solid green;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             max-width: 1100px;
             margin: auto;
+        }
+        .ser{
+            border-radius: 8px 0px 0px 8px !important;
+            margin-right: -2px;
+            border: 1px solid blue !important;
+            text-align: center !important;
+        }
+        #employee_search:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 2px solid blue !important; /* Optional: Keeps a normal border */
         }
         .header-title {
             font-family: 'Tajawal', serif;
@@ -209,28 +221,59 @@ $conn->close();
             font-size: 2rem;
             margin: 0 10px;
         }
+
+        @media (max-width: 768px) {
+            body {
+            padding: 4px;
+        }
+            .container-main {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .method-section label {
+                font-size: .5rem;
+            }
+            .form-section label, #lbd {
+                font-size: 1rem;
+            }
+            h4 {
+                font-size: 16px !important;
+            }
+            .months-card, .snd{
+                margin-right: -.5rem !important;
+                width: 100% !important;
+            }
+            .wdth{
+                width: 100% !important;
+            }
+
+            h1 {
+                font-size: 19px !important;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container-main">
     <!-- Header Section -->
-<div class="row mb-3">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-    <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i> تسجيل عملية حسابية</h1>
-        <div class="d-flex align-items-center">
-            <!-- Home Button with Icon -->
-            <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                <i class="bi bi-house-fill" style="margin-left: 5px;"></i> 
-                الرئيسية
-            </a>
-            <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
-            <select id="financial-year" class="form-select w-100">
-                <option> <?php echo htmlspecialchars($last_year); ?> </option>
-            </select>
+    <div class="row mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i> تسجيل عملية حسابية</h1>
+            <div class="d-flex align-items-center">
+                <!-- Home Button with Icon -->
+                <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
+                    <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
+                    الرئيسية
+                </a>
+                <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
+                <select id="financial-year" class="form-select w-100">
+                    <option> <?php echo htmlspecialchars($last_year); ?> </option>
+                </select>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Search Section -->
     <div class="row mb-4">
@@ -239,7 +282,7 @@ $conn->close();
             <form method="GET" action="">
                 <div class="input-group">
                     <input type="text" name="employee_search" class="form-control" id="employee_search" placeholder="ابحث باسم الموظف أو رقم الهاتف">
-                    <button class="btn btn-outline-secondary border-2" type="submit">
+                    <button class="btn btn-outline-secondary border-2 ser" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
@@ -248,117 +291,113 @@ $conn->close();
     </div>
 
     <!-- Account Info Section -->
-<?php if (isset($employee_data)): ?>
-<div class="row form-section">
-    <div class="col-12 row-underline">
-        <h2 class="section-title">معلومات الحساب:</h2>
-    </div>
-    <div class="col-12 d-flex justify-content-between text-center">
-        <div>
-            <label>رقم الحساب</label>
-            <div ><?php echo $employee_data['employee_number']; ?></div>
-        </div>
-        <div>
-            <label>الاسم الكامل</label>
-            <div ><?php echo $employee_data['full_name']; ?></div>
-        </div>
-        <div>
-            <label>نوع الحساب</label>
-            <div ><?php echo $employee_data['job_name']; ?></div>
-        </div>
-        <div>
-            <label>الرصيد</label>
-            <div><?php echo $employee_data['balance']; ?> أوقية جديدة</div>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
-
-<!-- Start the Form -->
-<form method="POST" action="process_transaction.php" onsubmit="return validateForm()">
-    <input type="hidden" name="transaction_type" id="transaction_type" value="">
-    <input type="hidden" name="employee_id" value="<?php echo $employee_data['id']; ?>">
-
-    <div class="row form-section">
-        <div class="col-12 row-underline">
-            <h2 class="section-title">معلومات العملية</h2>
-        </div>
-        <div class="info-container mt-3">
-            <div>
-                <label>نوع العملية <span style="color:red;">*</span></label>
-                <div>
-                    <!-- Clickable icons -->
-                    <label for="transaction_type_plus" style="cursor: pointer;">
-                        <i id="plusIcon" class="bi bi-plus-circle-fill" style="color: green; font-size: 2rem;"></i>
-                    </label>
-                    <input type="radio" name="transaction_type_radio" id="transaction_type_plus" value="plus" style="display:none;" required>
-
-                    <label for="transaction_type_minus" style="cursor: pointer;">
-                        <i id="minusIcon" class="bi bi-dash-circle-fill" style="color: red; font-size: 2rem;"></i>
-                    </label>
-                    <input type="radio" name="transaction_type_radio" id="transaction_type_minus" value="minus" style="display:none;" required>
+    <?php if (isset($employee_data)): ?>
+        <div class="row form-section">
+            <div class="col-12 row-underline">
+                <h2 class="section-title">معلومات الحساب:</h2>
+            </div>
+            <div class="col-12">
+                <div class="row text-lg-center">
+                    <div class="col-6 col-lg-3">
+                        <label>رقم الحساب</label>
+                        <div ><?php echo $employee_data['employee_number']; ?></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label>الاسم الكامل</label>
+                        <div ><?php echo $employee_data['full_name']; ?></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label>نوع الحساب</label>
+                        <div ><?php echo $employee_data['job_name']; ?></div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <label>الرصيد</label>
+                        <div><?php echo $employee_data['balance']; ?> أوقية جديدة</div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="mt-3">
-            <label for="transaction_description">بيان العملية <span style="color:red;">*</span></label>
-            <input type="text" id="transaction_description" name="transaction_description" class="form-control" value="" style="background-color: #e0e0e0; padding: 5px; border-radius: 5px;" required>
-        </div>
-        <div class="text-center mt-4">
-            <label for="amount">المبلغ <span style="color:red;">*</span></label>
-            <input type="text" id="amount" name="amount" class="form-control amount-display" value="" style="width: 100%; text-align: center;" required>
-            <span style="font-size: 1.5rem;">أوقية جديدة</span>
-        </div>
-    </div>
+    <?php endif; ?>
 
-    <!-- Payment Method Section -->
-    <div class="row form-section">
-        <div class="col-12">
-            <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label>
-            <select id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
-                <option value="">اختر طريقة الدفع</option>
-                <option value="نقدي">نقدي</option>
-                <option value="بنكي">بنكي</option>
+    <!-- Start the Form -->
+    <form method="POST" action="process_transaction.php" onsubmit="return validateForm()">
+        <input type="hidden" name="transaction_type" id="transaction_type" value="">
+        <input type="hidden" name="employee_id" value="<?php echo $employee_data['id']; ?>">
+        <input type="hidden" name="employee_name" value="<?php echo $employee_data['full_name']; ?>">
+
+        <div class="row form-section">
+            <div class="col-12 row-underline">
+                <h2 class="section-title">معلومات العملية</h2>
+            </div>
+            <div class="info-container mt-2">
+                <div>
+                    <label>نوع العملية <span style="color:red;">*</span></label>
+                    <div>
+                        <!-- Clickable icons -->
+                        <label for="transaction_type_plus" style="cursor: pointer;">
+                            <i id="plusIcon" class="bi bi-plus-circle-fill" style="color: green; font-size: 2rem;"></i>
+                        </label>
+                        <input type="radio" name="transaction_type_radio" id="transaction_type_plus" value="plus" style="display:none;" required>
+
+                        <label for="transaction_type_minus" style="cursor: pointer;">
+                            <i id="minusIcon" class="bi bi-dash-circle-fill" style="color: red; font-size: 2rem;"></i>
+                        </label>
+                        <input type="radio" name="transaction_type_radio" id="transaction_type_minus" value="minus" style="display:none;" required>
+                    </div>
+                </div>
+            </div>
+            <div style="border: 1px solid #ddd;" class="payment-info d-flex flex-column flex-sm-row gap-6">
+                <div class="mt-2  w-50 wdth">
+                    <label>المبلغ <span style="color:red; ">*</span></label>
+                    <input type="text" id="amount" name="amount" class="form-control mb-3" value="" style="width: 95%; text-align: center;" required>
+                    <div style="width: 95%;">
+                        <!-- <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label> -->
+                        <select style="width: 100%;" id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
+                            <option value="">اختر طريقة الدفع</option>
+                            <option value="نقدي">نقدي</option>
+                            <option value="بنكي">بنكي</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-2 w-50 wdth">
+                    <label for="transaction_description">بيان العملية <span style="color:red;">*</span></label>
+                    <textarea type="text" rows="3" id="transaction_description" name="transaction_description" class="form-control" value="" style="width: 98%;background-color: white; padding: 5px; border-radius: 5px;" required></textarea>
+                    
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button class="confirm-button" type="submit">تأكيد العملية</button>
+            </div>
+        </div>
+
+    </form>
+    <!-- End the Form -->
+
+
+
+
+    <!-- Bank Modal -->
+    <div class="modal fade" id="bankModal" tabindex="-1" aria-labelledby="bankModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="bankModalLabel">اختر البنك</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <select id="bank" name="bank" class="form-control" onchange="updateSelectedBankName()">
+                <?php foreach ($bankList as $bank): ?>
+                    <option value="<?php echo $bank['account_id']; ?>"><?php echo $bank['bank_name']; ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
-
-        <!-- Display the selected bank name and value -->
-        <div id="selected-bank-name" style="margin-top: 15px; font-weight: bold; color: #1a73e8; text-align: center; font-size: 1.2rem;"></div>
-        <input type="hidden" id="selected-bank-id" name="bank">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="selectBank()">تأكيد</button>
+        </div>
+        </div>
     </div>
-
-    <!-- Submit Button -->
-    <div class="text-center mt-4">
-        <button class="confirm-button" type="submit">تأكيد العملية</button>
     </div>
-</form>
-<!-- End the Form -->
-
-
-
-
-<!-- Bank Modal -->
-<div class="modal fade" id="bankModal" tabindex="-1" aria-labelledby="bankModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="bankModalLabel">اختر البنك</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <select id="bank" name="bank" class="form-control" onchange="updateSelectedBankName()">
-            <?php foreach ($bankList as $bank): ?>
-                <option value="<?php echo $bank['account_id']; ?>"><?php echo $bank['bank_name']; ?></option>
-            <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="selectBank()">تأكيد</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script src="js/jquery-3.5.1.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>

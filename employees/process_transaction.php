@@ -21,7 +21,8 @@ $user_id = $_SESSION['userid'];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $transaction_type = $_POST['transaction_type'] ?? null;
-    $employee_id = $_POST['employee_id'] ?? null; 
+    $employee_id = $_POST['employee_id'] ?? null;
+    $employee_name = $_POST['employee_name'] ?? null;
     $amount = $_POST['amount'] ?? 0;
     $payment_method = $_POST['payment_method'] ?? '';
     $bank_id = isset($_POST['bank']) && $_POST['bank'] !== '' ? $_POST['bank'] : null;
@@ -29,18 +30,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // If no bank is provided, set a default fund_id value
     $fund_id = isset($_POST['bank']) && $_POST['bank'] !== '' ? null : 1;
     $transaction_description = $_POST['transaction_description'] ?? '';
-    // Fetch the employee's full name based on employee_id
-    $stmt = $conn->prepare("SELECT full_name FROM employees WHERE id = ?");
-    $stmt->bind_param('i', $employee_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $employee = $result->fetch_assoc();
-    $employee_name = $employee ? $employee['full_name'] : '';
 
     // Sanitize transaction_description to remove unwanted newlines
     $transaction_description = str_replace(["\r", "\n"], '', $_POST['transaction_description'] ?? '');
-
-    $tr_ption =  ' الموظف(ة): ' . $employee_name . ',  ' . $transaction_description;
+    $tr_ption =  ' الموظف(ة): ' . $employee_name . ':  { ' . $transaction_description . " }";
 
     // Insert data into receipts
     $stmt = $conn->prepare("INSERT INTO receipts (receipt_date, total_amount, receipt_description, created_by)
@@ -50,23 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $receipts_id = $conn->insert_id;
 
-    $stmt = $conn->prepare("
-        INSERT INTO combined_transactions (employee_id, type, description, paid_amount, payment_method, bank_id, user_id, fund_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    
+    $stmt = $conn->prepare(" INSERT INTO combined_transactions (employee_id, type, description, paid_amount, payment_method, bank_id, user_id, fund_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssss", $employee_id, $transaction_type, $tr_ption, $amount, $payment_method, $bank_id, $user_id, $fund_id);
-    
     $stmt->execute();
-
-    // Retrieve the last inserted transaction ID
     $transaction_id = $conn->insert_id;
 
     // Insert into `receipt_payments`
-    $stmt = $conn->prepare("
-    INSERT INTO receipt_payments (receipt_id, transaction_id)
-    VALUES (?, ?)
-    ");
+    $stmt = $conn->prepare("INSERT INTO receipt_payments (receipt_id, transaction_id) VALUES (?, ?)");
     $stmt->bind_param("ss", $receipts_id, $transaction_id);
     $stmt->execute();
 
@@ -80,9 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fund_id = null;
         $bank_account_id = null;
     
-        // Adjust balances based on transaction type
         if ($transaction_type === 'minus' && $amount > 0) {
-            // Deduct from fund or bank balance
             if ($payment_method === 'نقدي') {
                 $sql = "UPDATE funds SET balance = balance - ? WHERE id = 1";
                 $stmt = $conn->prepare($sql);
@@ -130,16 +111,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('sdsiiii', $tr_ption, $amount, $transaction_type, $fund_id, $bank_account_id, $employee_id, $user_id);
-    
         $stmt->execute();
-    
-        // Commit transaction  
+        
         $conn->commit();
     
         header("Location: operation.php?status=success&message=" . urlencode("تمت العملية بنجاح"));
         exit();
     } catch (Exception $e) {
-        // Rollback in case of error
         $conn->rollback();
     
         header("Location: operation.php?status=error&message=" . urlencode("حدث خطأ: " . $e->getMessage()));
@@ -147,5 +125,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } finally {
         $conn->close();
     }
-}    
+}
 
