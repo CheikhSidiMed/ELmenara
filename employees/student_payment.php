@@ -81,7 +81,6 @@ $months1 = [
 ];
 
 
-// Retrieve the connected user ID from the session
 $user_id = $_SESSION['userid'];
 
 
@@ -151,11 +150,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
         }
         $monthsBefore = array_merge($monthsBefore1, $monthsBefore2);
 
-    
-        
-        // $monthsBefore[] = $monthsArabic[$registrationMonth];
-
-       
         $paidMonthsQuery = "SELECT month FROM payments WHERE student_id = ? ";
         $stmt2 = $conn->prepare($paidMonthsQuery);
         $stmt2->bind_param('i', $student_data['id']);
@@ -168,14 +162,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
             
         }
 
-        // $paidMonths_with[] = $months1[$registrationMonth];
-    $combinedMonths = array_merge($paidMonths_with, $monthsBefore);
-    
-    $paidMonths = array_unique($combinedMonths);
-    // foreach ($academicMonths as $combined){
-
-    //     echo $combined. '<br>';
-    // }
+        $combinedMonths = array_merge($paidMonths_with, $monthsBefore);
+        $paidMonths = array_unique($combinedMonths);
 
         $stmt2->close();
     } else {
@@ -499,6 +487,17 @@ $conn->close();
             background-color: #145a85; /* Even darker blue on click */
             transform: translateY(1px); /* Slight push down on click */
         }
+        .ser{
+            border-radius: 8px 0px 0px 8px !important;
+            margin-right: -2px;
+            border: 1px solid blue !important;
+            text-align: center !important;
+        }
+        #student_name:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 2px solid blue !important; /* Optional: Keeps a normal border */
+        }
 
     </style>
 </head>
@@ -507,24 +506,21 @@ $conn->close();
 <div class="container-main">
      <!-- Header Section -->
     <div class="row mb-3">
-        <!-- <div class="col-12 d-flex justify-content-between align-items-center"> -->
-            <div class="col-12 col-lg-6 d-flex align-items-center">
-                <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>تسديد رسوم الطلاب عن طريق الطالب</h1>
+        <div class="col-12 col-lg-6 d-flex align-items-center">
+            <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>تسديد رسوم الطلاب عن طريق الطالب</h1>
+        </div>
+        <div class="col-12 col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center mt-3 mt-lg-0">
+            <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
+                <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i>
+                الرئيسية
+            </a>
+            <div class="d-flex align-items-center">
+                <label class="form-label mb-0 me-2 w-25" for="financial-year">السنة المالية</label>
+                <select id="financial-year" class="form-select w-auto">
+                    <option><?php echo $last_year; ?></option>
+                </select>
             </div>
-            <div class="col-12 col-lg-6 d-flex flex-wrap justify-content-lg-end align-items-center mt-3 mt-lg-0">
-                <!-- Home Button with Icon -->
-                <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                    <i class="bi bi-house-door-fill" style="margin-left: 5px;"></i> 
-                    الرئيسية
-                </a>
-                <div class="d-flex align-items-center">
-                    <label class="form-label mb-0 me-2 w-25" for="financial-year">السنة المالية</label>
-                    <select id="financial-year" class="form-select w-auto">
-                        <option><?php echo $last_year; ?></option>
-                    </select>
-                </div>
-            </div>
-        <!-- </div> -->
+        </div>
     </div>
     
     <!-- Search Section -->
@@ -536,7 +532,7 @@ $conn->close();
 
                 <div class="input-group">
                     <input type="text" name="student_name" class="form-control" id="student_name" placeholder="  الإسم الكامل لطالب ">
-                    <button class="btn btn-outline-secondary border-2" type="submit">
+                    <button class="btn btn-outline-secondary border-2 ser" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
@@ -583,14 +579,14 @@ $conn->close();
                     <!-- Dues -->
                     <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <label>المستحقات</label>
-                        <div id="due-amounte">0 أوقية جديدة</div>
+                        <div style="color: green; font-weight: bold;" id="due-amounte">0 أوقية جديدة</div>
                         <input type="hidden" name="due_amounte" id="due-amount-hidden" value="0">
                     </div>
 
                     <!-- Arrears -->
                     <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <label>المتأخرات</label>
-                        <div><?php echo number_format($total_remaining, 2); ?> أوقية جديدة</div>
+                        <div style="color: red; font-weight: bold;"><?php echo number_format($total_remaining, 2); ?> أوقية جديدة</div>
                     </div>
                 </div>
             </div>
@@ -604,7 +600,7 @@ $conn->close();
         <input type="hidden" name="due_amount" id="due-amount-hidden" value="<?php echo $student_data['remaining']; ?>">
         <input type="hidden" name="due_amounte" id="due-amounte-hidden" value="0">
 
-        <div class="row form-section">
+        <div class="row form-section ms-lg-1">
             <div class="col-12 col-lg-6">
                 <div class="payment-info" style="border: 1px solid #ddd;" >
                     <div>
@@ -639,7 +635,6 @@ $conn->close();
                         <input type="text" name="p_paid" id="p-paid" placeholder="0,00">
                     </div>
                 </div>
-
 
                 </div>
 
@@ -833,6 +828,7 @@ $conn->close();
 <script>
     const remainingFee = <?php echo $student_data['remaining']; ?>;
     const dueAmountDisplay = document.getElementById('due-amounte');
+    const paidAmountDisplay = document.getElementById('arrears-paid');
     const dueAmountHidden = document.getElementById('due-amounte-hidden');
     const checkboxes = document.querySelectorAll('.months-card input[type="checkbox"]');
 
@@ -847,6 +843,8 @@ $conn->close();
         const totalDue = remainingFee * selectedMonths;
         dueAmountDisplay.innerText = totalDue + ' أوقية جديدة';
         dueAmountHidden.value = totalDue;
+        paidAmountDisplay.value = totalDue;
+        calculateRemaining();
     }
 
     checkboxes.forEach(function(checkbox) {

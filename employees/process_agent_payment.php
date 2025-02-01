@@ -7,14 +7,11 @@ error_reporting(E_ALL);
 include 'db_connection.php';
 $conn->set_charset("utf8mb4");
 $response = array('success' => false, 'message' => '');
-s
 session_start();
 
 if (!isset($_SESSION['userid'])) {
-    echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-    exit();
+    die("Error: User is not logged in.");
 }
-
 
 
 $user_id = $_SESSION['userid'];

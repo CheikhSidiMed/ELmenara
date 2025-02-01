@@ -43,38 +43,35 @@ $total_paid_rest = 0;
 $student_remaining_sum = 0;
 
 if (!empty($student_id)) {
-    $sql = "SELECT 
-        r.receipt_id AS payment_id, 
-        s.phone,
-        r.total_amount, 
-        r.receipt_date,
-        s.student_name AS student_name, 
-        IFNULL(b.bank_name, 'نقدي') AS bank_name,  
-        IFNULL(cl.class_name, 'N/A') AS student_class,
-        SUM(c.remaining_amount) AS remaining_amount, 
-        s.remaining AS student_remaining, 
-        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid, 
-        SUM(c.paid_amount) AS total_paid, 
-        c.description AS transaction_descriptions
-
-        FROM 
+    $sql = "SELECT
+            r.receipt_id AS payment_id,
+            s.phone,
+            r.total_amount,
+            r.receipt_date,
+            s.student_name AS student_name,
+            IFNULL(b.bank_name, 'نقدي') AS bank_name,
+            IFNULL(cl.class_name, 'N/A') AS student_class,
+            SUM(c.remaining_amount) AS remaining_amount,
+            s.remaining AS student_remaining,
+            GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
+            SUM(c.paid_amount) AS total_paid,
+            c.description AS transaction_descriptions
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             students s ON c.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             classes cl ON s.class_id = cl.class_id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-        WHERE 
-            c.description NOT LIKE 'تم إلغاء%' AND 
-            r.student_id LIKE ?  
-            AND DATE(r.receipt_date) >= DATE(NOW() - INTERVAL 12 HOUR)        
-        GROUP BY 
-            r.receipt_id, s.class_id;";
+        WHERE
+            c.description NOT LIKE 'تم إلغاء%' AND r.student_id LIKE ?
+        GROUP BY
+            r.receipt_id, s.class_id DESC LIMIT 1;";
 
     $stmt = $conn->prepare($sql);
 
@@ -109,7 +106,7 @@ if (!empty($student_id)) {
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
         }
-    } 
+    }
 
     $stmt->close();
 
@@ -126,148 +123,6 @@ $conn->close();
     <title>إيصال الدفع</title>
     <link rel="stylesheet" href="css/bootstrap-4-5-2.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <!-- <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #f5f5f5;
-            direction: rtl;
-            text-align: right;
-        }
-
-        .receipt {
-            background-color: white;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 5px;
-            margin: auto;
-            width: 100%; /* Full width on screen */
-        }
-
-        .receipt-header img {
-            width: 100%;
-            height: auto;
-            border-bottom: 2px solid #007b5e;
-            margin-bottom: 20px;
-        }
-
-        .info-line {
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #5a5a5a;
-        }
-
-        .info-line span {
-            color: #007b5e;
-            font-weight: bold;
-        }
-
-        .info-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .info-container div {
-            flex: 1;
-            text-align: center;
-        }
-
-        .info-container div:not(:last-child) {
-            margin-right: 10px;
-        }
-
-        .info-container .highlight {
-            color: #007b5e;
-            font-weight: bold;
-        }
-
-        .summary-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .summary-container div {
-            flex: 1;
-            text-align: center;
-            font-weight: bold;
-            color: #5a5a5a;
-        }
-
-        .summary-container .text-primary {
-            color: #17a2b8 !important;
-        }
-
-        .footer-note {
-            text-align: right;
-            margin-top: 20px;
-            font-weight: bold;
-            color: #5a5a5a;
-        }
-
-
-        @media print {
-            @page {
-                size: A5;
-                margin: 0;
-            }
-
-            body {
-                margin: 0;
-                padding: 0px;
-                font-size: 10pt;
-                color: #000; /* Force text to black */
-            }
-
-            .container {
-                max-width: 1200px !important;
-                margin: 0 auto;
-                margin-right: -67px !important;
-
-                padding: 0 2px;
-                text-align: center;
-            }
-
-            .receipt {
-                max-width: 80% !important;
-                margin: 0 auto;
-                padding: 0px;
-                border: none;
-                color: #000;
-                /* page-break-inside: avoid; */
-            }
-
-            table {
-                width: 100% !important;
-                border-collapse: collapse;
-            }
-
-            th, td {
-                padding: 0px;
-                border: 1px solid #000;
-                text-align: center;
-                font-size: 9pt !important;
-            }
-
-            /* Styling for emphasis */
-            .highlight {
-                font-weight: bold;
-                font-size: 9.5pt;
-                color: #000;
-            }
-
-            /* Hide unnecessary print elements */
-            .no-print, .print-button {
-                display: none;
-            }
-        }
-
-    </style> -->
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
@@ -448,10 +303,10 @@ $conn->close();
                 <strong>وصل رقم:</strong> <?php echo sprintf("%010d", $resptId); ?>
             </div>
             <div>
-                <strong>بتاريخ:</strong> <?php 
-                    $formatted_date = date('Y-m-d', strtotime($receipt_date)); 
+                <strong>بتاريخ:</strong> <?php
+                    $formatted_date = date('Y-m-d', strtotime($receipt_date));
                     $formatted_time = date('H:i:s', strtotime($receipt_date));
-                    echo $formatted_date . ' | ' . $formatted_time; 
+                    echo $formatted_date . ' | ' . $formatted_time;
                     ?>
             </div>
             <div>

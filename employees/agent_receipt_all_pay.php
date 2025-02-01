@@ -47,45 +47,44 @@ $created_by = '';
 
 
 if (!empty($agent_id)) {
-    $sql = "SELECT 
-        r.receipt_id AS payment_id, 
-        a.agent_id, 
-        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name, 
+    $sql = "SELECT
+        r.receipt_id AS payment_id,
+        a.agent_id,
+        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name,
         a.phone AS agent_phone,
         r.total_amount,
         r.receipt_date,
         u.username AS created_by,
-        s.student_name AS student_name, 
-        IFNULL(b.bank_name, 'نقدي') AS bank_name,  
+        s.student_name AS student_name,
+        IFNULL(b.bank_name, 'نقدي') AS bank_name,
         IFNULL(cl.class_name, 'N/A') AS student_class,
-        SUM(c.remaining_amount) AS remaining_amount, 
-        s.remaining AS student_remaining, 
-        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid, 
-        SUM(c.paid_amount) AS total_paid, 
+        SUM(c.remaining_amount) AS remaining_amount,
+        s.remaining AS student_remaining,
+        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
+        SUM(c.paid_amount) AS total_paid,
         COALESCE(c.description, 'دفع رسوم اشهر ') AS transaction_descriptions
 
-        FROM 
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             students s ON c.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             agents a ON a.agent_id = r.agent_id
-        LEFT JOIN 
+        LEFT JOIN
             users u ON u.id = r.created_by
-        LEFT JOIN 
+        LEFT JOIN
             classes cl ON s.class_id = cl.class_id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-        WHERE 
+        WHERE
             c.description NOT LIKE 'تم إلغاء%' AND
-            r.agent_id LIKE ?  
-            AND DATE(r.receipt_date) >= DATE(NOW() - INTERVAL 12 HOUR)
-        GROUP BY 
-            s.student_name, s.class_id;";
+            r.agent_id LIKE ?
+        GROUP BY
+            s.student_name, s.class_id DESC LIMIT 1;";
 
     $stmt = $conn->prepare($sql);
 
@@ -123,63 +122,11 @@ if (!empty($agent_id)) {
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
         }
-    } 
+    }
 
     $stmt->close();
 
 
-//     $sql = "SELECT 
-//     t.id, 
-//     t.agent_id, 
-//     a.agent_name AS agent_name, 
-//     a.phone AS agent_phone, 
-//     s.student_name AS student_name, 
-//     t.transaction_description AS transaction_description, 
-//     IFNULL(b.bank_name, 'نقدي') AS bank_name,  
-//     IFNULL(c.class_name, 'N/A') AS student_class,
-//     SUM(t.amount) AS remaining_amount, 
-//     SUM(t.amount) AS total_paid
-//     FROM 
-//         transactions t
-//     LEFT JOIN 
-//         agents a ON t.agent_id = a.agent_id
-//     LEFT JOIN 
-//         students s ON t.student_id = s.id
-//     LEFT JOIN 
-//         classes c ON s.class_id = c.class_id
-//     LEFT JOIN 
-//         bank_accounts b ON t.bank_account_id = b.account_id
-//     WHERE 
-//         t.agent_id LIKE ?  
-//         AND t.transaction_date >= NOW() - INTERVAL 24 HOUR
-//     GROUP BY 
-//         s.student_name, c.class_id;";
-
-// $stmt = $conn->prepare($sql);
-
-// // Check for statement errors
-// if ($stmt === false) {
-//     die('Error preparing the statement: ' . $conn->error);
-// }
-
-// // Bind parameters
-// $stmt->bind_param('i', $agent_id);
-
-// // Execute and fetch results
-// $stmt->execute();
-// $result = $stmt->get_result();
-
-// while ($row = $result->fetch_assoc()) {
-//     $receipt_data_rest[] = $row;
-//     $agent_name = $row['agent_name'];
-//     $student_name = $row['student_name'];
-//     $agent_phone = $row['agent_phone'];
-//     $bank_name = $row['bank_name'];
-//     $total_paid_rest = $row['total_paid'];
-//     $total_paid_sum_rest += $row['total_paid'];
-// }
-
-// $stmt->close();
 }
 
 $conn->close();

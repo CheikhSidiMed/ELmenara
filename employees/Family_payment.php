@@ -470,7 +470,20 @@ $conn->close();
         input[readonly] {
             pointer-events: none;
             opacity: 0.6;
-            accent-color: red;        }
+            accent-color: red;
+        }
+        .ser{
+            border-radius: 8px 0px 0px 8px !important;
+            margin-right: -2px;
+            border: 1px solid blue !important;
+            text-align: center !important;
+        }
+        #phone:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 2px solid blue !important;
+        }
+    
     </style>
 </head>
 <body>
@@ -510,7 +523,7 @@ $conn->close();
             <form method="POST" action="">
                 <div class="input-group">
                     <input type="text" name="phone" class="form-control" id="phone" placeholder="رقم الهاتف (الرقم الشخصي أو الاسم)">
-                    <button class="btn btn-outline-secondary border-2" type="submit">
+                    <button class="btn btn-outline-secondary border-2 ser" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
@@ -533,6 +546,7 @@ $conn->close();
                                     <th scope="col">الاسم</th>
                                     <th scope="col">الفرع</th>
                                     <th scope="col">القسم</th>
+                                    <th scope="col">الرسوم الشهرية</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -542,6 +556,7 @@ $conn->close();
                                         <td><?php echo $student['student_name']; ?></td>
                                         <td><?php echo $student['branch_name']; ?></td>
                                         <td><?php echo $student['class_name']; ?></td>
+                                        <td><?php echo $student['remaining']; ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -595,7 +610,7 @@ $conn->close();
                 </div>
                 <div  style="border: 1px solid #ddd; margin-bottom: 20px; border-radius: 4px;">
                     <div id="total-remaining-container" style="background-color: #f1f1f1; padding: 12px; border-radius: 5px; color: #555; font-size: 1.1rem;">
-                        <label for="total-remaining">  المتأخرات </label>
+                        <label  style="color: red; font-weight: bold;" for="total-remaining">  المتأخرات </label>
                         <input type="text" id="total-remaining" name="due_amount" value="0.00" disabled style="border: none; background-color: transparent; outline: none; color: #555; font-size: 1.1rem;">
                     </div>
                 </div>
