@@ -18,32 +18,31 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
 }
 
-$response = []; // Initialize response array
-$activities = []; // Initialize response array
+$response = [];
+$activities = [];
 $activitys = null;
 $tot_price = 0;
 
-// Handle GET request (fetch student and activity information)
-// Handle GET request (fetch student and activity information)
+
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
 
     // SQL query to fetch student and activity details
-    $sql = "SELECT 
+    $sql = "SELECT
                 a.id AS id_act,
-                s.student_name, 
-                s.phone, 
-                sa.id AS student_activity_id, 
-                s.id AS student_id, 
-                c.class_name, 
-                a.activity_name, 
-                sa.fee AS price, 
+                s.student_name,
+                s.phone,
+                sa.id AS student_activity_id,
+                s.id AS student_id,
+                c.class_name,
+                a.activity_name,
+                sa.fee AS price,
                 sa.subscription_date
             FROM student_activities sa
             INNER JOIN students s ON sa.student_id = s.id
@@ -61,13 +60,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['student_id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $activities = []; 
-    $tot_price = 0;   
+    $activities = [];
+    $tot_price = 0;
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $activities[] = $row;           
-            $tot_price += $row['price']; 
+            $activities[] = $row;
+            $tot_price += $row['price'];
         }
     } else {
         $activities = null;
@@ -114,6 +113,7 @@ $conn->close();
         }
         .container-main {
             background-color: #ffffff;
+            border: 1px solid blue;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -171,6 +171,7 @@ $conn->close();
             background-color: #f9f9f9;
             padding: 15px;
             border-radius: 5px;
+            border: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -212,11 +213,11 @@ $conn->close();
             font-family: 'Amiri', serif;
             font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-align: center;
         }
         .row-underline {
-            border-bottom: 2px solid #1a73e8;
+            border-bottom: 1px solid #1a73e8;
             margin-bottom: 20px;
         }
         .icon-left {
@@ -230,6 +231,7 @@ $conn->close();
             align-items: center;
             justify-content: space-between;
             background-color: #f9f9f9;
+            border: 1px solid blue;
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -262,31 +264,74 @@ $conn->close();
             border: 1px solid #ddd;
             background-color: #fff;
         }
+        .ser{
+            border-radius: 8px 0px 0px 8px !important;
+            margin-right: -2px;
+            border: 1px solid blue !important;
+            text-align: center !important;
+        }
+        #name_student:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 2px solid blue !important; /* Optional: Keeps a normal border */
+        }
+
+        @media (max-width: 768px) {
+            body {
+            padding: 4px;
+            }
+            .container-main {
+                width: 100%;
+                padding: 15px;
+
+            }
+            
+            .method-section label {
+                font-size: .5rem;
+            }
+            .form-section label, #lbd {
+                font-size: 1rem;
+            }
+            h4 {
+                font-size: 16px !important;
+            }
+            .months-card, .snd{
+                margin-right: -.5rem !important;
+                width: 100% !important;
+            }
+            .wdth{
+                width: 100% !important;
+            }
+
+            h1 {
+                font-size: 19px !important;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container-main">
     <!-- Header Section -->
-<div class="row mb-3">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <h1 class="header-title">  تسديد رسوم الإشتراك في نشاط أو دورة تكوينية </h1>
-        <div>
-            <a href="activitie_payment_etrang.php" class="btn bg-light">الطلاب الأجانب</a>
-        </div>
-        <div class="d-flex align-items-center">
-            <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-            <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
-                الرئيسية
-            </a>
-            <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
-            <select id="financial-year" class="form-select w-100">
-                <option><?php echo $last_year; ?></option>
+    <div class="row mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <h1 class="header-title">  تسديد رسوم الإشتراك في نشاط أو دورة تكوينية </h1>
+            <div class="d-flex align-items-center">
+                <div>
+                    <a href="activitie_payment_etrang.php" class="btn bg-light ms-4" style="border: 1px solid #ddd;">الطلاب الأجانب</a>
+                </div>
+                <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
+                <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
+                    الرئيسية
+                </a>
+                <label class="form-select-title" for="financial-year" style="margin-left: 5px; width: 50px;">السنة المالية</label>
+                <select id="financial-year" class="form-select" style="width: 130px;">
+                    <option><?php echo $last_year; ?></option>
 
-            </select>
+                </select>
+            </div>
         </div>
     </div>
-</div>
     
     <!-- Search Section -->
     <div class="row mb-4">
@@ -299,9 +344,8 @@ $conn->close();
 
                     <div id="agentDropdown" class="dropdown-menu mt-5"></div>
 
-                    <button class="btn btn-outline-secondary border-2" type="submit">
-                    <i class="bi bi-search"></i>
-
+                    <button class="btn btn-outline-secondary border-2 ser" type="submit">
+                        <i class="bi bi-search"></i>
                     </button>
                 </div>
             </form>
@@ -315,8 +359,8 @@ $conn->close();
         <div class="col-12 row-underline">
             <h2 class="section-title"> بيانات الطالب (ة):</h2>
         </div>
-        <div class="col-12 d-flex justify-content-between text-center">
-        <div>
+        <div class="col-12 d-flex justify-content-between text-center row-underline pb-3">
+            <div>
                 <label> رقم التعريف</label>
                 <div><?php echo $firstActivity['student_id']; ?></div>
             </div>
@@ -342,55 +386,54 @@ $conn->close();
         <input type="hidden" name="student_activitie_id" id="student_activitie_id">
 
 
-        <div class="row form-section">
-            <div class="col-6">
-                <div class="payment-info">
-                    <div>
-                        <label for="arrears-paid">المبلغ المسدد</label>
-                        <input type="text" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
-                    </div>
-                    <div>
-                        <label for="arrears-remaining">الباقي</label>
-                        <input type="text" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
+        <div class="form-section">
+            <div class="d-flex flex-column flex-sm-row gap-6">
+                <div class="w-50 wdth">
+                    <div class="payment-info pb-4" style="width: 95%;">
+                        <div>
+                            <label for="arrears-paid">المبلغ المسدد</label>
+                            <input type="text" style="width: 95%;" name="paid_amount" id="arrears-paid" placeholder="0.00" oninput="calculateRemaining()">
+                        </div>
+                        <div>
+                            <label for="arrears-remaining">الباقي</label>
+                            <input type="text" style="width: 95%;" name="remaining_amount" id="arrears-remaining" placeholder="0.00" readonly>
+                        </div>
                     </div>
                 </div>
-
-                <div class="method-section mt-3">
-                    <div>
-                        <label for="method">طريقة الدفع</label>
-                        <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
-                            <option value="نقدي">نقدي</option>
-                            <option value="بنكي">بنكي</option>
-                        </select>
-                    </div>
-                    <!-- Display the selected bank name and value -->
-                    <div id="selected-bank-name"></div>
-                    <input type="hidden" id="selected-bank-id" name="bank">
-                    <button type="submit" class="confirm-button">تأكيد العملية</button>
-                </div>
-            </div>
-
-            <div class="col-6">
-                <div class="months-card">
-                    
-                    <div>
-                        <!-- <label>النشاط</label>
-                        <div></div> -->
-                        <div class="mb-3">
-                            <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
-                            <select class="form-select" id="activity_id" name="activity_id" required>
-                                <option value="" disabled selected>اختر دورة أو نشاط</option>
-                                <?php foreach ($activities as $activity): ?>
-                                    <option value="<?php echo $activity['activity_name']; ?>" data-price="<?php echo $activity['price']; ?>" data-id="<?php echo $activity['id_act']; ?>">
-                                        <?php echo $activity['activity_name'] . '  ¬|¬  ' . 'تاريخ التسجيل: ' . $activity['subscription_date']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                <div class="w-50 wdth">
+                    <div class="payment-info">
+                        <div>
+                            <div class="mb-3">
+                                <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
+                                <select class="form-select" id="activity_id" name="activity_id" required>
+                                    <option value="" disabled selected>اختر دورة أو نشاط</option>
+                                    <?php foreach ($activities as $activity): ?>
+                                        <option value="<?php echo $activity['activity_name']; ?>" data-price="<?php echo $activity['price']; ?>" data-id="<?php echo $activity['id_act']; ?>">
+                                            <?php echo $activity['activity_name'] . '  ¬|¬  ' . 'تاريخ التسجيل: ' . $activity['subscription_date']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+
             </div>
+            <div class="method-section mt-3">
+                <div>
+                    <label for="method">طريقة الدفع</label>
+                    <select id="method" name="payment_method" onchange="toggleBankModal(this.value)">
+                        <option value="نقدي">نقدي</option>
+                        <option value="بنكي">بنكي</option>
+                    </select>
+                </div>
+                <!-- Display the selected bank name and value -->
+                <div id="selected-bank-name"></div>
+                <input type="hidden" id="selected-bank-id" name="bank">
+                <button type="submit" class="confirm-button">تأكيد العملية</button>
+            </div>
+
         </div>
     </form>
     <?php endif; ?>

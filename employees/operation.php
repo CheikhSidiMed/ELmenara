@@ -225,7 +225,7 @@ $conn->close();
         @media (max-width: 768px) {
             body {
             padding: 4px;
-        }
+            }
             .container-main {
                 width: 100%;
                 padding: 15px;
@@ -347,7 +347,7 @@ $conn->close();
                 </div>
             </div>
             <div style="border: 1px solid #ddd;" class="payment-info d-flex flex-column flex-sm-row gap-6">
-                <div class="mt-2  w-50 wdth">
+                <div class="mt-2 w-50 wdth">
                     <label>المبلغ <span style="color:red; ">*</span></label>
                     <input type="text" id="amount" name="amount" class="form-control mb-3" value="" style="width: 95%; text-align: center;" required>
                     <div style="width: 95%;">
