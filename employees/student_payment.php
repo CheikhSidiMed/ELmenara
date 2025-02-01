@@ -628,7 +628,8 @@ $conn->close();
                 <div class="payment-info" id="p-fee" style="display: none; border: 1px solid #ddd;" >
                     <div>
                         <label for="description-p">الوصف</label>
-                        <input type="text" name="description_p" id="description-p" placeholder="الوصف">
+                        <textarea type="text" rows="3" style="width: 100%; padding: 5px; border: 1px solid #ddd;" name="description_p" id="description-p" placeholder="الوصف"></textarea>
+
                     </div>
                     <div>
                         <label for="p-paid">المبلغ المسدد</label>

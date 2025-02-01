@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = $conn->prepare("INSERT INTO garants (name, balance, phone, amount_sponsored, donate_id) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("sssss", $name, $balance, $phone, $amount_sponsored, $donate_id);
                 if ($stmt->execute()) {
-                    $message = "تمت إضافة الكافل(ة) بنجاح.";
+                    $message = "تمت إضافة الكفيل(ة) بنجاح.";
                 } else {
-                    $message = "حدث خطأ أثناء إضافة الكافل(ة).";
+                    $message = "حدث خطأ أثناء إضافة الكفيل(ة).";
                 }
                 $stmt->close();
             }
@@ -60,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $conn->prepare("DELETE FROM garants WHERE id=?");
             $stmt->bind_param("i", $parrainer_id);
             if ($stmt->execute()) {
-                $message = "تم حذف الكافل(ة) بنجاح.";
+                $message = "تم حذف الكفيل(ة) بنجاح.";
             } else {
-                $message = "حدث خطأ أثناء حذف الكافل(ة).";
+                $message = "حدث خطأ أثناء حذف الكفيل(ة).";
             }
             $stmt->close();
         }
@@ -81,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $conn->prepare("UPDATE garants SET donate_id = ?, name = ?, balance = ?, phone = ?, amount_sponsored = ? WHERE id = ?");
             $stmt->bind_param("sssssi", $donate_id, $name, $balance, $phone, $amount_sponsored, $parrainer_id);
             if ($stmt->execute()) {
-                $message = "تم تحديث بيانات الكافل(ة) بنجاح.";
+                $message = "تم تحديث بيانات الكفيل(ة) بنجاح.";
             } else {
-                $message = "حدث خطأ أثناء تحديث بيانات الكافل(ة).";
+                $message = "حدث خطأ أثناء تحديث بيانات الكفيل(ة).";
             }
             $stmt->close();
         } else {
@@ -138,6 +138,9 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
             padding: 10px;
             text-align: right;
         }
+        #searchInput{
+            border: 2px solid blue;
+        }
         table th {
             background-color: #f4f4f4;
         }
@@ -156,7 +159,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
             text-align: right;
         }
         .btn-head, .form-group button {
-            padding: 11px 23px;
+            padding: 5px 18px;
             background-color: #007BFF;
             color: #fff;
             border: none;
@@ -184,8 +187,8 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
             background-color: orange;
             color: white;
             font-size: 22px;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 5px 20px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
         }
@@ -198,8 +201,8 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
             background-color: red;
             color: white;
             font-size: 22px;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 5px 20px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
         }
@@ -260,7 +263,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
 
             .btn-delete, .btn-edit, .btn-head {
                 font-size: 16px;
-                padding: 8px 12px;
+                padding: 4px 12px;
             }
 
             .form-group input, .form-group select, .form-group button {
@@ -284,7 +287,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
 <body>
 <div class="container">
     <div class="head">
-        <h1>إدارة الكافون</h1>
+        <h1>إدارة الكفالات</h1>
         <button class="btn-head" onclick="window.location.href='../home.php'">الصفحة الرئيسية</button>
     </div>
 
@@ -299,7 +302,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
     <form method="POST" action="" class="form row">
         <input type="hidden" name="parrainer_id" value="<?= $editParrainer['id'] ?? '' ?>">
         <div class="form-group col-12 col-lg-6">
-            <label for="name">اسم الكافل(ة)</label>
+            <label for="name">اسم الكفيل(ة)</label>
             <input type="text" id="name" name="name" value="<?= htmlspecialchars($editParrainer['name'] ?? '') ?>" required>
         </div>
         <div class="form-group col-12 col-lg-6">
@@ -328,7 +331,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
 
         <div class="form-group">
             <button type="submit" class="btn-head" name="action" value="<?= $editParrainer ? 'update' : 'add' ?>">
-                <?= $editParrainer ? 'تحديث الكافل(ة)' : 'إضافة الكافل(ة)' ?>
+                <?= $editParrainer ? 'تحديث كفيل(ة)' : 'إضافة كفيل(ة)' ?>
             </button>
         </div>
     </form>
@@ -336,13 +339,13 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
     <!-- Liste des garants -->
      <hr>
     <div class="search-box mb-1 mt-4">
-        <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الكافل(ة)...">
+        <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الكفيل(ة)...">
     </div>
     <table>
         <thead>
         <tr>
             <th>المعرف</th>
-            <th>اسم الكافل(ة)</th>
+            <th>اسم الكفيل(ة)</th>
             <th> المبلغ المتكفل به</th>
             <th>رصيد حساب</th>
             <th>رقم الهاتف</th>

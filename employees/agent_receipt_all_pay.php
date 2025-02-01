@@ -60,31 +60,46 @@ if (!empty($agent_id)) {
         IFNULL(cl.class_name, 'N/A') AS student_class,
         SUM(c.remaining_amount) AS remaining_amount,
         s.remaining AS student_remaining,
-        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
-        SUM(c.paid_amount) AS total_paid,
-        COALESCE(c.description, 'دفع رسوم اشهر ') AS transaction_descriptions
-
+        GROUP_CONCAT(DISTINCT c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
+        c.paid_amount AS total_paid,
+        COALESCE(NULLIF(c.description, 'دفع رسوم اشهر '), 'دفع عادي') AS transaction_descriptions
+    FROM
+        receipts r
+    LEFT JOIN
+        receipt_payments rp ON r.receipt_id = rp.receipt_id
+    LEFT JOIN
+        combined_transactions c ON rp.transaction_id = c.id
+    LEFT JOIN
+        students s ON c.student_id = s.id
+    LEFT JOIN
+        agents a ON a.agent_id = r.agent_id
+    LEFT JOIN
+        users u ON u.id = r.created_by
+    LEFT JOIN
+        classes cl ON s.class_id = cl.class_id
+    LEFT JOIN
+        bank_accounts b ON c.bank_id = b.account_id
+    INNER JOIN (
+        SELECT
+            MAX(r2.receipt_id) AS max_receipt_id,
+            c2.student_id
         FROM
-            receipts r
+            receipts r2
         LEFT JOIN
-            receipt_payments AS rp ON r.receipt_id = rp.receipt_id
+            receipt_payments rp2 ON r2.receipt_id = rp2.receipt_id
         LEFT JOIN
-            combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN
-            students s ON c.student_id = s.id
-        LEFT JOIN
-            agents a ON a.agent_id = r.agent_id
-        LEFT JOIN
-            users u ON u.id = r.created_by
-        LEFT JOIN
-            classes cl ON s.class_id = cl.class_id
-        LEFT JOIN
-            bank_accounts b ON c.bank_id = b.account_id
+            combined_transactions c2 ON rp2.transaction_id = c2.id
         WHERE
-            c.description NOT LIKE 'تم إلغاء%' AND
-            r.agent_id LIKE ?
+            c2.description NOT LIKE 'تم إلغاء%'
+            AND r2.agent_id LIKE ?
         GROUP BY
-            s.student_name, s.class_id DESC LIMIT 1;";
+            c2.student_id
+    ) latest ON latest.max_receipt_id = r.receipt_id
+    WHERE
+        c.description NOT LIKE 'تم إلغاء%'
+        AND r.agent_id LIKE ?
+    GROUP BY
+        s.student_name, c.description;";
 
     $stmt = $conn->prepare($sql);
 
@@ -94,7 +109,7 @@ if (!empty($agent_id)) {
     }
 
     // Bind parameters
-    $stmt->bind_param('i', $agent_id);
+    $stmt->bind_param('ii', $agent_id, $agent_id);
 
     // Execute and fetch results
     $stmt->execute();
@@ -121,6 +136,39 @@ if (!empty($agent_id)) {
             // Calculate for the current student
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
+        }
+    }
+
+    $grouped_data = [];
+    foreach ($receipt_data as $data) {
+        $key = $data['student_name'] . '_' . $data['student_class'];
+        
+        if (!empty(trim($data['months_paid'], ', '))) {
+            if (!isset($grouped_data[$key])) {
+                $grouped_data[$key] = [
+                    'student_name' => $data['student_name'],
+                    'student_class' => $data['student_class'],
+                    'months' => [],
+                    'total' => 0
+                ];
+            }
+            
+            $months = array_filter(explode(', ', $data['months_paid']));
+            foreach ($months as $month) {
+                if (!in_array($month, $grouped_data[$key]['months'])) {
+                    $grouped_data[$key]['months'][] = $month;
+                }
+            }
+            
+            $grouped_data[$key]['total'] += $data['total_paid'];
+        } else {
+            $unique_key = $key . '_' . md5($data['transaction_descriptions']);
+            $grouped_data[$unique_key] = [
+                'student_name' => $data['student_name'],
+                'student_class' => $data['student_class'],
+                'description' => $data['transaction_descriptions'],
+                'total' => $data['total_paid']
+            ];
         }
     }
 
@@ -323,8 +371,8 @@ $conn->close();
                 <span>وصل رقم: </span><?php echo sprintf("%010d", $resptId ?? 0); ?>
             </div>
             <div>
-                <span>بتاريخ: </span><?php 
-                    $formatted_date = date('Y-m-d', strtotime($receipt_date)); 
+                <span>بتاريخ: </span><?php
+                    $formatted_date = date('Y-m-d', strtotime($receipt_date));
                     $formatted_time = date('H:i:s', strtotime($receipt_date));
                     echo $formatted_date . ' | ' . $formatted_time;  ?>
             </div>
@@ -353,23 +401,23 @@ $conn->close();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($receipt_data as $data): ?>
-                <tr>
-                    <td><?php echo $data['student_name']; ?></td>
-                    <td><?php echo $data['student_class']; ?></td>
-                    <td><?php echo $data['months_paid'] ?? $data['transaction_descriptions'] ; ?></td>
-                    <td><?php echo $data['total_paid']; ?></td>
-                </tr>
-                <?php endforeach; ?>
-
-              
-            </tbody>
+    <?php foreach ($grouped_data as $entry): ?>
+    <tr>
+        <td><?= htmlspecialchars($entry['student_name']) ?></td>
+        <td><?= htmlspecialchars($entry['student_class']) ?></td>
+        <td>
+            <?php echo (isset($entry['months'])) ? implode(', ', $entry['months']) : htmlspecialchars($entry['description']); ?>
+        </td>
+        <td><?= number_format($entry['total'], 2) ?></td>
+    </tr>
+    <?php endforeach; ?>
+</tbody>
         </table>
 
         <!-- Summary section -->
         <div class="summary-container">
             <div>
-                <strong>حساب الدفع:</strong> 
+                <strong>حساب الدفع:</strong>
                 <span class="text-primary">
                     <?php echo empty($bank_name) ? 'نقدي' : $bank_name; ?>
                 </span>

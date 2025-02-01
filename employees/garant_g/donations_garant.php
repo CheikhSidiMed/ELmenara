@@ -317,7 +317,7 @@ $conn->close();
             <div class="col-12">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <h1 class="header-title text-center text-md-start mb-3 mb-md-0">
-                        <i class="icon-left bi bi-file-earmark-text"></i> تسجيل عملية حسابية للتبرعات الكافون
+                        <i class="icon-left bi bi-file-earmark-text"></i> تسجيل عملية حسابية للتبرعات الكافلون
                     </h1>
                     <div class="d-flex flex-row flex-sm-row align-items-center">
                         <a href="../home.php" class="btn btn-primary d-flex align-items-center mb-2 mb-sm-0 me-0 me-sm-3">
@@ -335,11 +335,11 @@ $conn->close();
 
         <div class="row mb-4">
             <div class="col-12">
-                <h4 class="header-titlee">البحث عن الكافل(ة)</h4>
+                <h4 class="header-titlee">البحث عن الكفيل(ة)</h4>
                 <form method="GET" action="">
                     <input type="hidden" name="garant_id" class="form-control" id="garant-id">
                     <div class="input-group">
-                        <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكافل(ة)">
+                        <input type="text" id="account_search" name="account_search" class="form-control" placeholder="ابحث باسم أو رقم الكفيل(ة)">
                         <button class="btn btn-outline-secondary border-2 ser" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -351,12 +351,12 @@ $conn->close();
         <!-- Account Info Section -->
         <div class="row form-section">
             <div class="col-12 row-underline">
-                <h4 class="section-title">معلومات الكافل(ة):</h4>
+                <h4 class="section-title">معلومات الكفيل(ة):</h4>
             </div>
             <hr>
             <div class="row text-center">
                 <div class="col-6 col-lg-3">
-                    <label>إسم الكافل(ة)</label>
+                    <label>إسم الكفيل(ة)</label>
                     <div id="lbd"><?php echo $result1['name'] ?? ''; ?></div>
                 </div>
                 <div class="col-6 col-lg-3">
@@ -415,12 +415,16 @@ $conn->close();
                         </div>
                         <div class="payment-info d-flex flex-column w-100">
                             <div class="d-flex flex-row" style="width: 90% !important;">
+                                <div class=" w-100">
+                                    <div  class="form-label" style="font-weight: bold; color: #1a73e8;" id="selected-bank-name"></div>
                                 <select id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
                                     <option value="">اختر طريقة الدفع</option>
                                     <option value="نقدي">نقدي</option>
                                     <option value="بنكي">بنكي</option>
                                 </select>
                                 <!-- <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label> -->
+                                </div>
+                                <input type="hidden" id="selected-bank-id" name="bank">
                             </div>
                             <div style="width: 90% !important;">
                                 <div class="month-option d-flex flex-row">

@@ -68,10 +68,26 @@ if (!empty($student_id)) {
             classes cl ON s.class_id = cl.class_id
         LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
+                INNER JOIN (
+        SELECT
+            MAX(r2.receipt_id) AS max_receipt_id,
+            c2.student_id
+        FROM
+            receipts r2
+        LEFT JOIN
+            receipt_payments rp2 ON r2.receipt_id = rp2.receipt_id
+        LEFT JOIN
+            combined_transactions c2 ON rp2.transaction_id = c2.id
+        WHERE
+            c2.description NOT LIKE 'تم إلغاء%'
+            AND r2.student_id LIKE ?
+        GROUP BY
+            c2.student_id
+    ) latest ON latest.max_receipt_id = r.receipt_id
         WHERE
             c.description NOT LIKE 'تم إلغاء%' AND r.student_id LIKE ?
         GROUP BY
-            r.receipt_id, s.class_id DESC LIMIT 1;";
+            r.receipt_id, c.description;";
 
     $stmt = $conn->prepare($sql);
 
@@ -81,7 +97,7 @@ if (!empty($student_id)) {
     }
 
     // Bind parameters
-    $stmt->bind_param('i', $student_id);
+    $stmt->bind_param('ii', $student_id, $student_id);
 
     // Execute and fetch results
     $stmt->execute();

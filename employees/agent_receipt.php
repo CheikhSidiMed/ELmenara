@@ -17,7 +17,7 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -102,15 +102,11 @@ if (!empty($receiptId)) {
         $agent_id = $row['agent_id'];
         $bank_name = $row['bank_name'];
         $total_paid_sum += $row['total_paid'];
-
-        
     }
 
     foreach ($receipt_data as $row) {
         if (!empty($row['months_paid']) && is_string($row['months_paid']) && !empty($row['student_remaining'])) {
-            // $monthsArray = explode(',', $row['months_paid']);
-            $monthsArray = preg_split('/,\s*/', $row['months_paid']);
-
+            $monthsArray = explode(',', $row['months_paid']);
             $student_remaining = (float)$row['student_remaining'];
             $remaining_amount += (float)$row['remaining_amount'];
             // Calculate for the current student
@@ -119,6 +115,46 @@ if (!empty($receiptId)) {
         }
     }
 
+    
+    $grouped_students = [];
+    foreach ($receipt_data as $data) {
+        $studentName = $data['student_name'];
+        $studentClass = $data['student_class'];
+        $transactionDesc = $data['transaction_descriptions'];
+        $monthsPaid = $data['months_paid'];
+        $totalPaid = $data['total_paid'];
+        
+        $key = $studentName . '_' . $studentClass;
+        
+        // إذا كان هناك أشهر مدفوعة، اجمعها في سطر واحد
+        if (!empty($monthsPaid)) {
+            if (!isset($grouped_students[$key])) {
+                $grouped_students[$key] = [
+                    'student_name' => $studentName,
+                    'student_class' => $studentClass,
+                    'months' => [],
+                    'total_paid' => 0,
+                ];
+            }
+            // إضافة الأشهر إلى المصفوفة وجمع المبالغ
+            $monthsArray = explode(', ', $monthsPaid);
+            foreach ($monthsArray as $month) {
+                $grouped_students[$key]['months'][] = trim($month);
+            }
+            $grouped_students[$key]['total_paid'] += $totalPaid;
+        } else {
+            // إذا لم تكن دفعة شهرية، أضفها كسطر منفصل
+            $uniqueKey = $key . '_' . uniqid();
+            $grouped_students[$uniqueKey] = [
+                'student_name' => $studentName,
+                'student_class' => $studentClass,
+                'description' => $transactionDesc,
+                'total_paid' => $totalPaid,
+            ];
+        }
+    }
+    
+    
     $stmt->close();
 }
 
@@ -348,18 +384,16 @@ $conn->close();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($receipt_data as $data): ?>
+                <?php foreach ($grouped_students as $entry): ?>
                 <tr>
-                    <td><?php echo $data['student_name']; ?></td>
-                    <td><?php echo $data['student_class']; ?></td>
+                    <td><?php echo htmlspecialchars($entry['student_name']); ?></td>
+                    <td><?php echo htmlspecialchars($entry['student_class']); ?></td>
                     <td>
                         <?php
-                        echo !empty($data['months_paid'])
-                            ? $data['months_paid']
-                            : (!empty($data['transaction_descriptions']) ? $data['transaction_descriptions'] : '');
+                            echo isset($entry['months']) ? implode(', ', $entry['months']) : htmlspecialchars($entry['description']);
                         ?>
                     </td>
-                    <td><?php echo $data['total_paid']; ?></td>
+                    <td><?php echo number_format($entry['total_paid'], 2); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -374,8 +408,6 @@ $conn->close();
                 </span>
             </div>
             <div>
-            <!-- !empty($data['months_paid']) ? ' ' : "<div><strong>مجموع الرسوم: </strong>" . $student_remaining_sum . "</div>"; -->
-
                 <strong>مجموع الرسوم: </strong><?php echo $student_remaining_sum; ?>
             </div>
             <div>

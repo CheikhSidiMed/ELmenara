@@ -5,7 +5,7 @@ session_start();
 
 if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
-    exit(); 
+    exit();
 }
 
 $userid = $_SESSION['userid'];
@@ -118,110 +118,104 @@ if ($activity_result->num_rows > 0) {
             <h1 id="studentRegistrationLabe">تسجيل في دورة أو نشاط</h1>
             <button class="btn btn-primary home" onclick="window.location.href='home.php'">العودة إلى الصفحة الرئيسية</button>
         </div>
-            <!-- <div class="modal-header">
-                <h5 class="modal-title" id="subscribeActivityModalLabel">تسجيل في دورة أو نشاط</h5>
-            </div> -->
             <form method="POST" id="activityForm"  action="subscribe_activity.php">
+                <div class="form-check col-3 h6 my-3">
+                    <input type="checkbox" class="form-check-input custo-checkbox" id="toggleForm" name="toggle_form">
+                    <div class="form-check-label custom-checkbox" for="toggleForm">تغيير إلى الاشتراك للطلبة الأجانب</div>
+                </div>
 
-                    <div class="form-check col-3 h6 my-3">
-                        <input type="checkbox" class="form-check-input custo-checkbox" id="toggleForm" name="toggle_form">
-                        <div class="form-check-label custom-checkbox" for="toggleForm">تغيير إلى الاشتراك للطلبة الأجانب</div>
+                <div class="modal-body" id="localForm">
+                    <div class="mb-3">
+                        <label for="student_name" class="form-label">اسم التلميذ</label>
+                        <input type="text" class="form-control" id="name_student" name="student_name" placeholder="أدخل اسم التلميذ" required>
+                        <input type="hidden" class="form-control" id="name_id" name="student_id" required>
+                        <div id="agentDropdown" class="dropdown-menu"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-body" id="foreignForm" style="display: none;">
+                    <div class="row d-flex align-items-center justify-content-between justify-content-center">
+                    <div class="col-8 mb-3" id="ifNotExistSearch">
+                        <label for="etr_name" class="form-label">اسم التلميذ</label>
+                        <input type="text" class="form-control" id="etrang_student" name="etr_name" placeholder="أدخل اسم التلميذ">
+                        <input type="hidden" class="form-control" id="etrang_id" name="etrang_id" required>
+                        <div id="etrangDropdown" class="dropdown-menu"></div>
                     </div>
 
-                    <div class="modal-body" id="localForm">
-                        <div class="mb-3">
-                            <label for="student_name" class="form-label">اسم التلميذ</label>
-                            <input type="text" class="form-control" id="name_student" name="student_name" placeholder="أدخل اسم التلميذ" required>
-                            <input type="hidden" class="form-control" id="name_id" name="student_id" required>
-                            <div id="agentDropdown" class="dropdown-menu"></div>
+                        <!-- Case à cocher pour afficher/masquer -->
+                        <div class="form-check mb-3 col-2">
+                            <input type="checkbox" class="form-check-input custo-checkbox" id="toggleIfNotExist" name="toggleIfNotExist">
+                            <label class="form-check-label custom-checkbox" for="toggleIfNotExist"> تسجيل الطالب</label>
                         </div>
+
                     </div>
-
-
-                    <!-- Section pour les étudiants étrangers -->
-                    <div class="modal-body" id="foreignForm" style="display: none;">
-                        <div class="row d-flex align-items-center justify-content-between justify-content-center">
-                        <div class="col-8 mb-3" id="ifNotExistSearch">
-                            <label for="etr_name" class="form-label">اسم التلميذ</label>
-                            <input type="text" class="form-control" id="etrang_student" name="etr_name" placeholder="أدخل اسم التلميذ">
-                            <input type="hidden" class="form-control" id="etrang_id" name="etrang_id" required>
-                            <div id="etrangDropdown" class="dropdown-menu"></div>
-                        </div>
-
-                            <!-- Case à cocher pour afficher/masquer -->
-                            <div class="form-check mb-3 col-2">
-                                <input type="checkbox" class="form-check-input custo-checkbox" id="toggleIfNotExist" name="toggleIfNotExist">
-                                <label class="form-check-label custom-checkbox" for="toggleIfNotExist"> تسجيل الطالب</label>
+                    <!-- if not exist -->
+                    <div id="ifNotExistSection" style="display: none;">
+                        <div class="row">
+                            <hr>
+                            <div class="form-group col-4">
+                                <label for="studentName">الاسم الكامل</label>
+                                <input type="text" class="form-control" name="studentName" placeholder="أدخل االاسم الكامل">
                             </div>
 
-                        </div>
-                        <!-- if not exist -->
-                        <div id="ifNotExistSection" style="display: none;">
-                            <div class="row">
-                                <hr>
-                                <div class="form-group col-4">
-                                    <label for="studentName">الاسم الكامل</label>
-                                    <input type="text" class="form-control" name="studentName" placeholder="أدخل االاسم الكامل">
-                                </div>
-
-                                <div class="form-group col-4" id="studentPhoneContainer">
-                                    <label for="nni"> الرقم الوطني (NNI)</label>
-                                    <input type="text" class="form-control" name="NNI" placeholder="أدخل الرقم الوطني (NNI)">
-                                </div>
-                                <div class="form-group col-4" id="studentPhoneContainer">
-                                    <label for="phone">رقم الهاتف </label>
-                                    <input type="text" class="form-control" name="phone" placeholder="أدخل رقم الهاتف">
-                                </div>
-                                <div class="form-group col-4" id="studentPhoneContainer">
-                                    <label for="wh">رقم الواتساب </label>
-                                    <input type="text" class="form-control" name="wh" placeholder="أدخل رقم الواتساب">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label for="studentPhoto">الصورة</label>
-                                    <input type="file" class="form-control" name="studentPhoto" >
-                                </div>
-
-                                <div class="form-group col-4">
-                                    <label for="birthDate">تاريخ الميلاد</label>
-                                    <input type="date" class="form-control" id="birthDate" name="birthDate">
-                                </div>
-                                <hr style="margin-top: 20px;">
-                                <br><br>
+                            <div class="form-group col-4" id="studentPhoneContainer">
+                                <label for="nni"> الرقم الوطني (NNI)</label>
+                                <input type="text" class="form-control" name="NNI" placeholder="أدخل الرقم الوطني (NNI)">
                             </div>
-                        </div>
-                        <!-- end if -->
+                            <div class="form-group col-4" id="studentPhoneContainer">
+                                <label for="phone">رقم الهاتف </label>
+                                <input type="text" class="form-control" name="phone" placeholder="أدخل رقم الهاتف">
+                            </div>
+                            <div class="form-group col-4" id="studentPhoneContainer">
+                                <label for="wh">رقم الواتساب </label>
+                                <input type="text" class="form-control" name="wh" placeholder="أدخل رقم الواتساب">
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="studentPhoto">الصورة</label>
+                                <input type="file" class="form-control" name="studentPhoto" >
+                            </div>
 
-                    </div>
-                    <div class="mb-3">
-                        <label for="subscription_date" class="form-label">تاريخ التسجيل</label>
-                        <input type="date" class="form-control" id="subscription_date" name="subscription_date" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
-                        <select class="form-select" id="activity_id" name="activity_id" required>
-                            <option value="" disabled selected>اختر دورة أو نشاط</option>
-                            <?php foreach ($activities as $activity): ?>
-                                <option value="<?php echo $activity['id']; ?>" data-fee="<?php echo $activity['price']; ?>">
-                                    <?php echo $activity['activity_name']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-4">
-                            <label for="discount" class="form-label">الخصم</label>
-                            <input type="number" class="form-control" id="discount" name="discount" required>
+                            <div class="form-group col-4">
+                                <label for="birthDate">تاريخ الميلاد</label>
+                                <input type="date" class="form-control" id="birthDate" name="birthDate">
+                            </div>
+                            <hr style="margin-top: 20px;">
+                            <br><br>
                         </div>
-                        <div class="col-4"> 
-                            <label for="fee" class="form-label">السعر</label>
-                            <input type="number" class="form-control" id="fee" disabled>
-                        </div>
-                        <div class="col-4">
-                            <label for="after_discount" class="form-label">بعد الخصم </label>
-                            <input type="number" class="form-control" id="after_discount" name="after_discount" readonly>
-                        </div>
+                    </div>
+                    <!-- end if -->
 
+                </div>
+                <div class="mb-3">
+                    <label for="subscription_date" class="form-label">تاريخ التسجيل</label>
+                    <input type="date" class="form-control" id="subscription_date" name="subscription_date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="activity_id" class="form-label">اختر دورة أو نشاط</label>
+                    <select class="form-select" id="activity_id" name="activity_id" required>
+                        <option value="" disabled selected>اختر دورة أو نشاط</option>
+                        <?php foreach ($activities as $activity): ?>
+                            <option value="<?php echo $activity['id']; ?>" data-fee="<?php echo $activity['price']; ?>">
+                                <?php echo $activity['activity_name']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <label for="discount" class="form-label">الخصم</label>
+                        <input type="number" class="form-control" id="discount" name="discount" required>
                     </div>
+                    <div class="col-4">
+                        <label for="fee" class="form-label">السعر</label>
+                        <input type="number" class="form-control" id="fee" disabled>
+                    </div>
+                    <div class="col-4">
+                        <label for="after_discount" class="form-label">بعد الخصم </label>
+                        <input type="number" class="form-control" id="after_discount" name="after_discount" readonly>
+                    </div>
+
+                </div>
                 <div class="modal-footer mt-4">
                     <button type="submit" style="margin-left: 79%; margin-right: 1%;"  class="btn btn-primary moda">تسجيل</button>
                     <button type="reset" class="btn btn-secondary moda" data-bs-dismiss="modal">إغلاق</button>

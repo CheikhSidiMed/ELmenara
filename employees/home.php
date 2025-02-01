@@ -505,7 +505,7 @@
                     <li><a href="operation.php"><i class="fa fa-calculator"></i>  تسجيل عملية حسابية</a></li>
                     <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>  عمليات المصاريف </a></li>
                     <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية تبرع </a></li>
-                    <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكافون </a></li>
+                    <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                 </ul>
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                     <ul class="collapse list-unstyled">
@@ -513,7 +513,7 @@
                         <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                         <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                         <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
-                        <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكافون</a></li>
+                        <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكفالات</a></li>
                         <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> النقل بين الحسابات البنكيه</a></li>
                         <li><a href="up_payment_nature.php"><i class="fa fa-tags"></i>إدارة طبيعة الدفع</a></li>
                         <li><a href="#" data-toggle="modal" data-target="#c"><i class="fa fa-credit-card"></i> إنشاء حساب بنكي جديد</a></li>
@@ -592,7 +592,7 @@
                             <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>
                             <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
                             <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>     تسجيل عملية تبرع </a></li>
-                            <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكافون </a></li>
+                            <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                         </ul>
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
                             <ul class="collapse list-unstyled">
@@ -600,7 +600,7 @@
                                 <li><a href="insert_expense_accountt.php"><i class="fa fa-money-bill"></i>إدارة حسابات مداخيل</a></li>
                                 <li><a href="manage_donations.php" ><i class="fa fa-dollar-sign"></i> إنشاء حساب مداخيل</a></li>
                                 <li><a href="expense_donations.php" ><i class="fas fa-wallet"></i>إدارة حسابات المصاريف</a></li>
-                                <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكافون</a></li>
+                                <li><a href="garant_g/garants_g.php"><i class="fa fa-money-bill"></i>إدارة حسابات الكفالات</a></li>
                                 <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> النقل بين الحسابات البنكيه</a></li>
 
                                 <!-- <li><a href="transaction_bancks_funds.php"><i class="fa fa-exchange-alt"></i> نقل الأموال من حساب الى حساب </a></li> -->
