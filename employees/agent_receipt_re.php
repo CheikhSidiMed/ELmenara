@@ -18,12 +18,11 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
 }
-
 
 $name_connect = $_SESSION['username'];
 
@@ -43,50 +42,50 @@ $student_name = '';
 $agent_phone = '';
 $agent_id = '';
 $paid_amount = 0;
-$student_class = ''; 
+$student_class = '';
 $student_remaining_sum = 0;
 $total_paid_sum = 0;
 $bank_name = '';
 
 if (!empty($id)) {
     // Prepare the SQL query
-    $sql = "SELECT 
-        r.receipt_id AS receipt_id, 
+    $sql = "SELECT
+        r.receipt_id AS receipt_id,
         r.total_amount,
         r.receipt_date,
         u.username AS created_by,
         c.payment_method,
-        a.agent_id, 
+        a.agent_id,
         a.phone AS agent_phone,
         s.phone,
-        s.student_name AS student_name, 
-        IFNULL(b.bank_name, 'نقدي') AS bank_name,  
+        s.student_name AS student_name,
+        IFNULL(b.bank_name, 'نقدي') AS bank_name,
         IFNULL(cl.class_name, 'N/A') AS student_class,
-        SUM(c.remaining_amount) AS remaining_amount, 
-        s.remaining AS student_remaining, 
+        SUM(c.remaining_amount) AS remaining_amount,
+        s.remaining AS student_remaining,
         GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid, 
-        SUM(c.paid_amount) AS total_paid, 
+        SUM(c.paid_amount) AS total_paid,
         COALESCE(c.description, 'دفع رسوم اشهر ') AS transaction_descriptions
-        FROM 
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             agents a ON a.agent_id = r.agent_id
-        LEFT JOIN 
+        LEFT JOIN
             users u ON u.id = r.created_by
-        LEFT JOIN 
+        LEFT JOIN
             students s ON c.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             classes cl ON s.class_id = cl.class_id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-    WHERE 
+    WHERE
         r.receipt_id = ?
-    GROUP BY 
-        s.student_name, c.description;";  
+    GROUP BY
+        s.student_name, c.description;";
 
     $stmt = $conn->prepare($sql);
     
@@ -108,10 +107,10 @@ if (!empty($id)) {
         $agent_id = $row['agent_id'];
         $agent_phone = $row['agent_phone'];
 
-        $student_class = $row['student_class']; 
-        $bank_name = $row['bank_name']; 
-        $paid_amount = $row['total_paid']; 
-        $payment_method = $row['payment_method']; 
+        $student_class = $row['student_class'];
+        $bank_name = $row['bank_name'];
+        $paid_amount = $row['total_paid'];
+        $payment_method = $row['payment_method'];
     }
 
     foreach ($receipt_data as $row) {
@@ -123,7 +122,7 @@ if (!empty($id)) {
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
         }
-    } 
+    }
     $stmt->close();
 
     
@@ -316,8 +315,8 @@ $conn->close();
             </div>
             <div class="summary-container">
                 <div><strong>وصل رقم</strong>: <?php echo sprintf("%010d", $id); ?></div>
-                <div><strong>بتاريخ</strong> : <?php  
-                    $formatted_date = date('Y-m-d', strtotime($receipt_date)); 
+                <div><strong>بتاريخ</strong> : <?php
+                    $formatted_date = date('Y-m-d', strtotime($receipt_date));
                     $formatted_time = date('H:i:s', strtotime($receipt_date));
                     echo $formatted_date . ' | ' . $formatted_time;  ?></div>
                 <div>

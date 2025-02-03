@@ -73,28 +73,19 @@ try {
         $transaction_description = ".سدد متأخرات : ($student_name)";
 
         // Insert receipt
-        $stmt = $conn->prepare("
-            INSERT INTO receipts (student_id, receipt_date, total_amount, receipt_description, created_by, agent_id)
-            VALUES (?, NOW(), ?, ?, ?, ?)
-        ");
+        $stmt = $conn->prepare("INSERT INTO receipts (student_id, receipt_date, total_amount, receipt_description, created_by, agent_id) VALUES (?, NOW(), ?, ?, ?, ?)");
         $stmt->bind_param("idssi", $student_id, $amount_paid, $transaction_description, $user_id, $agent_id);
         $stmt->execute();
         $receipts_id = $stmt->insert_id;
 
         // Insert into combined_transactions
-        $stmt = $conn->prepare("
-            INSERT INTO combined_transactions (type, student_id, description, paid_amount, payment_method, bank_id, user_id, agent_id, fund_id)
-            VALUES ('plus', ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
+        $stmt = $conn->prepare("INSERT INTO combined_transactions (type, student_id, description, paid_amount, payment_method, bank_id, user_id, agent_id, fund_id) VALUES ('plus', ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("isdsiiii", $student_id, $transaction_description, $amount_paid, $payment_method, $bank_id, $user_id, $agent_id, $fund_id);
         $stmt->execute();
         $transaction_id = $stmt->insert_id;
 
         // Link receipt with payment
-        $stmt = $conn->prepare("
-            INSERT INTO receipt_payments (receipt_id, transaction_id)
-            VALUES (?, ?)
-        ");
+        $stmt = $conn->prepare("INSERT INTO receipt_payments (receipt_id, transaction_id) VALUES (?, ?)");
         $stmt->bind_param("ii", $receipts_id, $transaction_id);
         $stmt->execute();
 

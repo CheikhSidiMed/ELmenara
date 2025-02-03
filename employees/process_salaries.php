@@ -14,7 +14,7 @@ $user_id = $_SESSION['userid'];
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$year = ""; 
+$year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $year = $row['year_name'];

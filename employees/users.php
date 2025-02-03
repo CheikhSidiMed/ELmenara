@@ -3,37 +3,35 @@
 session_start();
 include 'db_connection.php';
 
-// Check if the user is logged in
+
 if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = 'index.php'; </script>";
     exit();
 }
 
-// Fetch the logged-in user's role_id
+
 $logged_in_role_id = $_SESSION['role_id'];
 
-// Fetch the users and their roles
-$query = "SELECT u.id, u.username, r.role_name 
-          FROM users u
-          JOIN roles r ON u.role_id = r.id";
+
+$query = "SELECT u.id, u.username, r.role_name FROM users u JOIN roles r ON u.role_id = r.id";
 $result = $conn->query($query);
 
-// Fetch all roles for the role selection dropdown
+
 $rolesQuery = "SELECT * FROM roles";
 $rolesResult = $conn->query($rolesQuery);
 
-// Check if the user was successfully edited
+
 $editSuccess = false;
 if (isset($_SESSION['edit_success'])) {
     $editSuccess = true;
-    unset($_SESSION['edit_success']); // Unset the flag after showing the message
+    unset($_SESSION['edit_success']);
 }
 
-// Check if a user was successfully deleted
+
 $deleteSuccess = false;
 if (isset($_SESSION['delete_success'])) {
     $deleteSuccess = true;
-    unset($_SESSION['delete_success']); // Unset the flag after showing the message
+    unset($_SESSION['delete_success']);
 }
 ?>
 
@@ -47,9 +45,7 @@ if (isset($_SESSION['delete_success'])) {
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
 
     <style>
@@ -172,11 +168,7 @@ if (isset($_SESSION['delete_success'])) {
 <body>
     <div class="container">
         <h2>قائمة المستخدمين و الأدوار</h2>
-
-        <!-- Home Button -->
         <a href="home.php" class="home-btn"><i class="bi bi-house-fill"></i> الصفحة الرئيسية</a>
-
-        <!-- Add User Button -->
         <button class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-fill-add"></i> إضافة مستخدم جديد</button>
 
         <!-- User Table -->
@@ -187,7 +179,8 @@ if (isset($_SESSION['delete_success'])) {
                         <th>رقم المستخدم</th>
                         <th>اسم المستخدم</th>
                         <th>الدور</th>
-                        <?php if ($logged_in_role_id == 1): // Only show this column if the logged-in user is an admin ?>
+                        <th>الدور</th>
+                        <?php if ($logged_in_role_id == 1): ?>
                         <th>الإجراءات</th>
                         <?php endif; ?>
                     </tr>
@@ -200,7 +193,7 @@ if (isset($_SESSION['delete_success'])) {
                             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['username']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['role_name']) . "</td>";
-                            if ($logged_in_role_id == 1) { // Show edit and delete buttons only for role_id = 1
+                            if ($logged_in_role_id == 1) {
                                 echo "<td class='action-buttons'>";
                                 echo "<a href='edit_user.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'><i class='bi bi-pencil-square'></i> تعديل</a>";
                                 echo "<a href='delete_user.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick=\"return confirm('هل أنت متأكد من أنك تريد حذف هذا المستخدم؟');\"><i class='bi bi-trash'></i> حذف</a>";

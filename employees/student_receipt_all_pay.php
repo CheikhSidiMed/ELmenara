@@ -23,7 +23,7 @@ if ($result->num_rows > 0) {
 }
 
 
-$name_connect = $_SESSION['username'];
+$name_connect = '';
 
 // Fetch payment IDs from URL parameters
 $student_id = isset($_POST['student_id']) ? $_POST['student_id']: '';
@@ -48,6 +48,7 @@ if (!empty($student_id)) {
             s.phone,
             r.total_amount,
             r.receipt_date,
+            u.username AS created_by,
             s.student_name AS student_name,
             IFNULL(b.bank_name, 'نقدي') AS bank_name,
             IFNULL(cl.class_name, 'N/A') AS student_class,
@@ -66,6 +67,8 @@ if (!empty($student_id)) {
             students s ON c.student_id = s.id
         LEFT JOIN
             classes cl ON s.class_id = cl.class_id
+        LEFT JOIN
+            users u ON u.id = r.created_by
         LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
                 INNER JOIN (
@@ -109,7 +112,7 @@ if (!empty($student_id)) {
         $resptId = $row['payment_id'];
         $student_name = $row['student_name'];
         $receipt_date = $row['receipt_date'];
-
+        $name_connect = $row['created_by'];
         $agent_phone = $row['phone'];
         $bank_name = $row['bank_name'];
         $total_paid_sum += $row['total_paid'];

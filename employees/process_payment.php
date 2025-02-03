@@ -306,9 +306,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $stmt = $conn->prepare("INSERT INTO combined_transactions 
-        (description, type, student_id, month, due_amount, paid_amount, remaining_amount, payment_method, bank_id, user_id, agent_id, fund_id)
-        VALUES (?, 'plus', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO combined_transactions (description, type, student_id, month, due_amount, paid_amount, remaining_amount, payment_method, bank_id, user_id, agent_id, fund_id) VALUES (?, 'plus', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
         if (!$stmt) {
             throw new Exception("Failed to prepare statement for combined_transactions: " . $conn->error);
         }
@@ -316,7 +315,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$stmt->execute()) {
             throw new Exception("Error inserting into combined_transactions: " . $stmt->error);
         }
-        $transaction_id = $conn->insert_id; // Retrieve last inserted ID
+        $transaction_id = $conn->insert_id;
         $stmt->close();
 
         // Insert into receipt_payments
@@ -331,8 +330,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // Insert into transactions
-        $stmt_transaction = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, student_id, fund_id, bank_account_id, user_id)
-            VALUES (?, ?, 'plus', ?, ?, ?, ?)");
+        $stmt_transaction = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, student_id, fund_id, bank_account_id, user_id) VALUES (?, ?, 'plus', ?, ?, ?, ?)");
 
         if (!$stmt_transaction) {
             throw new Exception("Failed to prepare statement for transactions: " . $conn->error);
@@ -347,36 +345,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($months as $month) {
             $paid_amount_per_month = $paid_amount / count($months);
 
-            $stmt = $conn->prepare("
-                INSERT INTO payments (student_id, month, due_amount, paid_amount, remaining_amount, payment_method, bank_id, user_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ");
+            $stmt = $conn->prepare("INSERT INTO payments (student_id, month, due_amount, paid_amount, remaining_amount, payment_method, bank_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("ssssssss", $student_id, $month, $due_amount, $paid_amount_per_month, $remaining_amount, $payment_method, $bank_id, $user_id);
 
             // Execute the statement
             if ($stmt->execute()) {
 
-                $receipt_id = $conn->insert_id;  
+                $receipt_id = $conn->insert_id;
                 $months_paid[] = $month;
 
-                // Fetch the student name for the transaction description
-                // $stmt_student = $conn->prepare("SELECT student_name FROM students WHERE id = ?");
-                // $stmt_student->bind_param("i", $student_id);
-                // $stmt_student->execute();
-                // $result_student = $stmt_student->get_result();
-                // $student_name = $result_student->fetch_assoc()['student_name'];
-                // $stmt_student->close();
-
-                // Prepare the transaction description
-
-
-                // Update the balance for the fund or bank
                 if ($payment_method === "نقدي") {
                     $stmt_fund = $conn->prepare("UPDATE funds SET balance = balance + ? WHERE id = 1");
                     $stmt_fund->bind_param("d", $paid_amount_per_month);
                     if (!$stmt_fund->execute()) {
                         $response = ['success' => false, 'message' => 'حدث خطأ أثناء تحديث رصيد الصندوق: ' . $stmt_fund->error];
-                        break;  // Stop on the first error
+                        break;
                     }
                     $stmt_fund->close();
                 } elseif ($payment_method === "بنكي" && $bank_id) {
@@ -384,20 +367,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_bank->bind_param("di", $paid_amount_per_month, $bank_id);
                     if (!$stmt_bank->execute()) {
                         $response = ['success' => false, 'message' => 'حدث خطأ أثناء تحديث رصيد البنك: ' . $stmt_bank->error];
-                        break;  // Stop on the first error
+                        break;
                     }
                     $stmt_bank->close();
                 }
 
             } else {
                 $response = ['success' => false, 'message' => 'حدث خطأ أثناء معالجة الدفع: ' . $stmt->error];
-                break;  // Stop on the first error
+                break;
             }
             $stmt->close();
         }
 
-        if (empty($response)) {  
-            $months_paid_str = implode(' • ', $months_paid); 
+        if (empty($response)) {
+            $months_paid_str = implode(' • ', $months_paid);
             $redirect_url = "student_receipt_re.php?receipt_id=$receipts_id&student_id=$student_id&payment_method=$payment_method&paid_amount=$paid_amount&remaining_amount=$remaining_amount&months_paid=$months_paid_str&due_amounte=$due_amounte";
             header("Location: $redirect_url");
             exit();

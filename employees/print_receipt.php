@@ -10,12 +10,12 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
-
 include 'db_connection.php';
+
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -46,44 +46,44 @@ $student_remaining_sum = 0;
 
 
 if (!empty($resptId)) {
-    $sql = "SELECT 
-        r.receipt_id AS payment_id, 
-        a.agent_id, 
-        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name, 
+    $sql = "SELECT
+        r.receipt_id AS payment_id,
+        a.agent_id,
+        COALESCE(a.agent_name, 'بدون وكيل') AS agent_name,
         a.phone AS agent_phone,
         s.phone,
         s.id,
-        r.total_amount, 
+        r.total_amount,
         r.receipt_date,
         u.username AS created_by,
-        s.student_name AS student_name, 
-        IFNULL(b.bank_name, 'نقدي') AS bank_name,  
+        s.student_name AS student_name,
+        IFNULL(b.bank_name, 'نقدي') AS bank_name,
         IFNULL(cl.class_name, 'N/A') AS student_class,
-        SUM(c.remaining_amount) AS remaining_amount, 
-        s.remaining AS student_remaining, 
-        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid, 
-        SUM(c.paid_amount) AS total_paid, 
+        SUM(c.remaining_amount) AS remaining_amount,
+        s.remaining AS student_remaining,
+        GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
+        SUM(c.paid_amount) AS total_paid,
         COALESCE(c.description, 'دفع رسوم اشهر ') AS transaction_descriptions
 
-        FROM 
+        FROM
             receipts r
-        LEFT JOIN 
+        LEFT JOIN
             receipt_payments AS rp ON r.receipt_id = rp.receipt_id
-        LEFT JOIN         
+        LEFT JOIN
             combined_transactions AS c ON rp.transaction_id = c.id
-        LEFT JOIN 
+        LEFT JOIN
             students s ON c.student_id = s.id
-        LEFT JOIN 
+        LEFT JOIN
             agents a ON a.agent_id = r.agent_id
-        LEFT JOIN 
+        LEFT JOIN
             users u ON u.id = r.created_by
-        LEFT JOIN 
+        LEFT JOIN
             classes cl ON s.class_id = cl.class_id
-        LEFT JOIN 
+        LEFT JOIN
             bank_accounts b ON c.bank_id = b.account_id
-        WHERE 
-            r.receipt_id = ?  
-        GROUP BY 
+        WHERE
+            r.receipt_id = ?
+        GROUP BY
             r.receipt_id, c.description;";
 
     $stmt = $conn->prepare($sql);
@@ -124,10 +124,46 @@ if (!empty($resptId)) {
             $value = count($monthsArray) * $student_remaining;
             $student_remaining_sum += floor($value / 100) * 100;
         }
-    } 
+    }
 
     $stmt->close();
-
+    $grouped_students = [];
+    foreach ($receipt_data as $data) {
+        $studentName = $data['student_name'];
+        $studentClass = $data['student_class'];
+        $transactionDesc = $data['transaction_descriptions'];
+        $monthsPaid = $data['months_paid'];
+        $totalPaid = $data['total_paid'];
+        
+        $key = $studentName . '_' . $studentClass;
+        
+        // إذا كان هناك أشهر مدفوعة، اجمعها في سطر واحد
+        if (!empty($monthsPaid)) {
+            if (!isset($grouped_students[$key])) {
+                $grouped_students[$key] = [
+                    'student_name' => $studentName,
+                    'student_class' => $studentClass,
+                    'months' => [],
+                    'total_paid' => 0,
+                ];
+            }
+            // إضافة الأشهر إلى المصفوفة وجمع المبالغ
+            $monthsArray = explode(', ', $monthsPaid);
+            foreach ($monthsArray as $month) {
+                $grouped_students[$key]['months'][] = trim($month);
+            }
+            $grouped_students[$key]['total_paid'] += $totalPaid;
+        } else {
+            // إذا لم تكن دفعة شهرية، أضفها كسطر منفصل
+            $uniqueKey = $key . '_' . uniqid();
+            $grouped_students[$uniqueKey] = [
+                'student_name' => $studentName,
+                'student_class' => $studentClass,
+                'description' => $transactionDesc,
+                'total_paid' => $totalPaid,
+            ];
+        }
+    }
 }
 
 $conn->close();
@@ -322,7 +358,7 @@ $conn->close();
             </div>
             <div>
                 <strong>بتاريخ: </strong> <?php
-                    $formatted_date = date('Y-m-d', strtotime($receipt_date)); 
+                    $formatted_date = date('Y-m-d', strtotime($receipt_date));
                     $formatted_time = date('H:i:s', strtotime($receipt_date));
                     echo $formatted_date . ' | ' . $formatted_time;  ?>
             </div>
@@ -358,16 +394,18 @@ $conn->close();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($receipt_data as $data): ?>
+                <?php foreach ($grouped_students as $entry): ?>
                 <tr>
-                    <td><?php echo $data['student_name']; ?></td>
-                    <td><?php echo $data['student_class']; ?></td>
-                    <td><?php echo $data['months_paid'] !== '' ? $data['months_paid'] : $data['transaction_descriptions'] ; ?></td>
-                    <td><?php echo $data['total_paid']; ?></td>
+                    <td><?php echo htmlspecialchars($entry['student_name']); ?></td>
+                    <td><?php echo htmlspecialchars($entry['student_class']); ?></td>
+                    <td>
+                        <?php
+                            echo isset($entry['months']) ? implode(', ', $entry['months']) : htmlspecialchars($entry['description']);
+                        ?>
+                    </td>
+                    <td><?php echo number_format($entry['total_paid'], 2); ?></td>
                 </tr>
                 <?php endforeach; ?>
-
-              
             </tbody>
         </table>
         <?php endif; ?>

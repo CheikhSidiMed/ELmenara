@@ -65,8 +65,8 @@ try {
         $student_name = $row['student_name'];
 
         // Calculate total remaining and count unpaid months
-        $check_stmt = $conn->prepare("SELECT SUM(remaining_amount) AS total_remaining, COUNT(*) AS count 
-                                      FROM payments 
+        $check_stmt = $conn->prepare("SELECT SUM(remaining_amount) AS total_remaining, COUNT(*) AS count
+                                      FROM payments
                                       WHERE student_id = ? AND remaining_amount > 0.00");
         $check_stmt->bind_param("i", $student_id);
         $check_stmt->execute();

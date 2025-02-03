@@ -40,9 +40,6 @@ $receipt_date = '';
 $created_by = '';
 
 if (!empty($receiptId)) {
-    // Prepare placeholders for SQL IN clause
-    // $receiptId = 28;
-    // implode(',', array_fill(0, count($payment_ids), '?'));
     $sql = "SELECT
         r.receipt_id AS payment_id,
         a.agent_id,

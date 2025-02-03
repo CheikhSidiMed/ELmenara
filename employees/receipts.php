@@ -14,7 +14,7 @@
     include 'db_connection.php';
 
     $resultYears = [];
-    $selectedYear = $_GET['year'] ?? ''; 
+    $selectedYear = $_GET['year'] ?? '';
     $startDate = $endDate = '';
 
     // Récupération des années académiques
@@ -42,27 +42,27 @@
     $receipts = [];
 
     // Construction dynamique de la requête
-    $query = "SELECT 
-                r.receipt_id, 
-                s.student_name, 
-                a.agent_name, 
-                r.total_amount, 
-                r.receipt_date, 
-                r.receipt_description 
+    $query = "SELECT
+                r.receipt_id,
+                s.student_name,
+                a.agent_name,
+                r.total_amount,
+                r.receipt_date,
+                r.receipt_description
             FROM receipts AS r
             LEFT JOIN agents AS a ON a.agent_id = r.agent_id
             LEFT JOIN students AS s ON s.id = r.student_id
             JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
-            WHERE 1=1"; 
+            WHERE 1=1";
 
     if ($search) {
-        $query .= " AND (r.student_id LIKE ? 
-                        OR s.student_name LIKE ? 
-                        OR a.agent_name LIKE ? 
-                        OR s.phone LIKE ?  
-                        OR a.phone LIKE ? 
-                        OR r.agent_id LIKE ? 
-                        OR r.receipt_date LIKE ? 
+        $query .= " AND (r.student_id LIKE ?
+                        OR s.student_name LIKE ?
+                        OR a.agent_name LIKE ?
+                        OR s.phone LIKE ?
+                        OR a.phone LIKE ?
+                        OR r.agent_id LIKE ?
+                        OR r.receipt_date LIKE ?
                         OR r.receipt_id = ?)";
     }
 
@@ -70,7 +70,7 @@
         $query .= " AND r.receipt_date BETWEEN ? AND ?";
     }
 
-    $query .= " ORDER BY r.receipt_id DESC";
+    $query .= " GROUP BY r.receipt_id ORDER BY r.receipt_id DESC LIMIT 100";
 
     $stmt = $conn->prepare($query);
 
@@ -240,7 +240,7 @@
 <body>
 
 
-    <h1>قائمة الإيصالات</h1>            
+    <h1>قائمة الإيصالات</h1>
         
 
     <!-- Formulaire de recherche -->
@@ -252,7 +252,7 @@
         <select name="year" id="year" onchange="this.form.submit()">
             <option value="">-- اختر العام --</option>
             <?php foreach ($resultYears as $year): ?>
-                <option value="<?php echo htmlspecialchars($year['year_name']); ?>" 
+                <option value="<?php echo htmlspecialchars($year['year_name']); ?>"
                     <?php if ($selectedYear == $year['year_name']) echo 'selected'; ?>>
                     <?php echo htmlspecialchars($year['year_name']); ?>
                 </option>
@@ -263,7 +263,7 @@
             <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-right: 25px;">
                 <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
                     الرئيسية
-            </a> 
+            </a>
         </div>
     </form>
 
@@ -286,7 +286,7 @@
                     <td><?php echo htmlspecialchars($receipt['receipt_id']); ?></td>
                     <td><?php echo htmlspecialchars($receipt['student_name'] ?? 'N/A'); ?></td>
                     <td><?php echo htmlspecialchars($receipt['agent_name'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars($receipt['total_amount']); ?></td>
+                    <td><?php echo htmlspecialchars($receipt['total_amount']?? 'N/A'); ?></td>
                     <td><?php echo htmlspecialchars($receipt['receipt_date']); ?></td>
                     <td><?php echo htmlspecialchars($receipt['receipt_description']); ?></td>
                     <td class="no-print">
