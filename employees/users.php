@@ -179,7 +179,7 @@ if (isset($_SESSION['delete_success'])) {
                         <th>رقم المستخدم</th>
                         <th>اسم المستخدم</th>
                         <th>الدور</th>
-                        <th>الدور</th>
+                        <!-- <th>الدور</th> -->
                         <?php if ($logged_in_role_id == 1): ?>
                         <th>الإجراءات</th>
                         <?php endif; ?>
