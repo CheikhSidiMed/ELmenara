@@ -223,17 +223,17 @@
             </li>
         </li>
 
-            <?php elseif($role_id == 4): ?>
-                <li  class="active">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
-                    <ul class="collapse">
-                        <li><a href="student_data.php"><i class="fa fa-user"></i> بيانات الطلاب</a></li>
-                        <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                        <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
-                    </ul>
-                </li>
+        <?php elseif($role_id == 4): ?>
+            <li  class="active">
+                <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
+                <ul class="collapse">
+                    <li><a href="student_data.php"><i class="fa fa-user"></i> بيانات الطلاب</a></li>
+                    <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                    <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                </ul>
             </li>
-            <li>
+        </li>
+        <li>
             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
             <ul class="collapse">
                 <!-- User-related options -->
@@ -242,198 +242,198 @@
                     <ul class="collapse list-unstyled">
                         <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                     </ul>
-                </li>
-            </ul>
-            <?php elseif($role_id == 5): ?>
-                <li class="active">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-plus"></i><span>تسجيل</span></a>
-                    <ul class="collapse">
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-sitemap"></i> الفروع و الأقسام</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="#" data-toggle="modal" data-target="#addClassModal"><i class="fa fa-list"></i> إضافة قسم</a></li>
-                                <li><a href="display_branches_classes.php"><i class="fa fa-th-list"></i> لائحة الفروع و الأقسام</a></li>
-                                <li><a href="manage_classes.php"><i class="fa-solid fa-chalkboard"></i>إدارة الصفوف</a></li>
-                                <li><a href="manage_branches.php"><i class="fa-solid fa-code-branch"></i>إدارة الفروع</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                                <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
-                                <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
-                                <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-book"></i> الدورات والأنشطة</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
-                                <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
-                                <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
-                                <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
-                                <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                                <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
-                                
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
-                    <ul class="collapse">
-                        <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
-                    </ul>
-                </li>
-                <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
-                    <ul class="collapse">
-                        <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
-                        <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
-                        <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
-                        <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                        <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
-                        <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
-                        <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
-                    </ul>
-                </li>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-balance-scale"></i><span> المحاسبة</span></a>
-                    <ul class="collapse">
-                        <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
-                                <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
-                                <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
-                            </ul>
-                            <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
-                            <ul class="collapse list-unstyled">
-                            <li class="dropdown">
-                                <a href="#" data-toggle="collapse" aria-expanded="true">
-                                    <i class="fas fa-layer-group"></i> المستويات
-                                </a>
-                                <ul class="collapse list-unstyled">
-                                    <li>
-                                        <a href="#" data-toggle="modal" data-target="#Levels">
-                                            <i class="fas fa-level-up-alt"></i> إضافة مستوى
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="levels.php">
-                                            <i class="fas fa-list-ul"></i> لائحة المستويات
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                    </ul>
-                </li>
-                <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-tasks"></i>  عمليات المعاينة</a>
-                    <ul class="collapse list-unstyled">
-                        <li><a href="students_accounts.php"><i class="fa fa-user-graduate"></i> حسابات الطلاب </a></li>
-                        <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
-                        <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
-                    <ul class="collapse list-unstyled">
-                        <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
-                        <li><a href="Debt report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
-                        <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
-                    </ul>
-                </li>
-                </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
-                    <ul class="collapse">
-                        <!-- User-related options -->
-                        <li class="dropdown">
-                        <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
-                        <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
 
-                    <!-- Menu items accessible to both role_id = 1 and role_id = 2 -->
-                    <?php elseif($role_id == 2): ?>
-                    <li class="active">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-plus"></i><span>تسجيل</span></a>
-                    <ul class="collapse">
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-sitemap"></i> الفروع و الأقسام</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="#" data-toggle="modal" data-target="#k"><i class="fa fa-plus-circle"></i>  إضافة فرع</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#addClassModal"><i class="fa fa-list"></i> إضافة قسم</a></li>
-                                <li><a href="display_branches_classes.php"><i class="fa fa-th-list"></i> لائحة الفروع و الأقسام</a></li>
-                                <li><a href="manage_classes.php"><i class="fa-solid fa-chalkboard"></i>إدارة الصفوف</a></li>
-                                <li><a href="manage_branches.php"><i class="fa-solid fa-code-branch"></i>إدارة الفروع</a></li>
+                    <?php elseif($role_id == 5): ?>
+                        <li class="active">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-plus"></i><span>تسجيل</span></a>
+                            <ul class="collapse">
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-sitemap"></i> الفروع و الأقسام</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="#" data-toggle="modal" data-target="#addClassModal"><i class="fa fa-list"></i> إضافة قسم</a></li>
+                                        <li><a href="display_branches_classes.php"><i class="fa fa-th-list"></i> لائحة الفروع و الأقسام</a></li>
+                                        <li><a href="manage_classes.php"><i class="fa-solid fa-chalkboard"></i>إدارة الصفوف</a></li>
+                                        <li><a href="manage_branches.php"><i class="fa-solid fa-code-branch"></i>إدارة الفروع</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
+                                        <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
+                                        <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                        <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                        <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
+
+                            
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-book"></i> الدورات والأنشطة</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
+                                        <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
+                                        <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
+                                        <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
+                                        <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                        <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                                        
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                                <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
-                                <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
-                                <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
-                                <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
+                        <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
+                            <ul class="collapse">
+                                <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
                             </ul>
+                        </li>
+                        <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
+                            <ul class="collapse">
+                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
+                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
+                                <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
+                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
+                                <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                                <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
+                                <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
+
+                            </ul>
+                        </li>
                         </li>
                         <li>
-                            <a href="agents.php"><i class="fa fa-plus-circle"></i> تسجيل الوكلاء</a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-book"></i> الدورات والأنشطة</a>
-                            <ul class="collapse list-unstyled">
-                                <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
-                                <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
-                                <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
-                                <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                                <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-balance-scale"></i><span> المحاسبة</span></a>
+                            <ul class="collapse">
+                                <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
+                                        <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
+                                        <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
+                                    </ul>
+                                    <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
+                                    <ul class="collapse list-unstyled">
+                                    <li class="dropdown">
+                                        <a href="#" data-toggle="collapse" aria-expanded="true">
+                                            <i class="fas fa-layer-group"></i> المستويات
+                                        </a>
+                                        <ul class="collapse list-unstyled">
+                                            <li>
+                                                <a href="#" data-toggle="modal" data-target="#Levels">
+                                                    <i class="fas fa-level-up-alt"></i> إضافة مستوى
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="levels.php">
+                                                    <i class="fas fa-list-ul"></i> لائحة المستويات
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
                             </ul>
                         </li>
-                    </ul>
-                </li>
-                <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
-                    <ul class="collapse">
-                        <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
-                    </ul>
-                </li>
-                <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
-                    <ul class="collapse">
-                        <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
-                        <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
-                        <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
-                        <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                        <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
-                        <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
-
-
-                    </ul>
-                </li>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
-                    <ul class="collapse">
-                        <!-- User-related options -->
+                        <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-tasks"></i>  عمليات المعاينة</a>
+                            <ul class="collapse list-unstyled">
+                                <li><a href="students_accounts.php"><i class="fa fa-user-graduate"></i> حسابات الطلاب </a></li>
+                                <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
+                                <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
+                            </ul>
+                        </li>
                         <li class="dropdown">
-                        <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
-                        <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
-                </li>
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
+                            <ul class="collapse list-unstyled">
+                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
+                                <li><a href="Debt report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
+                                <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
+                            </ul>
+                        </li>
+                        </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
+                            <ul class="collapse">
+                                <!-- User-related options -->
+                                <li class="dropdown">
+                                <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
+                                <ul class="collapse list-unstyled">
+                                <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+                            </ul>
 
-            <!-- Menu items accessible to both role_id = 1 and role_id = 3 -->
+                            <!-- Menu items accessible to both role_id = 1 and role_id = 2 -->
+                            <?php elseif($role_id == 2): ?>
+                            <li class="active">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-plus"></i><span>تسجيل</span></a>
+                            <ul class="collapse">
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-sitemap"></i> الفروع و الأقسام</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="#" data-toggle="modal" data-target="#k"><i class="fa fa-plus-circle"></i>  إضافة فرع</a></li>
+                                        <li><a href="#" data-toggle="modal" data-target="#addClassModal"><i class="fa fa-list"></i> إضافة قسم</a></li>
+                                        <li><a href="display_branches_classes.php"><i class="fa fa-th-list"></i> لائحة الفروع و الأقسام</a></li>
+                                        <li><a href="manage_classes.php"><i class="fa-solid fa-chalkboard"></i>إدارة الصفوف</a></li>
+                                        <li><a href="manage_branches.php"><i class="fa-solid fa-code-branch"></i>إدارة الفروع</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
+                                        <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
+                                        <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                        <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                        <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
+                                        <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="agents.php"><i class="fa fa-plus-circle"></i> تسجيل الوكلاء</a>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-book"></i> الدورات والأنشطة</a>
+                                    <ul class="collapse list-unstyled">
+                                        <li><a href="#" data-toggle="modal" data-target="#createActivityModal"><i class="fa fa-plus-square"></i> إنشاء دورة أو نشاط </a></li>
+                                        <li><a href="Iscrire_in_event.php" ><i class="fa fa-user-plus"></i> تسجيل في دورة أو نشاط </a></li>
+                                        <li><a href="list_activities.php"><i class="fa fa-list"></i> لائحة الدورات والأنشطة </a></li>
+                                        <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                        <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-edit"></i><span>تعديل</span></a>
+                            <ul class="collapse">
+                                <li><a href="view_agents.php"><i class="fa fa-user-tie"></i> بيانات الوكلاء</a></li>
+                            </ul>
+                        </li>
+                        <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
+                            <ul class="collapse">
+                                <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
+                                <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
+                                <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
+                                <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
+                                <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                                <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
+                                <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
 
-            <?php elseif($role_id == 3): ?>
+
+                            </ul>
+                        </li>
+            </li>
+        <li>
+            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
+            <ul class="collapse">
+                <!-- User-related options -->
+                <li class="dropdown">
+                <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
+                <ul class="collapse list-unstyled">
+                <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+            </ul>
+        <!-- Restricted Access for role_id = 2 -->
+         <!-- Menu items accessible to both role_id = 1 and role_id = 3 -->
+         <?php elseif($role_id == 3): ?>
                 <li class="active">
                     <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-plus"></i><span>تسجيل</span></a>
                     <ul class="collapse">
@@ -576,35 +576,7 @@
                         <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                     </ul>
 
-
-            <!-- Restricted Access for role_id = 6 -->
-
-            <?php elseif($role_id == 6): ?>
-                <li class="<?php if($page=='manage-leave') {echo 'active';} ?>">
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user-cog"></i><span>شؤون الطلاب</span></a>
-                    <ul class="collapse">
-                        <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
-                        <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
-                        <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
-                        <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
-                        <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
-                        <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
-
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
-                    <ul class="collapse">
-                        <!-- User-related options -->
-                        <li class="dropdown">
-                        <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
-                        <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
-
-                </li>
+                <!-- Restricted Access for role_id = 2 -->
             <?php endif; ?>
 
             <!-- This section will be visible only to role_id = 1 -->
@@ -749,99 +721,99 @@
 
     <!-- Add Section Modal -->
     <div class="modal fade" id="addClassModal" tabindex="-1" role="dialog" aria-labelledby="addClassModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addClassModalLabel">إضافة قسم</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addClassForm" method="POST" action="add_class.php">
-                <div class="form-group">
-                    <label for="branchSelect">اختر الفرع</label>
-                    <select class="form-control" id="branchSelect" name="branch_id" required>
-                        <?php include 'db_connection.php'; 
-                            $branches = [];
-                            $result = $conn->query("SELECT branch_id, branch_name FROM branches");
-                            while ($row = $result->fetch_assoc()) {
-                                $branches[] = $row;
-                            }
-
-                            $conn->close();
-                        ?>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var branchSelect = document.getElementById('branchSelect');
-                                var branches = <?php echo json_encode($branches); ?>;
-
-                                branches.forEach(function(branch) {
-                                    var option = document.createElement('option');
-                                    option.value = branch.branch_id;
-                                    option.textContent = branch.branch_name;
-                                    branchSelect.appendChild(option);
-                                });
-                            });
-                        </script>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="className">اسم القسم</label>
-                    <input type="text" class="form-control" id="class_name" name="class_name" placeholder="أدخل اسم القسم" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                    <button type="submit" class="btn btn-primary">إضافة القسم</button>
-                </div>
-                </form>
-            </div>
-            </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addClassModalLabel">إضافة قسم</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
         </div>
+        <div class="modal-body">
+            <form id="addClassForm" method="POST" action="add_class.php">
+            <div class="form-group">
+                <label for="branchSelect">اختر الفرع</label>
+                <select class="form-control" id="branchSelect" name="branch_id" required>
+                    <?php include 'db_connection.php'; 
+                        $branches = [];
+                        $result = $conn->query("SELECT branch_id, branch_name FROM branches");
+                        while ($row = $result->fetch_assoc()) {
+                            $branches[] = $row;
+                        }
+
+                        $conn->close();
+                    ?>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var branchSelect = document.getElementById('branchSelect');
+                            var branches = <?php echo json_encode($branches); ?>;
+
+                            branches.forEach(function(branch) {
+                                var option = document.createElement('option');
+                                option.value = branch.branch_id;
+                                option.textContent = branch.branch_name;
+                                branchSelect.appendChild(option);
+                            });
+                        });
+                    </script>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="className">اسم القسم</label>
+                <input type="text" class="form-control" id="class_name" name="class_name" placeholder="أدخل اسم القسم" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                <button type="submit" class="btn btn-primary">إضافة القسم</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
     </div>
 
     <!-- Modal for Creating Activity -->
     <div class="modal fade" id="createActivityModal" tabindex="-1" aria-labelledby="createActivityModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createActivityModalLabel">إنشاء دورة أو نشاط</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="createActivityForm" action="insert_activity.php" method="POST">
-                <div class="mb-3">
-                    <label for="activityName" class="form-label">اسم الدورة أو النشاط</label>
-                    <input type="text" class="form-control" id="activityName" name="activity_name" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="session" class="form-label">عدد الحلقات</label>
-                    <input type="text" class="form-control" id="session" name="session" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="startDate" class="form-label">تاريخ البداية</label>
-                    <input type="date" class="form-control" id="startDate" name="start_date" required>
-                </div>
-                <div class="mb-3">
-                    <label for="endDate" class="form-label">تاريخ النهاية</label>
-                    <input type="date" class="form-control" id="endDate" name="end_date" required>
-                </div>
-                <div class="mb-3">
-                    <label for="price" class="form-label">السعر</label>
-                    <input type="number" step="0.01" class="form-control" id="price" name="price" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                    <button type="submit" class="btn btn-primary">حفظ</button>
-                </div>
-                </form>
-            </div>
-            </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="createActivityModalLabel">إنشاء دورة أو نشاط</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+            <form id="createActivityForm" action="insert_activity.php" method="POST">
+            <div class="mb-3">
+                <label for="activityName" class="form-label">اسم الدورة أو النشاط</label>
+                <input type="text" class="form-control" id="activityName" name="activity_name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="session" class="form-label">عدد الحلقات</label>
+                <input type="text" class="form-control" id="session" name="session" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="startDate" class="form-label">تاريخ البداية</label>
+                <input type="date" class="form-control" id="startDate" name="start_date" required>
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">تاريخ النهاية</label>
+                <input type="date" class="form-control" id="endDate" name="end_date" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">السعر</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="submit" class="btn btn-primary">حفظ</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
     </div>
 
     <!-- Modal for Creating Levels -->
