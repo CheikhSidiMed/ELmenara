@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_id = $_SESSION['userid'];
 
 
 // Handle suspension of student
@@ -19,8 +20,7 @@ if (isset($_POST['suspend_student_id'])) {
     $suspension_reason = $_POST['suspension_reason'];
 
     // First, fetch the student's data from the students table
-    $student_query = "
-        SELECT students.id, students.student_name, students.gender, students.phone,
+    $student_query = "SELECT students.id, students.student_name, students.gender, students.phone,
                  students.regstration_date_count, students.part_count, students.payment_nature, students.fees, students.discount, students.remaining,
                classes.class_name, branches.branch_name, agents.agent_name, agents.phone AS agent_phone, levels.level_name
         FROM students
@@ -37,20 +37,19 @@ if (isset($_POST['suspend_student_id'])) {
 
     if ($student) {
         // Insert the student's data into the suspended_students table with the suspension reason
-        $insert_query = "
-    INSERT INTO suspended_students (student_id, student_name, gender, phone, class_name, branch_name, 
-                                    agent_name, agent_phone, level_name, suspension_reason, 
-                                    reg_date, part_count, payment_nature, fees, discount, remaining)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($insert_query);
-$stmt->bind_param("issssssssssisiii", 
-    $student['id'], $student['student_name'], $student['gender'], $student['phone'], 
-    $student['class_name'], $student['branch_name'], $student['agent_name'], $student['agent_phone'],
-    $student['level_name'], $suspension_reason,
-    $student['regstration_date_count'], $student['part_count'], 
-    $student['payment_nature'], $student['fees'], $student['discount'], $student['remaining']);
-$stmt->execute();
-$stmt->close();
+        $sql = "INSERT INTO suspended_students (student_id, student_name, gender, phone, class_name, branch_name,
+                            agent_name, agent_phone, level_name, suspension_reason,
+                            reg_date, part_count, payment_nature, fees, discount, remaining)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("issssssssssisiii",
+        $student['id'], $student['student_name'], $student['gender'], $student['phone'],
+        $student['class_name'], $student['branch_name'], $student['agent_name'], $student['agent_phone'],
+        $student['level_name'], $suspension_reason,
+        $student['regstration_date_count'], $student['part_count'],
+        $student['payment_nature'], $student['fees'], $student['discount'], $student['remaining']);
+    $stmt->execute();
+    $stmt->close();
 
         // Delete the student from the students table
         $delete_query = "DELETE FROM students WHERE id = ?";
@@ -67,17 +66,21 @@ $stmt->close();
 }
 
 // Fetch all students and their foreign key data
-$students_query = "
-    SELECT students.id, students.student_name, students.gender, students.phone, 
+$students_query = "SELECT students.id, students.student_name, students.gender, students.phone,
            classes.class_name, branches.branch_name, agents.agent_name, agents.phone AS agent_phone, levels.level_name, COALESCE(SUM(payments.remaining_amount), 0) AS total_remaining_amount
     FROM students
     LEFT JOIN classes ON students.class_id = classes.class_id
     LEFT JOIN branches ON students.branch_id = branches.branch_id
+    JOIN user_branch ub ON branches.branch_id = ub.branch_id AND ub.user_id = ?
     LEFT JOIN agents ON students.agent_id = agents.agent_id
     LEFT JOIN payments ON students.id = payments.student_id
     LEFT JOIN levels ON students.level_id = levels.id
     GROUP BY students.id, students.student_name, students.gender, students.phone, classes.class_name, branches.branch_name, agents.agent_name, agents.phone, levels.level_name";
-$result = $conn->query($students_query);
+
+$stmt = $conn->prepare($students_query);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $students = [];
 if ($result->num_rows > 0) {

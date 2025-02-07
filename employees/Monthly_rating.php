@@ -10,6 +10,7 @@ if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
     exit();
 }
+$user_id = $_SESSION['userid'];
 
 
 // Include database connection
@@ -18,7 +19,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -26,6 +27,7 @@ if ($result->num_rows > 0) {
 
 $branch_name = '';
 $class_name = '';
+$username = '';
 $totalPages = 0;
 
 
@@ -43,9 +45,14 @@ $selectedClass = $_SESSION['class'] ?? '';
 $selectedMonth = $_SESSION['month'] ?? '';
 $selectedYear = $_SESSION['year'] ?? date('Y');
 
-// Fetch branches from the database
-$sqlBranches = "SELECT branch_id, branch_name FROM branches";
-$resultBranches = $conn->query($sqlBranches);
+
+$sql = "SELECT b.branch_id, b.branch_name
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$resultBranches = $stmt->get_result();
 
 $branches = [];
 if ($resultBranches->num_rows > 0) {
@@ -80,21 +87,20 @@ $arabic_months = [
 
 // Fetch branch and class names if set
 if (!empty($branch_id) && !empty($selectedClass)) {
-    $sqlBranch = "SELECT branch_name FROM branches WHERE branch_id = ?";
-    $stmtBranch = $conn->prepare($sqlBranch);
-    $stmtBranch->bind_param('i', $branch_id);
-    $stmtBranch->execute();
-    $stmtBranch->bind_result($branch_name);
-    $stmtBranch->fetch();
-    $stmtBranch->close();
 
-    $sqlClass = "SELECT class_name FROM classes WHERE class_id = ?";
-    $stmtClass = $conn->prepare($sqlClass);
-    $stmtClass->bind_param('i', $selectedClass);
-    $stmtClass->execute();
-    $stmtClass->bind_result($class_name);
-    $stmtClass->fetch();
-    $stmtClass->close();
+
+    $sql = "SELECT c.class_name, b.branch_name, u.username
+    FROM classes AS c
+    JOIN branches AS b ON c.branch_id = b.branch_id
+    LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+    LEFT JOIN users AS u ON u.id = ub.user_id
+    WHERE c.class_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $selectedClass);
+$stmt->execute();
+$stmt->bind_result($class_name, $branch_name, $username);
+$stmt->fetch();
+$stmt->close();
 }
 
 // Fetch students based on selected class with pagination
@@ -145,7 +151,7 @@ if (isset($_GET['print_all']) && $_GET['print_all'] == 'true') {
     }
     $stmt->close();
 
-    echo json_encode($students);
+    json_encode($students);
     exit;
 }
 
@@ -316,7 +322,13 @@ $conn->close();
     .pagination {
         display: none;
     }
-    }
+    .p-head{
+                font-size: 15px !important;
+            }
+        }
+        .p-head{
+            font-size: 21px !important;
+        }
 
     </style>
     <script>
@@ -397,7 +409,7 @@ $conn->close();
         <img src="../images/header.png" width="100%" alt="Header Image">
         <div class="sheet-header">
             <h3> استمارة التقويم </h3>
-            <p>الفرع: <?php echo $branch_name; ?>  <p>القسم: <?php echo $class_name; ?></p> <p>الشهر: <?php echo $arabic_months[$selectedMonth] ?? ''; ?> </p> <p> العام الدراسي: <?php echo $last_year; ?></p>
+            <p class="p-head">الفرع: <?php echo $branch_name; ?>  <p class="p-head">القسم: <?php echo $class_name; ?></p> <p class="p-head">الشهر: <?php echo $arabic_months[$selectedMonth] ?? ''; ?> </p> <p class="p-head"> العام الدراسي: <?php echo $last_year; ?></p>
             <p class="print-date">تاريخ الطباعة: <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
 
         </div>
@@ -426,8 +438,9 @@ $conn->close();
     </table>
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p>الأستاذ </p>
+            <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
+            <p style="margin-top: -35px;">__________________</p>
         </div>
         <div class="signature">
             <p>تاريخ التسليم</p>

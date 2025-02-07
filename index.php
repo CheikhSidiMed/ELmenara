@@ -22,7 +22,7 @@ if (isset($_POST['signin'])) {
     if ($result) {
         $_SESSION['userid'] = $result->id;
         $_SESSION['username'] = $result->username;
-        $_SESSION['role_id'] = $result->role_id; // Store the role_id in the session
+        $_SESSION['role_id'] = $result->role_id;
         $_SESSION['UR_id'] = $result->id; // Store the role_id in the session
 
 

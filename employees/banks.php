@@ -10,6 +10,7 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$user_id = $_SESSION['userid'];
 
 // Fetch funds data
 $funds = [];
@@ -157,7 +158,7 @@ $conn->close();
     <?php foreach ($funds as $fund): ?>
     <tr>
         <td><?php echo $fund['fund_name']; ?></td>
-        <td><?php echo number_format($fund['balance']); ?> MRU </td>
+        <td><?php echo $user_id === 1 ? number_format($fund['balance']) : 'N/A'; ?> MRU </td>
         <td class="eye-icon">
             <a href="Account Preview.php?fund_id=<?php echo $fund['id']; ?>"><i class="bi bi-eye"></i></a>
         </td>
@@ -168,7 +169,7 @@ $conn->close();
     <?php foreach ($banks as $bank): ?>
     <tr>
         <td><?php echo $bank['bank_name']; ?></td>
-        <td><?php echo number_format($bank['balance']); ?> MRU </td>
+        <td><?php echo  $user_id === 1 ?  number_format($bank['balance'])  : 'N/A'; ?> MRU </td>
         <td class="eye-icon">
             <a href="Account Preview.php?bank_id=<?php echo $bank['account_id']; ?>"><i class="bi bi-eye"></i></a>
         </td>

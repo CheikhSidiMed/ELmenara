@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_id = $_SESSION['userid'];
 
 
 // Fetch student data from the database, including agent phone number
@@ -19,13 +20,16 @@ $sql = "SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.bir
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
     LEFT JOIN branches b ON s.branch_id = b.branch_id
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?
     LEFT JOIN levels l ON s.level_id = l.id
     LEFT JOIN classes c ON s.class_id = c.class_id
     LEFT JOIN agents a ON s.agent_id = a.agent_id
 ";
 
-$result = $conn->query($sql);
-
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 ?>
 

@@ -9,13 +9,13 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
 
 // Database connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Update payment_nature and discount if form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment_nature'])) {
     $student_id = $_POST['student_id'];
     $level_id = $_POST['level_id'];
@@ -45,7 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment_nature'
 }
 
 // Fetch all students
-$result = $conn->query("SELECT id, student_name, payment_nature, discount, level_id FROM students");
+$sql = "SELECT s.id, s.student_name, s.payment_nature, s.discount, s.level_id
+    FROM students s
+    JOIN branches b ON s.branch_id = b.branch_id
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>

@@ -10,6 +10,9 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
+
+
 
 // Include database connection
 include 'db_connection.php';
@@ -17,7 +20,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -36,8 +39,14 @@ $selectedClass = $_SESSION['class'] ?? '';
 $selectedMonth = $_SESSION['month'] ?? '';
 
 // Fetch branches from the database
-$sqlBranches = "SELECT branch_id, branch_name FROM branches";
-$resultBranches = $conn->query($sqlBranches);
+
+$sql = "SELECT b.branch_id, b.branch_name
+FROM branches b
+JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$resultBranches = $stmt->get_result();
 
 $branches = [];
 if ($resultBranches->num_rows > 0) {
@@ -52,6 +61,7 @@ $branch_id = $_POST['branch'] ?? '';
 $students = [];
 $branch_name = '';
 $class_name = '';
+$username = '';
 
 // Fetch classes based on selected branch
 if (!empty($branch_id)) {
@@ -69,7 +79,7 @@ if (!empty($branch_id)) {
 
 // Arabic months
 $arabic_months = [
-    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
     'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
 ];
 
@@ -78,14 +88,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $month = $_POST['month'];
 
     // Fetch class name and branch name
-    $sql = "SELECT classes.class_name, branches.branch_name 
-            FROM classes 
-            JOIN branches ON classes.branch_id = branches.branch_id 
-            WHERE classes.class_id = ?";
+    $sql = "SELECT c.class_name, b.branch_name, u.username
+            FROM classes AS c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+            LEFT JOIN users AS u ON u.id = ub.user_id
+            WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
     $stmt->execute();
-    $stmt->bind_result($class_name, $branch_name);
+    $stmt->bind_result($class_name, $branch_name, $username);
     $stmt->fetch();
     $stmt->close();
 
@@ -265,6 +277,12 @@ $conn->close();
             tr {
                 page-break-inside: avoid;
             }
+            .p-head{
+                font-size: 15px !important;
+            }
+        }
+        .p-head{
+            font-size: 21px !important;
         }
 
     </style>
@@ -345,9 +363,9 @@ $conn->close();
     <div class="sheet-header receipt-header">
         <img src="../images/header.png" alt="Header Image">
         <h3>استمارة تقييم أقسام التهجي</h3>
-        <p>الشهر: <?php echo $arabic_months[$selectedMonth] ?? ''; ?>،  العام الدراسي : <?php echo $last_year; ?></p>
-        <p>الفرع: <?php echo $branch_name; ?></p>
-        <p>القسم: <?php echo $class_name; ?></p>
+        <p class="p-head">الشهر: <?php echo $arabic_months[$selectedMonth] ?? ''; ?>،  العام الدراسي : <?php echo $last_year; ?></p>
+        <p class="p-head">الفرع: <?php echo $branch_name; ?></p>
+        <p class="p-head">القسم: <?php echo $class_name; ?></p>
         <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
 
     </div>
@@ -394,7 +412,7 @@ $conn->close();
     
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ</p>
+            <p>توقيع الأستاذ: <strong><?php echo $username; ?></strong></p>
             <p>__________________</p>
         </div>
         <div class="signature">

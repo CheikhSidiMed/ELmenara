@@ -9,12 +9,15 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_id = $_SESSION['userid'];
 
 // Query to fetch students with a discount and their class names
 $sql = "SELECT s.id, s.student_name, c.class_name, s.fees, s.discount, (s.fees - s.discount) AS remaining 
         FROM students s
         JOIN classes c ON s.class_id = c.class_id
-        WHERE s.fees > 0.00"; // Only fetch students with a discount
+        LEFT JOIN branches b ON s.branch_id = b.branch_id
+        JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ($user_id)
+        WHERE s.fees > 0.00";
 
 $result = $conn->query($sql);
 ?>

@@ -1,5 +1,8 @@
 <?php
 include 'db_connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 session_start();
 
@@ -9,6 +12,8 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$user_id = $_SESSION['userid'];
+$role_id = $_SESSION['role_id'];
 
 // Initialize variables
 $transactions = [];
@@ -23,7 +28,6 @@ $result = $conn->query($sql);
 
 $last_year = $result && $result->num_rows > 0 ? $result->fetch_assoc()['year_name'] : "";
 
-// Get the date filter inputs (if provided)
 $fromDate = isset($_GET['fromDate']) ? $_GET['fromDate'] : null;
 $toDate = isset($_GET['toDate']) ? $_GET['toDate'] : null;
 
@@ -32,98 +36,59 @@ if ($toDate) {
     $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
 }
 
-// Determine if the request is for a fund or a bank
-if (isset($_GET['fund_id'])) {
-    $fund_id = $_GET['fund_id'];
+$cond = ($role_id === 1) ? "1=1" : "user_id = $user_id";
 
-    // Fetch the fund name and balance
-    $stmt = $conn->prepare("SELECT fund_name, balance FROM funds WHERE id = ?");
-    $stmt->bind_param('i', $fund_id);
+// Déterminer si la requête concerne un fond ou une banque
+if (isset($_GET['fund_id']) || isset($_GET['bank_id'])) {
+    $isFund = isset($_GET['fund_id']);
+    $account_id = $isFund ? $_GET['fund_id'] : $_GET['bank_id'];
+    $account_table = $isFund ? "funds" : "bank_accounts";
+    $account_column = $isFund ? "fund_name" : "bank_name";
+    $account_id_column = $isFund ? "id" : "account_id";
+    $payment_method = $isFund ? "نقدي" : "بنكي";
+    $transaction_account_column = $isFund ? "fund_id" : "bank_id";
+
+    // Récupérer le nom du compte et le solde
+    $stmt = $conn->prepare("SELECT $account_column, balance FROM $account_table WHERE $account_id_column = ?");
+    $stmt->bind_param('i', $account_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $fund = $result->fetch_assoc();
-    $account_name = $fund['fund_name'];
-    $balance = $fund['balance'];
+    $account = $result->fetch_assoc();
+    $account_name = $account[$account_column];
+    $balance = $account['balance'];
 
-    // Check if the date filters are set and adjust the query accordingly
-    if ($fromDate && $toDate) {
-        // Fetch the related transactions with date filter
-        $query = "
-                SELECT transaction_description, amount, transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-                FROM transactions 
-                WHERE fund_id = ?
-                AND (transaction_date BETWEEN ? AND ?)
-                UNION 
-                SELECT transaction_description, amount, 'minus' as transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-                FROM expense_transaction 
-                WHERE payment_method = 'نقدي'
-                AND (transaction_date BETWEEN ? AND ?)
-                ORDER BY transaction_date DESC
-            ";
+    // Déterminer si les filtres de date sont définis
+    $dateFilter = ($fromDate && $toDate) ? "AND (date BETWEEN '$fromDate' AND '$toDate')" : "";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('issss', $fund_id, $fromDate, $toDate, $fromDate, $toDate);
-    } else {
-        // Fetch all transactions without date filter
-        $query = "
-            SELECT transaction_description, amount, transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM transactions 
-            WHERE fund_id = ?
-            UNION 
-            SELECT transaction_description, amount, 'minus' as transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM expense_transaction 
-            WHERE payment_method = 'نقدي'
-            ORDER BY transaction_date DESC
-        ";
+    // Requête pour récupérer les transactions
+    $query = "
+        SELECT description AS transaction_description, paid_amount AS amount, type AS transaction_type, DATE_FORMAT(date, '%Y-%m-%d') as transaction_date
+        FROM combined_transactions
+        WHERE $transaction_account_column = ? AND ($cond) $dateFilter
+        ORDER BY date DESC
+    ";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('i', $fund_id);
-    }
-} elseif (isset($_GET['bank_id'])) {
-    $bank_id = $_GET['bank_id'];
+    // Préparer la requête SQL
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $account_id);
 
-    // Fetch the bank name and balance
-    $stmt = $conn->prepare("SELECT bank_name, balance FROM bank_accounts WHERE account_id = ?");
-    $stmt->bind_param('i', $bank_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $bank = $result->fetch_assoc();
-    $account_name = $bank['bank_name'];
-    $balance = $bank['balance'];
+    // $dateFilter = ($fromDate && $toDate) ? "AND (transaction_date BETWEEN '$fromDate' AND '$toDate')" : "";
 
-    // Check if the date filters are set and adjust the query accordingly
-    if ($fromDate && $toDate) {
-        // Fetch the related transactions with date filter
-        $query = "
-            SELECT transaction_description, amount, transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM transactions 
-            WHERE bank_account_id = ?
-            AND (transaction_date BETWEEN ? AND ?)
-            UNION 
-            SELECT transaction_description, amount, 'minus' as transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM expense_transaction 
-            WHERE payment_method = 'بنكي'
-            AND (transaction_date BETWEEN ? AND ?)
-            ORDER BY transaction_date DESC
-        ";
+    // // Requête pour récupérer les transactions
+    // $query = "
+    //     SELECT transaction_description, amount, transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
+    //     FROM transactions
+    //     WHERE $transaction_account_column = ? AND ($cond) $dateFilter
+    //     UNION
+    //     SELECT transaction_description, amount, 'minus' as transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
+    //     FROM expense_transaction
+    //     WHERE payment_method = ? $dateFilter
+    //     ORDER BY transaction_date DESC
+    // ";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('issss', $bank_id, $fromDate, $toDate, $fromDate, $toDate);
-    } else {
-        // Fetch all transactions without date filter
-        $query = "
-            SELECT transaction_description, amount, transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM transactions 
-            WHERE bank_account_id = ?
-            UNION 
-            SELECT transaction_description, amount, 'minus' as transaction_type, DATE_FORMAT(transaction_date, '%Y-%m-%d') as transaction_date
-            FROM expense_transaction 
-            WHERE payment_method = 'بنكي'
-            ORDER BY transaction_date DESC
-        ";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('i', $bank_id);
-    }
+    // // Préparer la requête SQL
+    // $stmt = $conn->prepare($query);
+    // $stmt->bind_param('is', $account_id, $payment_method);
 }
 
 // Execute the statement and fetch the transactions

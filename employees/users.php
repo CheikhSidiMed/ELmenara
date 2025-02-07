@@ -12,8 +12,21 @@ if (!isset($_SESSION['userid'])) {
 
 $logged_in_role_id = $_SESSION['role_id'];
 
+$selectedClass = $_POST['class'] ?? null;
+$selectedBranch = isset($_POST['branch']) ? (is_array($_POST['branch']) ? $_POST['branch'][0] : $_POST['branch']) : null;
 
-$query = "SELECT u.id, u.username, r.role_name FROM users u JOIN roles r ON u.role_id = r.id";
+$query = "SELECT
+            u.id,
+            u.username,
+            r.role_name,
+            c.class_name,
+            GROUP_CONCAT(b.branch_name ORDER BY b.branch_name SEPARATOR ', ') AS branch_names
+        FROM users u
+        JOIN roles r ON u.role_id = r.id
+        LEFT JOIN user_branch ub ON ub.user_id = u.id
+        LEFT JOIN branches b ON b.branch_id = ub.branch_id
+        LEFT JOIN classes c ON c.class_id = ub.class_id
+        GROUP BY u.id, u.username, r.role_name;";
 $result = $conn->query($query);
 
 
@@ -33,6 +46,24 @@ if (isset($_SESSION['delete_success'])) {
     $deleteSuccess = true;
     unset($_SESSION['delete_success']);
 }
+
+$branchesQuery = "SELECT branch_id, branch_name FROM branches";
+$branchesResult = $conn->query($branchesQuery);
+
+
+
+$selectedTeacher = ($_POST['role'] &&$_POST['role'] === 20) ?? null; // Récupérer le teacher depuis le formulaire
+$classesResult = [];
+
+if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélectionnés
+    $classesQuery = "SELECT class_id, class_name FROM classes WHERE branch_id = ?";
+    $stmt = $conn->prepare($classesQuery);
+    $stmt->bind_param("i", $selectedBranch);
+    $stmt->execute();
+    $classesResult = $stmt->get_result();
+    $stmt->close();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -60,8 +91,13 @@ if (isset($_SESSION['delete_success'])) {
         .container {
             margin-top: 50px;
         }
+        .bny{
+            padding: 4px 15px !important;
+            font-size:  22px !important;
+            color: #fff;
+        }
 
-        .table {
+        table {
             margin-top: 20px;
             border: 2px solid #1BA078;
             border-radius: 15px;
@@ -80,8 +116,6 @@ if (isset($_SESSION['delete_success'])) {
             background-color: #1BA078;
             color: white;
             font-size: 20px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
         }
 
         .table td {
@@ -111,14 +145,12 @@ if (isset($_SESSION['delete_success'])) {
 
         .table th:first-child,
         .table td:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
+            border-top-left-radius: 1px;
+            border-bottom-left-radius: 1px;
         }
 
         .table th:last-child,
         .table td:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
         }
 
         /* Scrollbar styling */
@@ -133,7 +165,6 @@ if (isset($_SESSION['delete_success'])) {
 
         .table-container::-webkit-scrollbar-thumb {
             background-color: #1BA078;
-            border-radius: 10px;
         }
 
         .table-container::-webkit-scrollbar-track {
@@ -162,6 +193,15 @@ if (isset($_SESSION['delete_success'])) {
             justify-content: center;
             gap: 10px;
         }
+        @media screen and (max-width: 768px) {
+            .bny{
+                font-size: 15px !important;
+            }
+            th{
+                font-size: 15px !important;
+
+            }
+        }
     </style>
 </head>
 
@@ -169,7 +209,7 @@ if (isset($_SESSION['delete_success'])) {
     <div class="container">
         <h2>قائمة المستخدمين و الأدوار</h2>
         <a href="home.php" class="home-btn"><i class="bi bi-house-fill"></i> الصفحة الرئيسية</a>
-        <button class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-fill-add"></i> إضافة مستخدم جديد</button>
+        <button class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-fill-add ms-1"></i> إضافة مستخدم جديد</button>
 
         <!-- User Table -->
         <div class="table-container">
@@ -179,7 +219,8 @@ if (isset($_SESSION['delete_success'])) {
                         <th>رقم المستخدم</th>
                         <th>اسم المستخدم</th>
                         <th>الدور</th>
-                        <!-- <th>الدور</th> -->
+                        <th>الفرع</th>
+                        <th>القسم</th>
                         <?php if ($logged_in_role_id == 1): ?>
                         <th>الإجراءات</th>
                         <?php endif; ?>
@@ -193,10 +234,12 @@ if (isset($_SESSION['delete_success'])) {
                             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['username']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['role_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['branch_names']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['class_name']??'الجيمع') . "</td>";
                             if ($logged_in_role_id == 1) {
                                 echo "<td class='action-buttons'>";
-                                echo "<a href='edit_user.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'><i class='bi bi-pencil-square'></i> تعديل</a>";
-                                echo "<a href='delete_user.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick=\"return confirm('هل أنت متأكد من أنك تريد حذف هذا المستخدم؟');\"><i class='bi bi-trash'></i> حذف</a>";
+                                echo "<a href='edit_user.php?id=" . $row['id'] . "' class='btn btn-success bny btn-sm'><i class='bi bi-pencil-square'></i> تعديل</a>";
+                                echo "<a href='delete_user.php?id=" . $row['id'] . "' class='btn btn-danger bny btn-sm' onclick=\"return confirm('هل أنت متأكد من أنك تريد حذف هذا المستخدم؟');\"><i class='bi bi-trash'></i> حذف</a>";
                                 echo "</td>";
                             }
                             echo "</tr>";
@@ -222,7 +265,6 @@ if (isset($_SESSION['delete_success'])) {
         </script>
     <?php } ?>
 
-    <!-- Success message after redirect from delete -->
     <?php if ($deleteSuccess) { ?>
         <script>
             Swal.fire({
@@ -234,13 +276,12 @@ if (isset($_SESSION['delete_success'])) {
         </script>
     <?php } ?>
 
-    <!-- Add User Modal -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #1BA078;">
                     <h5 class="modal-title text-white" id="addUserModalLabel">إضافة مستخدم جديد</h5>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close text-white ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addUserForm">
@@ -254,7 +295,7 @@ if (isset($_SESSION['delete_success'])) {
                         </div>
                         <div class="mb-3">
                             <label for="role" class="form-label">الدور</label>
-                            <select class="form-select" id="role" name="role">
+                            <select class="form-select" id="role" name="role" onchange="toggleFields()">
                                 <?php
                                 if ($rolesResult->num_rows > 0) {
                                     while ($role = $rolesResult->fetch_assoc()) {
@@ -264,65 +305,110 @@ if (isset($_SESSION['delete_success'])) {
                                 ?>
                             </select>
                         </div>
+
+                        <div class="form-group w-100" id="branchContainer">
+                            <label for="branch">الفروع</label>
+                            <select class="form-control" id="branch" name="branch[]" multiple required>
+                            <option value="">اختر فرع</option>
+
+                                <?php
+                                if ($branchesResult->num_rows > 0) {
+                                    while ($row = $branchesResult->fetch_assoc()) {
+                                        // echo "<option value='{$row['branch_id']}'>{$row['branch_name']}</option>";
+                                        echo "<option value='{$row['branch_id']}'" . ($selectedBranch == $row['branch_id'] ? " selected" : "") . ">{$row['branch_name']}</option>";
+
+                                    }
+                                } else {
+                                    echo "<option value=''>لا يوجد فروع</option>";
+                                }
+                                ?>
+                            </select>
+                            <small class="text-muted text-success">يمكنك اختيار عدة فروع باستخدام Ctrl (Windows) أو Cmd (Mac)</small>
+                        </div>
+
+                        <div class="form-group w-100 d-none" id="classContainer">
+                            <label for="class">القسم</label>
+                            <select class="form-control" id="class" name="class">
+                                <option value="">اختر القسم</option>
+                                <?php
+                                if ($selectedBranch && $classesResult->num_rows > 0) {
+                                    echo "<!-- Debug: classes trouvées -->";
+                                    while ($classRow = $classesResult->fetch_assoc()) {
+                                        var_dump($classRow); // Vérifier chaque ligne retournée
+                                        echo "<option value='{$classRow['class_id']}'>{$classRow['class_name']}</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>لا يوجد صفوف</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-primary" onclick="addUser()">إضافة</button>
+                    <button type="button" class="btn btn-secondary bny" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-success bny" onclick="addUser()">إضافة</button>
                 </div>
             </div>
         </div>
     </div>
 
+
+
+
+
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
-    // Function to handle adding a new user
     function addUser() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const role = document.getElementById('role').value;
+        let class_id = document.getElementById('class').value;
 
-        if (username && password && role) {
+        const branchSelect = document.getElementById('branch');
+        const branches = Array.from(branchSelect.selectedOptions).map(option => option.value);
+
+        if (username && password && role && branches.length > 0) {
             const formData = new FormData();
             formData.append('username', username);
             formData.append('password', password);
             formData.append('role', role);
+            formData.append('class', class_id);
+
+            branches.forEach(branch => {
+                formData.append('branches[]', branch);
+            });
 
             fetch('add_user_process.php', {
                 method: 'POST',
                 body: formData
-            }).then(response => response.json())
-              .then(data => {
+            })
+            .then(response => response.json())
+            .then(data => {
                 if (data.success) {
-                    // Show success Swal.fire alert
                     Swal.fire({
                         icon: 'success',
                         title: 'تمت إضافة المستخدم بنجاح',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        // Reload the page after the alert
                         window.location.reload();
                     });
                 } else {
-                    // Show error Swal.fire alert
                     Swal.fire({
-                        icon: 'success',
-                        title: 'تمت إضافة المستخدم بنجاح',
-                       
+                        icon: 'error',
+                        title: 'حدث خطأ أثناء الإضافة',
                     });
                 }
-            }).catch(error => {
+            })
+            .catch(error => {
                 console.error('Error:', error);
-                // Show error Swal.fire alert for the catch block
                 Swal.fire({
-                    icon: 'success',
-                    title: 'تمت إضافة المستخدم بنجاح',
-                   
+                    icon: 'error',
+                    title: 'حدث خطأ أثناء الإضافة',
                 });
             });
         } else {
-            // Show validation error if fields are missing
             Swal.fire({
                 icon: 'warning',
                 title: 'الرجاء ملء جميع الحقول',
@@ -330,6 +416,53 @@ if (isset($_SESSION['delete_success'])) {
             });
         }
     }
+</script>
+</body> <!-- Assurez-vous que ceci est la fin du document -->
+
+
+
+<script>
+    function toggleFields() {
+        let role = document.getElementById('role').value;
+        let branchSelect = document.getElementById('branch');
+        let branchContainer = document.getElementById('branchContainer');
+        let classContainer = document.getElementById('classContainer');
+
+        if (role == "6") { // Si le rôle est enseignant
+            branchSelect.removeAttribute("multiple"); // Désactiver multiple
+            branchContainer.innerHTML = branchContainer.innerHTML.replace("multiple", ""); // Supprimer multiple si existant
+            classContainer.classList.remove("d-none"); // Afficher la sélection de classe
+        } else {
+            branchSelect.setAttribute("multiple", "multiple"); // Activer multiple
+            classContainer.classList.add("d-none"); // Cacher la sélection de classe
+        }
+    }
+</script>
+
+<script>
+
+
+
+
+document.addEventListener('change', function (event) {
+    if (event.target && event.target.id === 'branch') {
+        let branchId = event.target.value;
+        let classSelect = document.getElementById('class');
+
+        if (branchId) {
+            fetch('get_classe_s.php?branch_id=' + branchId)
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Données reçues:", data);
+                    classSelect.innerHTML = data;
+                })
+                .catch(error => console.error('Erreur:', error));
+        } else {
+            classSelect.innerHTML = '<option value="">اختر القسم</option>';
+        }
+    }
+});
+
 </script>
 
 </body>

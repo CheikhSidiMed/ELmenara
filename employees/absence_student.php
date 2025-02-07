@@ -13,6 +13,9 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+
+$user_id = $_SESSION['userid'];
+
 ?>
 
 
@@ -28,7 +31,7 @@ if (!isset($_SESSION['userid'])) {
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/cairo.css"> 
+    <link rel="stylesheet" href="css/cairo.css">
 
     <style>
         body {
@@ -109,7 +112,13 @@ if (!isset($_SESSION['userid'])) {
                 <select id="branch" name="branch_id" class="form-select" required>
                     <option value="">-- اختر الفرع --</option>
                     <?php
-                    $branches = $conn->query("SELECT branch_id, branch_name FROM branches");
+                            $sql = "SELECT b.branch_id, b.branch_name
+                            FROM branches b
+                            JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param('i', $user_id);
+                        $stmt->execute();
+                        $branches = $stmt->get_result();
                     while ($branch = $branches->fetch_assoc()) {
                         echo "<option value='{$branch['branch_id']}'>{$branch['branch_name']}</option>";
                     }

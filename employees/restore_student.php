@@ -15,9 +15,8 @@ if (isset($_POST['restore_student_id'])) {
     $student_id = $_POST['restore_student_id'];
 
     // First, fetch the suspended student's data
-    $suspended_query = "
-    SELECT suspended_students.student_id, suspended_students.payment_nature,suspended_students.part_count, suspended_students.reg_date, suspended_students.student_name, suspended_students.gender, suspended_students.phone, 
-           suspended_students.class_name, suspended_students.branch_name, suspended_students.agent_name, suspended_students.agent_phone, 
+    $suspended_query = "SELECT suspended_students.student_id, suspended_students.payment_nature,suspended_students.part_count, suspended_students.reg_date, suspended_students.student_name, suspended_students.gender, suspended_students.phone, 
+           suspended_students.class_name, suspended_students.branch_name, suspended_students.agent_name, suspended_students.agent_phone,
            suspended_students.level_name, suspended_students.discount, suspended_students.fees, suspended_students.remaining
     FROM suspended_students
     WHERE suspended_students.student_id = ?";
@@ -29,17 +28,16 @@ $stmt->close();
 
 if ($suspended_student) {
     // Insert the student's data back into the students table
-    $insert_query = "
-        INSERT INTO students (remaining, discount, fees, part_count, payment_nature, regstration_date_count, student_name, gender, phone, class_id, branch_id, agent_id, level_id)
-        SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+    $insert_query = "INSERT INTO students (remaining, discount, fees, part_count, payment_nature, regstration_date_count, student_name, gender, phone, class_id, branch_id, agent_id, level_id)
+        SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?,
                (SELECT class_id FROM classes WHERE class_name = ? LIMIT 1),
                (SELECT branch_id FROM branches WHERE branch_name = ? LIMIT 1),
                (SELECT agent_id FROM agents WHERE agent_name = ? LIMIT 1),
                (SELECT id FROM levels WHERE level_name = ? LIMIT 1)";
     $stmt = $conn->prepare($insert_query);
-    $stmt->bind_param("sssssssssssss", 
+    $stmt->bind_param("sssssssssssss",
     $suspended_student['remaining'], $suspended_student['discount'], $suspended_student['fees'], $suspended_student['part_count'],$suspended_student['payment_nature'], $suspended_student['reg_date'], $suspended_student['student_name'], $suspended_student['gender'], $suspended_student['phone'], 
-        $suspended_student['class_name'], $suspended_student['branch_name'], $suspended_student['agent_name'], 
+        $suspended_student['class_name'], $suspended_student['branch_name'], $suspended_student['agent_name'],
         $suspended_student['level_name']);
     $stmt->execute();
     $stmt->close();
@@ -61,8 +59,7 @@ if ($suspended_student) {
 }
 
 // Fetch all suspended students
-$suspended_students_query = "
-    SELECT students.id, suspended_students.student_id, suspended_students.student_name, suspended_students.gender, suspended_students.phone, 
+$suspended_students_query = "SELECT students.id, suspended_students.student_id, suspended_students.student_name, suspended_students.gender, suspended_students.phone, 
            suspended_students.class_name, suspended_students.branch_name, suspended_students.agent_name, suspended_students.agent_phone, 
            suspended_students.level_name, suspended_students.suspension_reason, suspended_students.suspension_date,
            COALESCE(SUM(payments.remaining_amount), 0) AS total_remaining_amount
@@ -70,14 +67,14 @@ $suspended_students_query = "
     FROM suspended_students
     LEFT JOIN students ON students.id = suspended_students.student_id
     LEFT JOIN payments ON students.id = payments.student_id
-GROUP BY suspended_students.student_id, 
+    GROUP BY suspended_students.student_id,
              suspended_students.student_name,
-             suspended_students.gender, 
-             suspended_students.phone, 
-             suspended_students.class_name, 
-             suspended_students.branch_name, 
-             suspended_students.agent_name, 
-             suspended_students.agent_phone, 
+             suspended_students.gender,
+             suspended_students.phone,
+             suspended_students.class_name,
+             suspended_students.branch_name,
+             suspended_students.agent_name,
+             suspended_students.agent_phone,
              suspended_students.level_name";
     
 $result = $conn->query($suspended_students_query);

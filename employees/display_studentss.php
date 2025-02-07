@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_id = $_SESSION['userid'];
 
 
 // Handle deletion of student
@@ -32,8 +33,7 @@ if (isset($_POST['delete_student_id'])) {
 }
 
 // Fetch all students and their foreign key data
-$students_query = "
-    SELECT 
+$students_query = "SELECT
         students.id,
         students.student_name,
         students.gender,
@@ -47,13 +47,18 @@ $students_query = "
     FROM students
     LEFT JOIN classes ON students.class_id = classes.class_id
     LEFT JOIN branches ON students.branch_id = branches.branch_id
+    JOIN user_branch ub ON branches.branch_id = ub.branch_id AND ub.user_id = ?
     LEFT JOIN agents ON students.agent_id = agents.agent_id
     LEFT JOIN levels ON students.level_id = levels.id
     LEFT JOIN payments ON students.id = payments.student_id
     GROUP BY students.id, students.student_name, students.gender, students.phone, classes.class_name, branches.branch_name, agents.agent_name, agents.phone, levels.level_name
 ";
 
-$result = $conn->query($students_query);
+$stmt = $conn->prepare($students_query);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
 
 $students = [];
 if ($result->num_rows > 0) {

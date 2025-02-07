@@ -171,7 +171,7 @@ try {
         $fund_id = null;
                 $bank_account_id = null;
 
-                // Update fund or bank balance based on payment method                          
+                // Update fund or bank balance based on payment method
                 if ($payment_method === "نقدي") {
                     $fund_id = 1; // Assuming the fund id is 1
                     $sql = "UPDATE funds SET balance = balance + ? WHERE id = ?";

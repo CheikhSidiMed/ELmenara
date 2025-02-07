@@ -12,7 +12,6 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
-
 // Fetch user data based on the user ID passed in the URL
 if (isset($_GET['id'])) {
     $user_id = $_GET['id'];
@@ -33,13 +32,24 @@ if (isset($_GET['id'])) {
 if (isset($_POST['edit_user'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $class_id = $_POST['class'] ?? 0;
+    $branches = isset($_POST['branches']) ? $_POST['branches'] : [];
 
     // Update user data in the database
     $updateQuery = $conn->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
     $updateQuery->bind_param("ssi", $username, $password, $user_id);
 
     if ($updateQuery->execute()) {
-        // Set a session flag to indicate success and redirect
+
+        $conn->query("DELETE FROM user_branch WHERE user_id = $user_id");
+
+        if (!empty($branches)) {
+            $stmt = $conn->prepare("INSERT INTO user_branch (user_id, class_id, branch_id) VALUES (?, ?, ?)");
+            foreach ($branches as $branch_id) {
+                $stmt->bind_param("iii", $user_id, $class_id, $branch_id);
+                $stmt->execute();
+            }
+        }
         $_SESSION['edit_success'] = true;
         header('Location: users.php');
         exit();
@@ -47,6 +57,38 @@ if (isset($_POST['edit_user'])) {
         echo "<script>alert('حدث خطأ أثناء محاولة تحديث المستخدم.');</script>";
     }
 }
+
+
+
+$branchesQuery = "SELECT branch_id, branch_name FROM branches";
+$branchesResult = $conn->query($branchesQuery);
+
+// Récupérer les branches déjà associées à l'utilisateur
+$userBranchesQuery = "SELECT branch_id, class_id FROM user_branch WHERE user_id = ?";
+$stmt = $conn->prepare($userBranchesQuery);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$userBranchesResult = $stmt->get_result();
+$selectedBranches = [];
+$selectedclass = 0;
+
+while ($row = $userBranchesResult->fetch_assoc()) {
+    $selectedBranches[] = $row['branch_id'];
+    $selectedclass = $row['class_id'];
+}
+
+
+$classesResult = [];
+if ($selectedBranches && ($selectedclass !== 0)) {
+    $classesQuery = "SELECT class_id, class_name
+        FROM classes WHERE branch_id = ?";
+    $stmt = $conn->prepare($classesQuery);
+    $stmt->bind_param("i", $selectedBranches[0]);
+    $stmt->execute();
+    $classesResult = $stmt->get_result();
+    $stmt->close(); // Close the statement after use
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -135,10 +177,62 @@ if (isset($_POST['edit_user'])) {
                 <label for="password" class="form-label">كلمة المرور</label>
                 <input type="password" class="form-control" id="password" name="password" value="<?= htmlspecialchars($user['password']); ?>" required>
             </div>
+            <div class="form-group w-100">
+                <label for="branch">الفروع</label>
+                <select class="form-control" id="branch" name="branches[]" <?php if ($selectedclass === 0) { ?> multiple <?php } ?> required>
+                    <?php if ($branchesResult->num_rows > 0) {
+                        while ($row = $branchesResult->fetch_assoc()): ?>
+                            <option value="<?= $row['branch_id']; ?>"
+                                <?= in_array($row['branch_id'], $selectedBranches) ? 'selected' : ''; ?>>
+                                <?= htmlspecialchars($row['branch_name']); ?>
+                            </option>
+                        <?php endwhile;
+                    } else {
+                        echo "<option value=''>لا يوجد فروع</option>";
+                    } ?>
+                </select>
+                <small class="text-muted text-success">يمكنك اختيار عدة فروع باستخدام Ctrl (Windows) أو Cmd (Mac)</small>
+            </div>
+
+            <div class="form-group w-100">
+                <?php if ($selectedclass !== 0) { ?>
+                <label for="class">الصف</label>
+                <select class="form-control" id="class" name="class" required>
+                    <option value="">اختر الصف</option>
+                    <?php
+                    if ($selectedBranches && $classesResult->num_rows > 0) {
+                        while($classRow = $classesResult->fetch_assoc()) {
+                            echo "<option value='{$classRow['class_id']}'" . ($selectedclass == $classRow['class_id'] ? " selected" : "") . ">{$classRow['class_name']}</option>";
+                        }
+                    }
+                    ?>
+                </select>
+                <?php } ?>
+            </div>
             <button type="submit" name="edit_user" class="btn btn-primary">تحديث المستخدم</button>
         </form>
     </div>
 
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('change', function (event) {
+    if (event.target && event.target.id === 'branch') {
+        let branchId = event.target.value;
+        let classSelect = document.getElementById('class');
+
+        if (branchId) {
+            fetch('get_classe_s.php?branch_id=' + branchId)
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Données reçues:", data);
+                    classSelect.innerHTML = data;
+                })
+                .catch(error => console.error('Erreur:', error));
+        } else {
+            classSelect.innerHTML = '<option value="">اختر الصف</option>';
+        }
+    }
+});
+    </script>
 </body>
 </html>

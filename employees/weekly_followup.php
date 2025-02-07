@@ -10,6 +10,7 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
 
 // Include database connection
 include 'db_connection.php';
@@ -18,13 +19,20 @@ include 'db_connection.php';
 $selectedBranch = $_POST['branch'] ?? null;
 $selectedClass = $_POST['class'] ?? null;
 
-$branchesQuery = "SELECT branch_id, branch_name FROM branches";
-$branchesResult = $conn->query($branchesQuery);
+
+$sql = "SELECT b.branch_id, b.branch_name
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$branchesResult = $stmt->get_result();
 
 // Fetch classes based on selected branch
 $classesResult = [];
 if ($selectedBranch) {
-    $classesQuery = "SELECT class_id, class_name FROM classes WHERE branch_id = ?";
+    $classesQuery = "SELECT class_id, class_name
+        FROM classes WHERE branch_id = ?";
     $stmt = $conn->prepare($classesQuery);
     $stmt->bind_param("i", $selectedBranch);
     $stmt->execute();
@@ -41,6 +49,7 @@ $start_date = '';
 $end_date = '';
 $branch_name = '';
 $class_name = '';
+$username = '';
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -50,14 +59,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $end_date = $_POST['end_date'];
 
     // Fetch class name and branch name
-    $sql = "SELECT classes.class_name, branches.branch_name 
-            FROM classes 
-            JOIN branches ON classes.branch_id = branches.branch_id 
-            WHERE classes.class_id = ?";
+    $sql = "SELECT c.class_name, b.branch_name, u.username
+            FROM classes AS c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+            LEFT JOIN users AS u ON u.id = ub.user_id
+            WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
     $stmt->execute();
-    $stmt->bind_result($class_name, $branch_name);
+    $stmt->bind_result($class_name, $branch_name, $username);
     $stmt->fetch();
     $stmt->close();
 
@@ -74,9 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 } else {
     // Fetch branches if no form is submitted
-    $sql = "SELECT branch_id, branch_name FROM branches";
-    $result = $conn->query($sql);
-
+    $sql = "SELECT b.branch_id, b.branch_name
+        FROM branches b
+        JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     while ($row = $result->fetch_assoc()) {
         $branches[] = $row;
     }
@@ -86,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -214,6 +229,12 @@ if ($result->num_rows > 0) {
             table {
                 width: 100%;
             }
+            .p-head{
+                font-size: 15px !important;
+            }
+        }
+        .p-head{
+            font-size: 21px !important;
         }
     </style>
     <script>
@@ -304,9 +325,9 @@ if ($result->num_rows > 0) {
     <div class="sheet-header">
         <img src="../images/header.png" alt="Header Image">
         <h3>استمارة المتابعة الأسبوعية</h3>
-        <p>من تاريخ: <?php echo $start_date; ?> إلى تاريخ: <?php echo $end_date; ?></p>
-        <p>الفرع: <?php echo $branch_name; ?></p>
-        <p>القسم: <?php echo $class_name; ?></p>
+        <p class="p-head">من تاريخ: <?php echo $start_date; ?> إلى تاريخ: <?php echo $end_date; ?></p>
+        <p class="p-head">الفرع: <?php echo $branch_name; ?></p>
+        <p class="p-head">القسم: <?php echo $class_name; ?></p>
         <p>العام الدراسي : <?php echo htmlspecialchars($last_year); ?></p>
     </div>
     <table>
@@ -378,7 +399,7 @@ if ($result->num_rows > 0) {
                 <td colspan="1" contenteditable="true"></td>
                 <td colspan="1" contenteditable="true"></td>
                 <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>    
+                <td colspan="1" contenteditable="true"></td>
                 <td colspan="1" contenteditable="true"></td>
                 <td colspan="1" contenteditable="true"></td>
                 <td contenteditable="true"></td>
@@ -392,8 +413,9 @@ if ($result->num_rows > 0) {
 
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p>الأستاذ </p>
+            <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
+            <p style="margin-top: -35px;">__________________</p>
         </div>
         <div class="signature">
             <p>تاريخ التسليم</p>

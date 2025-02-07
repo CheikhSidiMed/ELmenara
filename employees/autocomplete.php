@@ -16,8 +16,8 @@ if (isset($_GET['term'])) {
 
     // SQL query to search student_name, student phone, and agent phone
     $sql = "SELECT s.id, s.student_name, s.phone AS student_phone, a.phone AS agent_phone 
-            FROM students s 
-            LEFT JOIN agents a ON s.agent_id = a.agent_id 
+            FROM students s
+            LEFT JOIN agents a ON s.agent_id = a.agent_id
             WHERE s.student_name LIKE ? OR s.phone LIKE ? OR a.phone LIKE ? ORDER BY s.id";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('sss', $term, $term, $term);

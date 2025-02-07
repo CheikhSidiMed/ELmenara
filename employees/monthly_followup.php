@@ -11,12 +11,14 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
 
 include 'db_connection.php';
 // Initialize variables
 $last_year = "";
 $branch_name = "";
 $class_name = "";
+$username = "";
 $students = [];
 $classes = [];
 $month = 0;
@@ -43,10 +45,14 @@ if ($result->num_rows > 0) {
 $branches = [];
 $classes = [];
 
-// Fetch branches from the database
-$sqlBranches = "SELECT branch_id, branch_name FROM branches";
-$resultBranches = $conn->query($sqlBranches);
 
+$sql = "SELECT b.branch_id, b.branch_name
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$resultBranches = $stmt->get_result();
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $branch_id = $_POST['branch'];
@@ -73,14 +79,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $year = $_POST['year'];
     
      // Fetch class name and branch name
-     $sql = "SELECT classes.class_name, branches.branch_name
-     FROM classes
-     JOIN branches ON classes.branch_id = branches.branch_id
-     WHERE classes.class_id = ?";
+     $sql = "SELECT c.class_name, b.branch_name, u.username
+        FROM classes AS c
+        JOIN branches AS b ON c.branch_id = b.branch_id
+        LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+        LEFT JOIN users AS u ON u.id = ub.user_id
+        WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
     $stmt->execute();
-    $stmt->bind_result($class_name, $branch_name);
+    $stmt->bind_result($class_name, $branch_name, $username);
     $stmt->fetch();
     $stmt->close();
 
@@ -261,6 +269,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             tr {
                 page-break-inside: avoid;
             }
+            .p-head{
+                font-size: 15px !important;
+            }
+        }
+        .p-head{
+            font-size: 21px !important;
         }
 
     </style>
@@ -344,9 +358,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="sheet-header receipt-header">
             <img src="../images/header.png" width="100%" alt="Header Image">
             <h3>تقرير الحصيلة الشهرية</h3>
-            <p>الشهر: <?php echo $arabic_months[$month-1]??''; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
-            <p>الفرع: <?php echo $branch_name; ?></p>
-            <p>القسم: <?php echo $class_name; ?></p>
+            <p class="p-head">الشهر: <?php echo $arabic_months[$month-1]??''; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
+            <p class="p-head">الفرع: <?php echo $branch_name; ?></p>
+            <p class="p-head">القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
         </div>
         <table>
@@ -392,8 +406,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </table>
         <div class="signature-section">
             <div class="signature">
-                <p>الأستاذ</p>
-                <p style="margin-top: -15px;">__________________</p>
+                <p>الأستاذ </p>
+                <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
+                <p style="margin-top: -35px;">__________________</p>
             </div>
             <div class="signature">
                 <p>تاريخ التسليم</p>

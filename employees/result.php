@@ -8,10 +8,15 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
+
+
 include 'db_connection.php';
 // Initialize variables
 $last_year = "";
 $branch_name = "";
+$username = '';
+
 $class_name = "";
 $students = [];
 $classes = [];
@@ -22,7 +27,7 @@ $class_id = null;
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -32,8 +37,14 @@ $branches = [];
 $classes = [];
 
 // Fetch branches from the database
-$sqlBranches = "SELECT branch_id, branch_name FROM branches";
-$resultBranches = $conn->query($sqlBranches);
+
+$sql = "SELECT b.branch_id, b.branch_name
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$resultBranches = $stmt->get_result();
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -60,14 +71,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $month = $_POST['month'];
     $year = $_POST['year'];
 
-     $sql = "SELECT classes.class_name, branches.branch_name 
-     FROM classes 
-     JOIN branches ON classes.branch_id = branches.branch_id 
-     WHERE classes.class_id = ?";
+    $sql = "SELECT c.class_name, b.branch_name, u.username
+            FROM classes AS c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+            LEFT JOIN users AS u ON u.id = ub.user_id
+            WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
     $stmt->execute();
-    $stmt->bind_result($class_name, $branch_name);
+    $stmt->bind_result($class_name, $branch_name, $username);
     $stmt->fetch();
     $stmt->close();
 
@@ -255,6 +268,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             tr {
                 page-break-inside: avoid;
             } */
+            table{
+                margin-top: -71px !important;
+            }
+            .p-head{
+                font-size: 15px !important;
+            }
+        }
+        .p-head{
+            font-size: 21px !important;
         }
     </style>
     <script>
@@ -319,7 +341,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-group col-md-2 align-self-end">
                     <button type="sibmit" class="btn btn-primary btn-block" id="generate-button">عرض التقرير</button>
                 </div>
-            </div>    
+            </div>
         </form>
     </div>
 
@@ -334,15 +356,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
         <div class="sheet-header receipt-header">
             <img src="../images/header.png" width="100%" alt="Header Image">
-            <h3>  نتائج تقييم </h3>
-            <p>الشهر: <?php echo $month; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
-            <p>الفرع: <?php echo $branch_name; ?></p>
-            <p>القسم: <?php echo $class_name; ?></p>
+            <p class="p-head">  نتائج تقييم </p>
+            <p class="p-head">الشهر: <?php echo $month; ?>،  العام الدراسي: <?php echo $last_year; ?></p>
+            <p class="p-head">الفرع: <?php echo $branch_name; ?></p>
+            <p class="p-head">القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
         </div>
         <table>
             <thead>
-                <tr>   
+                <tr>
                     <th style="width: 15%; font-size: 18px">الاسم الكامل</th>
                     <th style="width: 18%; font-size: 18px">  التقييم (الكيف) </th>
                     <th style="width: 18%; font-size: 18px">  الحصيلة ( الكم)</th>
@@ -378,23 +400,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </tbody>
         </table>
         <div class="signature-section">
-        <div class="signature">
-            <p>الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <div class="signature">
+                <p>الأستاذ </p>
+                <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
+                <p style="margin-top: -35px;">__________________</p>
+            </div>
+            <div class="signature">
+                <p>تاريخ التسليم</p>
+                <p style="margin-top: -15px;">__________________</p>
+            </div>
+            <div class="signature">
+                <p>توقيع الأستاذ</p>
+                <p style="margin-top: -15px;">__________________</p>
+            </div>
+            <div class="signature">
+                <p>توقيع الإدارة</p>
+                <p style="margin-top: -15px;">__________________</p>
+            </div>
         </div>
-        <div class="signature">
-            <p>تاريخ التسليم</p>
-            <p style="margin-top: -15px;">__________________</p>
-        </div>
-        <div class="signature">
-            <p>توقيع الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
-        </div>
-        <div class="signature">
-            <p>توقيع الإدارة</p>
-            <p style="margin-top: -15px;">__________________</p>
-        </div>
-    </div>
     </div>
 
 

@@ -35,7 +35,7 @@ if ($accountNumber) {
     // Fetch account information
     $stmt = $conn->prepare("SELECT account_name FROM donate_accounts WHERE account_number = ?");
     if (!$stmt) {
-        die('Prepare failed: ' . $conn->error); 
+        die('Prepare failed: ' . $conn->error);
     }
     $stmt->bind_param("s", $accountNumber);
     $stmt->execute();
@@ -45,7 +45,7 @@ if ($accountNumber) {
 
     // Fetch transactions with date filter (if provided)
     $query = "SELECT transaction_date, transaction_description, amount, payment_method 
-          FROM donate_transactions 
+          FROM donate_transactions
           WHERE donate_account_id = (SELECT id FROM donate_accounts WHERE account_number = ?)";
 
     if ($fromDate && $toDate) {

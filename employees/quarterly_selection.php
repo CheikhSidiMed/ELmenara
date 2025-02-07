@@ -12,6 +12,7 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+$user_id = $_SESSION['userid'];
 
 
 // Include database connection
@@ -39,8 +40,14 @@ $selectedMonth = isset($_SESSION['month']) ? $_SESSION['month'] : '';
 
 
 // Fetch branches from the database
-$sqlBranches = "SELECT branch_id, branch_name FROM branches";
-$resultBranches = $conn->query($sqlBranches);
+
+$sql = "SELECT b.branch_id, b.branch_name
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$resultBranches = $stmt->get_result();
 
 $branches = [];
 if ($resultBranches->num_rows > 0) {
@@ -90,7 +97,7 @@ $quarterlyMonths_number = [
     'الفصل الرابع' => ['9', '8', '7'],
 ];
 
-$months = $selectedMonth !== '' ? $quarterlyMonths_number[$selectedMonth] : '';
+$months = isset($quarterlyMonths_number[$selectedMonth]) ? $quarterlyMonths_number[$selectedMonth] : [];
 
 
 $className = '';
@@ -348,6 +355,9 @@ if (!empty($selectedClass)) {
                 page-break-inside: avoid;
             }
         }
+        .p-head{
+            font-size: 21px !important;
+        }
     </style>
     <script>
         function printPage() {
@@ -427,9 +437,9 @@ if (!empty($selectedClass)) {
     <div class="sheet-header receipt-header">
         <img src="../images/header.png" width="100%" alt="Header Image">
         <h3 style="margin-top: 3px; margin-bottom: -1px;"> الحصيلة الفصلية </h3>
-        <p style="font-size: 16px !important;">إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> <span style="font-size: 22px !important; color: #109686 ; font-weight: bold;">|</span> <strong> الفرع: </strong><?php echo $branch_name; ?> <span style="font-size: 28px !important; color: #109686; font-weight: bold;">_</span> <strong> الصف: </strong><?php echo $class_name; ?> <span style="font-size: 22px !important; color: #109686; font-weight: bold;">|</span>
+        <p style="font-size: 19px !important;">إدارة الدروس - العام الدراسي: <?php echo $last_year; ?> <span style="font-size: 22px !important; color: #109686 ; font-weight: bold;">|</span> <strong> الفرع: </strong><?php echo $branch_name; ?> <span style="font-size: 28px !important; color: #109686; font-weight: bold;">_</span> <strong> الصف: </strong><?php echo $class_name; ?> <span style="font-size: 22px !important; color: #109686; font-weight: bold;">|</span>
         الفصل: <?php echo in_array($selectedMonth, $arabic_quarterly) ? $selectedMonth : 'غير محدد'; ?> </p>
-        <p style="font-size: 16px !important;" class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
+        <p style="font-size: 15px !important;" class="print-date">التاريخ : <?php echo date('Y-m-d'); ?></p> <!-- Print date only visible during print -->
 
     </div>
     <div class="for-container">
