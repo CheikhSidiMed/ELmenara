@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 $user_id = $_SESSION['userid'];
+$role_id = $_SESSION['role_id'];
 
 
 // Include database connection
@@ -61,13 +62,22 @@ if ($resultBranches->num_rows > 0) {
     }
 }
 
-// Initialize classes and branch name
 $classes = [];
 $branch_id = $_SESSION['branch'] ?? '';
 
 // Fetch classes based on selected branch
 if (!empty($branch_id)) {
-    $sqlClasses = "SELECT class_id, class_name FROM classes WHERE branch_id = ?";
+    $sqlClasses = '';
+    if($role_id == 6){
+        $sqlClasses = "SELECT c.class_id, c.class_name
+            FROM classes c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            WHERE c.branch_id = ?";
+    }else{
+        $sqlClasses = "SELECT class_id, class_name
+            FROM classes WHERE branch_id = ?";
+    }
     $stmt = $conn->prepare($sqlClasses);
     $stmt->bind_param('i', $branch_id);
     $stmt->execute();

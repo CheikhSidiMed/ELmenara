@@ -11,7 +11,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $user_id = $_SESSION['userid'];
-
+$role_id = $_SESSION['role_id'];
 
 
 // Include database connection
@@ -41,8 +41,8 @@ $selectedMonth = $_SESSION['month'] ?? '';
 // Fetch branches from the database
 
 $sql = "SELECT b.branch_id, b.branch_name
-FROM branches b
-JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
+    FROM branches b
+    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
@@ -65,7 +65,17 @@ $username = '';
 
 // Fetch classes based on selected branch
 if (!empty($branch_id)) {
-    $sqlClasses = "SELECT class_id, class_name FROM classes WHERE branch_id = ?";
+    $sqlClasses = '';
+    if($role_id == 6){
+        $sqlClasses = "SELECT c.class_id, c.class_name
+            FROM classes c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            WHERE c.branch_id = ?";
+    }else{
+        $sqlClasses = "SELECT class_id, class_name
+            FROM classes WHERE branch_id = ?";
+    }
     $stmt = $conn->prepare($sqlClasses);
     $stmt->bind_param('i', $branch_id);
     $stmt->execute();

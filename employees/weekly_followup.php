@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $user_id = $_SESSION['userid'];
+$role_id = $_SESSION['role_id'];
 
 // Include database connection
 include 'db_connection.php';
@@ -31,8 +32,17 @@ $branchesResult = $stmt->get_result();
 // Fetch classes based on selected branch
 $classesResult = [];
 if ($selectedBranch) {
-    $classesQuery = "SELECT class_id, class_name
-        FROM classes WHERE branch_id = ?";
+    $classesQuery = '';
+    if($role_id == 6){
+        $classesQuery = "SELECT c.class_id, c.class_name
+            FROM classes c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            WHERE c.branch_id = ?";
+    }else{
+        $classesQuery = "SELECT class_id, class_name
+            FROM classes WHERE branch_id = ?";
+    }
     $stmt = $conn->prepare($classesQuery);
     $stmt->bind_param("i", $selectedBranch);
     $stmt->execute();
@@ -59,6 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $end_date = $_POST['end_date'];
 
     // Fetch class name and branch name
+
     $sql = "SELECT c.class_name, b.branch_name, u.username
             FROM classes AS c
             JOIN branches AS b ON c.branch_id = b.branch_id
@@ -315,10 +326,10 @@ if ($result->num_rows > 0) {
     
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="fas fa-print" style="margin-right: 8px;"></i> 
+            طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>
         </button>
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-            الصفحة الرئيسية <i class="fas fa-home mr-2"></i> 
+            الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
         </button>
     </div>
 

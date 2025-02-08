@@ -86,14 +86,18 @@ if ($stmt->execute()) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تعديل بيانات الطالب</title>
-<link rel="stylesheet" href="css/sweetalert2.css"> 
+<link rel="stylesheet" href="css/sweetalert2.css">
 <script src="js/sweetalert2.min.js"></script>
 <script src="js/jquery-3.5.1.min.js"></script>
 <link rel="stylesheet" href="css/bootstrap-4-5-2.min.css">
 <!-- Add these links in the <head> of your HTML -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" /> -->
+<link href="css/select2.min.css" rel="stylesheet" />
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min-3.6.0.js"></script> -->
+<script src="js/jquery.min-3.6.0.js"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script> -->
+<script src="js/select2.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link href="css/bootstrap-icons.css" rel="stylesheet">
