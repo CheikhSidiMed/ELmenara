@@ -379,11 +379,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <thead>
                 <tr>
                     <th style="width: 13%; font-size: 18px">الاسم الكامل</th>
-                    <th style="width: 8%; font-size: 18px"> عدد الأحزاب</th>
+                    <th style="width: 5%; font-size: 18px"> الأحزاب</th>
                     <th style="width: 8%; font-size: 18px"> مقدار الحفظ</th>
                     <th style="width: 20%; font-size: 18px">  المستوى السابق</th>
                     <th style="width: 20%; font-size: 18px">  المستوى الحالي</th>
-                    <th style="width: 19%; font-size: 18px">  الزيادة</th>
+                    <th style="width: 21%; font-size: 18px">  الزيادة</th>
                     <th style="width: 2%; font-size: 18px">  الغياب</th>
                     <th style="width: 11%; font-size: 18px">  الملاحظات</th>
                 </tr>
