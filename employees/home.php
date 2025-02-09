@@ -585,11 +585,8 @@
                     <ul class="collapse">
                         <li><a href="weekly_followup.php"><i class="fa fa-calendar-week"></i> المتابعة الأسبوعية </a></li>
                         <li><a href="monthly_followup.php"><i class="fa fa-calendar-alt"></i> الحصيلة الشهرية</a></li>
-                        <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
-                        <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li>
                         <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
-                        <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
 
                     </ul>
                 </li>

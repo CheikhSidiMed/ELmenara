@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
     $subscription_date = $_POST['subscription_date'];
     $id_number = $_POST['id_number'];
 
-    $sql = "INSERT INTO employees (employee_number, full_name, balance, phone, job_id, salary, subscription_date, id_number) 
+    $sql = "INSERT INTO employees (employee_number, full_name, balance, phone, job_id, salary, subscription_date, id_number)
             VALUES ('$employee_number', '$full_name', '$balance', '$phone', '$job_id', '$salary', '$subscription_date', '$id_number')";
 
     if ($conn->query($sql) === TRUE) {
@@ -47,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
     $subscription_date = $_POST['subscription_date'];
     $id_number = $_POST['id_number'];
 
-    $sql = "UPDATE employees 
-            SET employee_number='$employee_number', full_name='$full_name', balance='$balance', 
-                phone='$phone', job_id='$job_id', salary='$salary', subscription_date='$subscription_date', id_number='$id_number' 
+    $sql = "UPDATE employees
+            SET employee_number='$employee_number', full_name='$full_name', balance='$balance',
+                phone='$phone', job_id='$job_id', salary='$salary', subscription_date='$subscription_date', id_number='$id_number'
             WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
 }
 
 // Fetch Employees
-$employees = $conn->query("SELECT e.*, j.job_name 
-                           FROM employees e 
+$employees = $conn->query("SELECT e.*, j.job_name
+                           FROM employees e
                            LEFT JOIN jobs j ON e.job_id = j.id");
 
 // Handle Edit
@@ -107,86 +107,89 @@ if (isset($_GET['id'])) {
     <!-- Employee Form -->
     <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-    <h4>تعديل بيانات الموظف(ة)</h4>
-    <a href="home.php" class="btn btn-secondary btn-sm">الرئيسية</a>
-</div>
-        <div class="card-body">
+        <h4>تعديل بيانات الموظف(ة)</h4>
+        <a href="home.php" class="btn btn-secondary btn-sm">الرئيسية</a>
+    </div>
+    <div class="card-body">
         <form method="POST">
-    <?php if ($editing_employee): ?>
-        <input type="hidden" name="id" value="<?php echo $editing_employee['id']; ?>">
-    <?php endif; ?>
-    <div class="row mb-3">
-        <div class="col">
-            <label for="employee_number">رقم الموظف(ة)</label>
-            <input type="text" id="employee_number" class="form-control" name="employee_number" 
-                   placeholder="رقم الموظف" value="<?php echo $editing_employee['employee_number'] ?? ''; ?>" required>
-        </div>
-        <div class="col">
-            <label for="full_name">الاسم الكامل</label>
-            <input type="text" id="full_name" class="form-control" name="full_name" 
-                   placeholder="الاسم الكامل" value="<?php echo $editing_employee['full_name'] ?? ''; ?>" required>
-        </div>
+            <?php if ($editing_employee): ?>
+                <input type="hidden" name="id" value="<?php echo $editing_employee['id']; ?>">
+            <?php endif; ?>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="employee_number">رقم الموظف(ة)</label>
+                    <input type="text" id="employee_number" class="form-control" name="employee_number"
+                        placeholder="رقم الموظف" value="<?php echo $editing_employee['employee_number'] ?? ''; ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="full_name">الاسم الكامل</label>
+                    <input type="text" id="full_name" class="form-control" name="full_name"
+                        placeholder="الاسم الكامل" value="<?php echo $editing_employee['full_name'] ?? ''; ?>" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="balance">الرصيد</label>
+                    <input type="text" id="balance" class="form-control" name="balance"
+                        placeholder="الرصيد" value="<?php echo $editing_employee['balance'] ?? ''; ?>">
+                </div>
+                <div class="col-md-6">
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="text" id="phone" class="form-control" name="phone"
+                        placeholder="رقم الهاتف" value="<?php echo $editing_employee['phone'] ?? ''; ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="job_id">الوظيفة</label>
+                    <select id="job_id" class="form-control" name="job_id" required>
+                        <option value="">اختر الوظيفة</option>
+                        <?php
+                        $jobs = $conn->query("SELECT * FROM jobs");
+                        while ($job = $jobs->fetch_assoc()) {
+                            $selected = ($editing_employee && $editing_employee['job_id'] == $job['id']) ? "selected" : "";
+                            echo "<option value='{$job['id']}' $selected>{$job['job_name']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="salary">الراتب</label>
+                    <input type="number" id="salary" class="form-control" name="salary"
+                        placeholder="الراتب" value="<?php echo $editing_employee['salary'] ?? ''; ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="subscription_date">تاريخ الاشتراك</label>
+                    <input type="date" id="subscription_date" class="form-control" name="subscription_date"
+                        value="<?php echo $editing_employee['subscription_date'] ?? ''; ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="id_number">رقم الهوية</label>
+                    <input type="text" id="id_number" class="form-control" name="id_number"
+                        placeholder="رقم الهوية" value="<?php echo $editing_employee['id_number'] ?? ''; ?>">
+                </div>
+            </div>
+            <button type="submit" name="update_employee" class="btn btn-primary w-100">
+                تحديث بيانات الموظف(ة)
+            </button>
+        </form>
     </div>
-    <div class="row mb-3">
-        <div class="col">
-            <label for="balance">الرصيد</label>
-            <input type="text" id="balance" class="form-control" name="balance" 
-                   placeholder="الرصيد" value="<?php echo $editing_employee['balance'] ?? ''; ?>">
-        </div>
-        <div class="col">
-            <label for="phone">رقم الهاتف</label>
-            <input type="text" id="phone" class="form-control" name="phone" 
-                   placeholder="رقم الهاتف" value="<?php echo $editing_employee['phone'] ?? ''; ?>">
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col">
-            <label for="job_id">الوظيفة</label>
-            <select id="job_id" class="form-control" name="job_id" required>
-                <option value="">اختر الوظيفة</option>
-                <?php
-                $jobs = $conn->query("SELECT * FROM jobs");
-                while ($job = $jobs->fetch_assoc()) {
-                    $selected = ($editing_employee && $editing_employee['job_id'] == $job['id']) ? "selected" : "";
-                    echo "<option value='{$job['id']}' $selected>{$job['job_name']}</option>";
-                }
-                ?>
-            </select>
-        </div>
-        <div class="col">
-            <label for="salary">الراتب</label>
-            <input type="number" id="salary" class="form-control" name="salary" 
-                   placeholder="الراتب" value="<?php echo $editing_employee['salary'] ?? ''; ?>">
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col">
-            <label for="subscription_date">تاريخ الاشتراك</label>
-            <input type="date" id="subscription_date" class="form-control" name="subscription_date" 
-                   placeholder="تاريخ الاشتراك" value="<?php echo $editing_employee['subscription_date'] ?? ''; ?>" required>
-        </div>
-        <div class="col">
-            <label for="id_number">رقم الهوية</label>
-            <input type="text" id="id_number" class="form-control" name="id_number" 
-                   placeholder="رقم الهوية" value="<?php echo $editing_employee['id_number'] ?? ''; ?>">
-        </div>
-    </div>
-    <button type="submit" name="update_employee" class="btn btn-primary">
-    (ة)تحديث الموظف  
-    </button>
-</form>
+</div>
 
-        </div>
-    </div>
-    <div class="search-box mb-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="البحث عن الموظف(ة)...">
-    </div>
-    <!-- Employee List -->
+<!-- Search Box -->
+<div class="search-box mb-4">
+    <input type="text" id="searchInput" class="form-control" placeholder="البحث عن الموظف(ة)...">
+</div>
+
+<!-- Employee List (Responsive) -->
+<div class="table-responsive">
     <table class="table table-bordered table-striped">
-        <thead>
+        <thead class="text-center">
             <tr>
                 <th>رقم</th>
-                <th> رقم الموظف(ة)</th>
+                <th>رقم الموظف(ة)</th>
                 <th>الاسم الكامل</th>
                 <th>الرصيد</th>
                 <th>الهاتف</th>
@@ -217,6 +220,7 @@ if (isset($_GET['id'])) {
         </tbody>
     </table>
 </div>
+
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="JS/jquery-3.5.1.min.js"></script>
 <script>

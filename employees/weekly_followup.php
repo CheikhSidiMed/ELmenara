@@ -271,6 +271,8 @@ if ($result->num_rows > 0) {
     </script>
 </head>
 <body>
+
+
     <div class="container-fluid">
         <div class="form-container">
             <h2 >إنشاء استمارة المتابعة الأسبوعية</h2>
@@ -341,6 +343,7 @@ if ($result->num_rows > 0) {
         <p class="p-head">القسم: <?php echo $class_name; ?></p>
         <p>العام الدراسي : <?php echo htmlspecialchars($last_year); ?></p>
     </div>
+    
     <table>
         <thead>
             <tr>
