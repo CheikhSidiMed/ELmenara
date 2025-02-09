@@ -89,7 +89,7 @@ $conn->close();
             padding: 30px;
             border-radius: 12px;
             background-color: white;
-            border: 2px solid #1BA078;
+            border: 1px solid #ddd;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             max-width: 1200px;
             text-align: center; /* Center align the content */
@@ -100,15 +100,6 @@ $conn->close();
             text-align: right;
             background-color: #f4f7f6;
             color: #333;
-        }
-
-        .main-contain {
-            margin: 10px auto;
-            padding: 10px;
-            border-radius: 15px;
-            background-color: white;
-            border: 2px solid #1BA078;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
 
         .header-tit {
@@ -307,6 +298,14 @@ $conn->close();
             width: 100%; /* Full width in print */
         }
         }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
+        }
     </style>
     <script>
         function printTable() {
@@ -316,89 +315,97 @@ $conn->close();
 </head>
 <body>
     <div class="container main-contain cnc">
-        <h2 class="header-tit"><i class="bi bi-file-earmark-text-fill"></i>الطلاب المعفيين</h2>
+        <h2 class="header-tit text-center"><i class="bi bi-file-earmark-text-fill"></i> الطلاب المعفيين</h2>
 
-        <form action="" method="get">
+        <form action="" method="get" class="row g-3">
             <!-- Year Selection -->
-            <label for="year-select">السنة المالية:</label>
-            <select id="year-select" name="year" class="form-sele">
-                <option><?php echo htmlspecialchars($last_year); ?></option>
-            </select>
+            <div class="col-12 col-md-6 col-lg-3">
+                <label for="year-select" class="form-label">السنة المالية:</label>
+                <select id="year-select" name="year" class="form-select">
+                    <option><?php echo htmlspecialchars($last_year); ?></option>
+                </select>
+            </div>
 
             <!-- Section Select -->
-            <label for="section">حسب القسم:</label>
-            <select id="section" name="class" class="form-sele">
-                <?php foreach ($classes as $class): ?>
-                    <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
-                <?php endforeach; ?>
-            </select>
+            <div class="col-12 col-md-6 col-lg-3">
+                <label for="section" class="form-label">حسب القسم:</label>
+                <select id="section" name="class" class="form-select">
+                    <?php foreach ($classes as $class): ?>
+                        <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            <!-- Filter Checkboxes -->
-            <label for="filter1">حسب القسم</label>
-            <input type="radio" id="filter1" name="filter" value="class" class="form-checkb">
+            <!-- Filter Selection -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <label for="filter-select" class="form-label">تصفية حسب:</label>
+                <select id="filter-select" name="filter" class="form-select">
+                    <option value="class">حسب القسم</option>
+                    <option value="all">حسب الجميع</option>
+                </select>
+            </div>
 
-            <label for="filter2">حسب الجميع</label>
-            <input type="radio" id="filter2" name="filter" value="all" class="form-checkb">
-
-            <!-- conf Button -->
-            <button type="submit" class="btn-conf">
-                <i class="bi bi-check"></i> تأكيد العملية
-            </button>
-            <button class="print-button" onclick="printTable()">طباعة</button>
-
+            <!-- Buttons -->
+            <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-check"></i> تأكيد العملية
+                </button>
+                <button type="button" class="btn btn-primary w-100" onclick="printTable()">
+                    <i class="bi bi-printer"></i> طباعة
+                </button>
+            </div>
         </form>
     </div>
 
+
     
     <div class="container main-contain">
-    <div style="text-align: center;">
-        <img src="../images/header.png" width="100%" alt="Header Image">
-    </div>
+        <div style="text-align: center;">
+            <img src="../images/header.png" width="100%" alt="Header Image">
+        </div>
 
-        <!-- Title -->
         <h2 class="header-tit">تقرير بحسابات الطلاب المعفيين</h2>
-
-        <!-- Sub-Title -->
         <?php if ($filterType === 'class'): ?>
             <div class="header-tit">
                 <span>الفصل: <?= htmlspecialchars($selectedClass) ?></span>
             </div>
         <?php endif; ?>
-
+        <div class="table-responsive tbl">
         <!-- Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>الاسم الكامل</th>
-                    <th>تاريخ التسجيل</th>
-                    <?php if ($filterType === 'all'): ?>
-                        <th>القسم</th>
-                    <?php endif; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($students)): ?>
-                    <?php foreach ($students as $student): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($student['student_name']) ?></td>
-                            <td><?= htmlspecialchars($student['regstration_date_count']) ?></td>
-                            <?php if ($filterType === 'all'): ?>
-                                <td><?= htmlspecialchars($student['class_name']) ?></td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+            <table>
+                <thead>
                     <tr>
-                        <td colspan="<?= ($filterType === 'all') ? 3 : 2 ?>">لا توجد بيانات للطلاب المعفيين.</td>
+                        <th>الاسم الكامل</th>
+                        <th>تاريخ التسجيل</th>
+                        <?php if ($filterType === 'all'): ?>
+                            <th>القسم</th>
+                        <?php endif; ?>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-            <tfoot>
-                <tr class="footer-row">
-                    <td colspan="<?= ($filterType === 'all') ? 3 : 2 ?>" class="footer-total">الجميع: <?= count($students) ?></td>
-                </tr>
-            </tfoot>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (!empty($students)): ?>
+                        <?php foreach ($students as $student): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($student['student_name']) ?></td>
+                                <td><?= htmlspecialchars($student['regstration_date_count']) ?></td>
+                                <?php if ($filterType === 'all'): ?>
+                                    <td><?= htmlspecialchars($student['class_name']) ?></td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="<?= ($filterType === 'all') ? 3 : 2 ?>">لا توجد بيانات للطلاب المعفيين.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+                <tfoot>
+                    <tr class="footer-row">
+                        <td colspan="<?= ($filterType === 'all') ? 3 : 2 ?>" class="footer-total">الجميع: <?= count($students) ?></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
     
 

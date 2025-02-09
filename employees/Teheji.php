@@ -189,6 +189,8 @@ $conn->close();
             th, td {
                 border: 1px solid black;
                 padding: 1px;
+                white-space: nowrap !important;
+
             }
             th {
                 background-color: #f8f9fa;
@@ -290,9 +292,20 @@ $conn->close();
             .p-head{
                 font-size: 15px !important;
             }
+            .tbl{
+                padding-left: 20px;
+            }
         }
         .p-head{
             font-size: 21px !important;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px; /* Ajustez selon votre besoin */
+            border-collapse: collapse;
         }
 
     </style>
@@ -362,10 +375,10 @@ $conn->close();
 
     <div class="button-group">
     <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-    طباعة <i class="fas fa-print" style="margin-right: 8px;"></i> 
+    طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>
     </button>
     <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-        الصفحة الرئيسية <i class="fas fa-home mr-2"></i> 
+        الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
     </button>
 
 
@@ -379,59 +392,60 @@ $conn->close();
         <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
 
     </div>
+    <div class="table-responsive tbl">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2"> التعريف</th>
+                    <th colspan="6">الاسم الكامل</th>
+                    <th colspan="10">س1 : اللوح (الوضوح - الصحة - الحفظ)</th>
+                    <th colspan="10">س2 : المحفوظات التعليمية و التربوية</th>
+                    <th colspan="10">س3 : الكتابة و القراءة (الأحرف، الكلمات، الجمل)</th>
+                    <th colspan="6">التقدير</th>
+                    <th colspan="6">الملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($students as $student): ?>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars($student['id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td colspan="6"><?php echo htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="6" contenteditable="true"></td>
+                    <td colspan="6" contenteditable="true"></td>
+                </tr>
+                <?php endforeach; ?>
+                <?php for ($i = 0; $i < 4; $i++): ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th colspan="3">رقم التعريف</th>
-                <th colspan="6">الاسم الكامل</th>
-                <th colspan="10">س1 : اللوح (الوضوح - الصحة - الحفظ)</th>
-                <th colspan="10">س2 : المحفوظات التعليمية و التربوية</th>
-                <th colspan="10">س3 : الكتابة و القراءة (الأحرف، الكلمات، الجمل)</th>
-                <th colspan="6">التقدير</th>
-                <th colspan="6">الملاحظات</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($students as $student): ?>
-            <tr>
-                <td colspan="3"><?php echo htmlspecialchars($student['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td colspan="6"><?php echo htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="6" contenteditable="true"></td>
-                <td colspan="6" contenteditable="true"></td>
-            </tr>
-            <?php endforeach; ?>
-            <?php for ($i = 0; $i < 4; $i++): ?>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="6"></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="10" contenteditable="true"></td>
+                    <td colspan="6" contenteditable="true"></td>
+                    <td colspan="6" contenteditable="true"></td>
+                </tr>
+                <?php endfor; ?>
 
-            <tr>
-                <td colspan="3"></td>
-                <td colspan="6"></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="10" contenteditable="true"></td>
-                <td colspan="6" contenteditable="true"></td>
-                <td colspan="6" contenteditable="true"></td>
-            </tr>
-            <?php endfor; ?>
+            </tbody>
+        </table>
+    </div>
 
-        </tbody>
-    </table>
-    
     <div class="signature-section">
         <div class="signature">
-            <p>توقيع الأستاذ: <strong><?php echo $username; ?></strong></p>
-            <p>__________________</p>
+            <p style="font-size: 18px;">توقيع الأستاذ: <strong><?php echo $username; ?></strong></p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>الملاحظات العامة</p>
-            <p>__________________</p>
+            <p style="font-size: 18px;">الملاحظات العامة</p>
+            <p style="margin-top: -15px;">______________</p>
         </div>
         <div class="signature">
-            <p> الإدارة</p>
-            <p>__________________</p>
+            <p style="font-size: 18px;"> الإدارة</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
     </div>
 

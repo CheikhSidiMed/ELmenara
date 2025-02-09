@@ -183,6 +183,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             th, td {
                 border: 1px solid black;
                 padding: 1px;
+                white-space: nowrap; /* Prevents text wrapping */
+    text-overflow: ellipsis;
             }
             th {
                 background-color: #f8f9fa;
@@ -222,9 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 display: none; /* Hide by default */
             }
 
-        /* Print-specific adjustments */
         @media print {
-            /* Hide unnecessary elements */
             .button-group, .form-container, .container-fluid {
                 display: none;
             }
@@ -235,7 +235,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 font-weight: bold;
                 margin-top: 10px;
             }
-       
+            .tbl{
+                padding-left: 20px;
+            }
             /* General body adjustments for print */
             body {
                 font-size: 14px; /* Smaller font to fit more content */
@@ -288,7 +290,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .p-head{
             font-size: 21px !important;
         }
-
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px; /* Ajustez selon votre besoin */
+            border-collapse: collapse;
+        }
     </style>
     <script>
         function printPage() {
@@ -375,64 +384,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="p-head">القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 13%; font-size: 18px">الاسم الكامل</th>
-                    <th style="width: 5%; font-size: 18px"> الأحزاب</th>
-                    <th style="width: 8%; font-size: 18px"> مقدار الحفظ</th>
-                    <th style="width: 20%; font-size: 18px">  المستوى السابق</th>
-                    <th style="width: 20%; font-size: 18px">  المستوى الحالي</th>
-                    <th style="width: 21%; font-size: 18px">  الزيادة</th>
-                    <th style="width: 2%; font-size: 18px">  الغياب</th>
-                    <th style="width: 11%; font-size: 18px">  الملاحظات</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($students as $student): ?>
-                <tr>
-                    <td><?php echo $student['student_name']; ?></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true" style="text-align: center;"><?php echo $student['ABS']; ?></td>
-                    <td contenteditable="true"></td>
 
+        <div class="table-responsive tbl">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 13%; font-size: 18px">الاسم الكامل</th>
+                        <th style="width: 5%; font-size: 18px"> الأحزاب</th>
+                        <th style="width: 8%; font-size: 18px"> مقدار الحفظ</th>
+                        <th style="width: 20%; font-size: 18px">  المستوى السابق</th>
+                        <th style="width: 20%; font-size: 18px">  المستوى الحالي</th>
+                        <th style="width: 21%; font-size: 18px">  الزيادة</th>
+                        <th style="width: 4%; font-size: 18px">  الغياب</th>
+                        <th style="width: 11%; font-size: 18px">  الملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($students as $student): ?>
+                    <tr>
+                        <td><?php echo $student['student_name']; ?></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true" style="text-align: center;"><?php echo $student['ABS']; ?></td>
+                        <td contenteditable="true"></td>
+
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php for ($i = 0; $i < 3; $i++): ?>
+                    <tr>
+                        <td contenteditable="true"></td>
+                        <?php for ($j = 0; $j < 4; $j++): ?>
+                        <td contenteditable="true"></td>
+                    <?php endfor; ?>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
                 </tr>
-                <?php endforeach; ?>
-                <?php for ($i = 0; $i < 3; $i++): ?>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <?php for ($j = 0; $j < 4; $j++): ?>
-                    <td contenteditable="true"></td>
                 <?php endfor; ?>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            </tr>
-            <?php endfor; ?>
-                
-            </tbody>
-        </table>
+                    
+                </tbody>
+            </table>
+        </div>
+
+
         <div class="signature-section">
             <div class="signature">
-                <p>الأستاذ </p>
+                <p style="font-size: 18px">الأستاذ </p>
                 <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-                <p style="margin-top: -35px;">__________________</p>
+                <p style="margin-top: -35px;">_________</p>
             </div>
             <div class="signature">
-                <p>تاريخ التسليم</p>
-                <p style="margin-top: -15px;">__________________</p>
+                <p style="font-size: 18px">تاريخ التسليم</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
             <div class="signature">
-                <p>توقيع الأستاذ</p>
-                <p style="margin-top: -15px;">__________________</p>
+                <p style="font-size: 18px">توقيع الأستاذ</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
             <div class="signature">
-                <p>توقيع الإدارة</p>
-                <p style="margin-top: -15px;">__________________</p>
+                <p style="font-size: 18px">توقيع الإدارة</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
         </div>
     </div>

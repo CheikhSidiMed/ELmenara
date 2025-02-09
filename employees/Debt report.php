@@ -163,6 +163,7 @@ $conn->close();
     <title>تقرير الديون</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link href="css/bootstrap-5.3.1.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -171,7 +172,7 @@ $conn->close();
             padding: 30px;
             border-radius: 12px;
             background-color: white;
-            border: 2px solid #1BA078;
+            border: 1px solid #ddd;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             max-width: 1200px;
             text-align: center; /* Center align the content */
@@ -182,15 +183,6 @@ $conn->close();
             text-align: right;
             background-color: #f4f7f6;
             color: #333;
-        }
-
-        .main-contain {
-            margin: 10px auto;
-            padding: 10px;
-            border-radius: 15px;
-            background-color: white;
-            border: 2px solid #1BA078;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
 
         .header-tit {
@@ -402,10 +394,19 @@ $conn->close();
                 display: none; /* Hide the button when printing */
             }
             img {
-            display: block;
-            margin: 0 auto; /* Center the image */
-            width: 100%; /* Full width in print */
+                display: block;
+                margin: 0 auto; /* Center the image */
+                width: 100%; /* Full width in print */
+            }
         }
+
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
         }
     </style>
     <script>
@@ -415,73 +416,84 @@ $conn->close();
     </script>
 </head>
 <body>
-    <div class="container main-contain cnc">
-        <div class="form-header d-flex justify-content-between align-items-center">
-            <h2 class="header-tit"><i class="bi bi-file-earmark-text-fill"></i>الطلاب المدينين</h2>
-
-            <button class="btn btn-success home" onclick="window.location.href='months_not_paid.php'">إدارة الأشهر غير المدفوعة</hbutton1>
-            <button class="btn btn-success home" onclick="window.location.href='home.php'">العودة إلى الصفحة الرئيسية</button>
+<div class="container main-contain">
+    <!-- Header Section -->
+    <div class="form-header d-flex flex-column mb-3 flex-md-row justify-content-between align-items-center">
+        <h2 class="header-tit">
+            <i class="bi bi-file-earmark-text-fill"></i> الطلاب المدينين
+        </h2>
+        <div class="d-flex flex-column flex-md-row gap-2 mt-2 mt-md-0">
+            <button class="btn btn-success" onclick="window.location.href='home.php'">
+                الصفحة الرئيسية <i class="fas fa-home ms-2"></i>
+            </button>
         </div>
+    </div>
 
-        <form action="" method="get" class="form-inline row">
-    <!-- Year Selection -->
-    <div class="form-group col-3">
-        <label for="year-select">السنة المالية:</label>
-        <select id="year-select" name="year" class="form-sele">
+    <!-- Form Section -->
+    <form action="" method="get" class="row g-3 align-items-end">
+    <!-- Gestion des mois non payés -->
+    <div class="col-12 col-md-6 col-lg-3">
+        <button class="btn btn-primary w-100" onclick="window.location.href='months_not_paid.php'">
+            إدارة الأشهر غير المدفوعة
+        </button>
+    </div>
+
+    <!-- Sélection de l'année -->
+    <div class="col-12 col-md-6 col-lg-2">
+        <label for="year-select" class="form-label">السنة المالية:</label>
+        <select id="year-select" name="year" class="form-select">
             <option><?php echo htmlspecialchars($last_year); ?></option>
         </select>
     </div>
 
-    <!-- Section Select -->
-    <div class="form-group col-3">
-        <label for="section">حسب القسم:</label>
-        <select id="section" name="class" class="form-sele">
+    <!-- Sélection de la section -->
+    <div class="col-12 col-md-6 col-lg-2">
+        <label for="section" class="form-label">حسب القسم:</label>
+        <select id="section" name="class" class="form-select">
             <?php foreach ($classes as $class): ?>
                 <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
             <?php endforeach; ?>
         </select>
     </div>
 
-    <!-- Filter Checkboxes -->
-    <div class="form-group col-3">
-        <label for="filter1">حسب القسم</label>
-        <input type="radio" id="filter1" name="filter" value="class" class="form-checkb">
-
-        <label for="filter2">حسب الجميع</label>
-        <input type="radio" id="filter2" name="filter" value="all" class="form-checkb">
+    <!-- Sélection du filtre -->
+    <div class="col-12 col-md-6 col-lg-2">
+        <label for="filter-select" class="form-label">تصفية حسب:</label>
+        <select id="filter-select" name="filter" class="form-select">
+            <option value="class">حسب القسم</option>
+            <option value="all">حسب الجميع</option>
+        </select>
     </div>
 
-    <!-- Confirm and Print Buttons -->
-    <div class="col-3">
-        <button type="submit" class="btn-conf">
+    <!-- Boutons de validation et d'impression -->
+    <div class="col-12 col-md-6 col-lg-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary w-100">
             <i class="bi bi-check-square"></i> تأكيد العملية
         </button>
-        <button type="button" class="print-button" onclick="printTable()">طباعة</button>
+        <button type="button" class="btn btn-secondary w-100" onclick="printTable()">
+            <i class="bi bi-printer"></i> طباعة
+        </button>
     </div>
 </form>
 
-    </div>
-
-    
-    <div class="container main-contain">
-        <!-- Header Image -->
-        <div style="text-align: center;">
-        <img src="../images/header.png" width="100%" alt="Header Image">
-    
-        <!-- Title -->
-        <h2 class="header-title">تقرير بالحسابات المدينة</h2>
-
-        <!-- Sub-Title -->
-        <?php if ($filterType === 'class'): ?>
-            <div class="header-title">
-                <h2>الفصل: <?= htmlspecialchars($selectedClass) ?></h2>
-            </div>
-        <?php endif; ?>
 </div>
-       
+
+
+<!-- Report Section -->
+    <div class="container main-contain mt-4">
+        <div class="text-center">
+            <img src="../images/header.png" class="img-fluid" alt="Header Image">
+            <h2 class="header-title mt-3">تقرير بالحسابات المدينة</h2>
+            
+            <?php if ($filterType === 'class'): ?>
+                <h3 class="header-title">الفصل: <?= htmlspecialchars($selectedClass) ?></h3>
+            <?php endif; ?>
+        </div>
+
+
+    <div class="table-responsive tbl">
         <table>
             <form method="post" action="debt_send_whatsapp.php" target="_blank">
-
                 <thead>
                     <tr>
                         <th>اسم الطالب</th>
@@ -495,7 +507,7 @@ $conn->close();
                     <?php foreach ($students as $name => $data): 
                         if (count($data['unpaid_months']) === 1 && in_array('كل الأشهر مدفوعة', $data['unpaid_months']) || (empty($data['unpaid_months']) && $data['remaining_amount'] <= 0.00)) {
                             continue;
-                        } ?>    
+                        } ?>
                         
                         <tr>
                             <td><?= htmlspecialchars($name) ?></td>
@@ -504,7 +516,7 @@ $conn->close();
                                 <?= !empty($data['unpaid_months']) 
                                 ? implode(', ', $data['unpaid_months']) 
                                 : '<span class="text-success">كل الأشهر مدفوعة</span>' 
-                                ?>   
+                                ?>
                             </td>
                             <td><?= htmlspecialchars($data['remaining_amount']) ?></td>
                             <td>
@@ -523,7 +535,9 @@ $conn->close();
                 </tfoot>
             </form>
         </table>
+        </div>
     </div>
+
     
 
     <script>

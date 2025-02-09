@@ -197,8 +197,8 @@ foreach ($transactions as $transaction) {
             font-weight: bold;
             color: #1BA078;
             display: flex;
-            align-items: center;
-            justify-content: center; /* Center the title */
+            align-items: start;
+            justify-content: start; /* Center the title */
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -299,7 +299,7 @@ foreach ($transactions as $transaction) {
             transition: background-color 0.3s;
         }
         .print-button:hover {
-            background-color: #14865b; 
+            background-color: #14865b;
         }
         .table-footer {
             background-color: #f0f0f0;
@@ -312,13 +312,13 @@ foreach ($transactions as $transaction) {
             border: 1px solid #14865b;
         }
         .signatures {
-        margin-top: 10px; 
+        margin-top: 10px;
         text-align: right;
             }
             .signature-row {
-                display: flex; 
-                flex-direction: column; 
-                align-items: center; 
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 width: 200px;
             }
             td:first-child {
@@ -327,7 +327,7 @@ foreach ($transactions as $transaction) {
             }
             td:not(:first-child) {
                 text-align: center;
-            }      
+            }
                 /* Print Styles */
         @media print {
             @page {
@@ -351,47 +351,50 @@ foreach ($transactions as $transaction) {
             background-color: #f0f0f0;
             font-weight: bold;
             text-align: right;
-        }
+            }
             th, td {
                 border: 1px solid black;
-                color: black; /* Black text */
-                padding: 2px; /* Minimal padding for readability */
+                color: black;
+                padding: 2px;
             }
             td:first-child {
                 text-align: right;
-                padding-right: 3px; /* Add padding for a slight indent */
+                padding-right: 3px;
             }
-            /* Center-align the rest of the cells */
+            
             td:not(:first-child) {
                 text-align: center;
             }
             th {
-                background-color: white; /* White background for header */
-                color: black; /* Black text for header */
-                font-size: 14px; /* Smaller font size for headers */
+                background-color: white;
+                color: black;
+                font-size: 14px;
             }
             tfoot {
-                background-color: white; /* White background for footer */
-                color: black; /* Black text for footer */
+                background-color: white;
+                color: black;
             }
             .print-button, .main-container {
-                display: none; /* Hide non-essential elements */
+                display: none;
             }
             img {
                 border: none;
                 display: block;
-                margin: 0 auto; /* Center image */
-                width: 100%; /* Adjusted for A4 print width */
+                margin: 0 auto;
+                width: 100%;
+            }
+            .tbl{
+                padding-left: 50px;
             }
         }
 
  
         .use-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
         }
 
         .use-info .date {
@@ -401,7 +404,69 @@ foreach ($transactions as $transaction) {
         .use-info span {
             margin: 0 10px;
         }
+        .tbl {
+            overflow-x: auto;
+            padding: 5px;
+            width: 100%;
+        }
+        table {
+            min-width: 700px;
+            border-collapse: collapse;
+        }
+        .main-container {
+    padding: 15px;
+}
 
+.header-title {
+    font-size: 2.3rem;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap; /* Permet aux éléments de passer en colonne sur petits écrans */
+    gap: 10px;
+    justify-content: center;
+}
+
+.form-group {
+    flex: 1; /* Permet d'étirer chaque champ */
+    min-width: 200px; /* Assure une bonne largeur minimale */
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+button i {
+    margin-left: 5px;
+}
+
+/* Rendre l'image responsive */
+.header-image {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Centrer les textes */
+.use-info {
+    text-align: center;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 1.2rem;
+    }
+
+    .d-flex {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
 
 
     </style>
@@ -413,142 +478,144 @@ foreach ($transactions as $transaction) {
 </head>
 
 <body>
-    <div class="container main-container">
-
-        <div class="col-12 d-flex justify-content-between align-items-center">
+<div class="container main-container">
+    <div class="row align-items-center justify-content-between">
+        <div class="col-md-6 text-start text-md-start">
             <h2 class="header-title"><i class="bi bi-file-earmark-text-fill"></i> اليومية</h2>
-            <div class="d-flex align-items-center">
-                <a href="home.php" class="btn btn-success d-flex align-items-center" style="margin-left: 15px;">
-                <i class="bi bi-house-fill" style="margin-left: 5px;"></i>
-                    الرئيسية
-                </a>
+        </div>
+        <div class="col-md-6 text-center text-md-end " style="width: 150px;">
+            <a href="home.php" class="btn btn-success d-flex align-items-center justify-content-center">
+                <i class="bi bi-house-fill" style="margin-left: 5px;"></i> الرئيسية
+            </a>
+        </div>
+    </div>
+
+    <form action="" method="POST">
+        <div class="form-row">
+            <!-- Year Selection -->
+            <div class="form-group">
+                <label for="year-select">السنة المالية:</label>
+                <select id="year-select" class="form-select" name="year">
+                    <option><?php echo htmlspecialchars($last_year); ?></option>
+                </select>
+            </div>
+
+            <!-- User Selection -->
+            <?php if ($role_id == 1) { ?>
+                <div class="form-group">
+                    <label for="user-select">المستخدم:</label>
+                    <select id="user-select" class="form-select" name="user_id" onchange="updateUsername()">
+                        <option value="all">جميع المستخدمين</option>
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $optionValue = $role_id != 1 ? $role_id : $row['id'];
+                                $selected = $selectedUser == $row['id'] ? 'selected' : '';
+                                echo "<option value='" . $optionValue . "' $selected>" . $row['username'] . "</option>";
+                            }
+                        } else {
+                            echo "<option value=''>لا يوجد مستخدمون</option>";
+                        }
+                        ?>
+                    </select>
+                    <input type="hidden" id="username" name="username" value="">
+                </div>
+            <?php } ?>
+
+            <!-- Date Range -->
+            <div class="form-group">
+                <label for="start-date">من:</label>
+                <input id="start-date" type="date" class="form-date" name="start_date" value="<?= $selectedStartDate ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end-date">إلى:</label>
+                <input id="end-date" type="date" class="form-date" name="end_date" value="<?= $selectedEndDate ?>" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit"><i class="bi bi-check-square"></i> تأكيد العملية</button>
             </div>
         </div>
-        <form action="" method="POST">
-            <div class="form-row">
-                <!-- Year Selection -->
-                <div class="form-group">
-                    <label for="year-select">السنة المالية:</label>
-                    <select style="padding-right: 30px" id="year-select" class="form-select" name="year">
-                        <option><?php echo htmlspecialchars($last_year); ?></option>
-                    </select>
-                </div>
+    </form>
+</div>
 
-                <!-- User Selection -->
-                <?php if($role_id == 1) { ?>
-    <div class="form-group">
-        <label for="user-select">المستخدم:</label>
-        <select style="padding-right: 30px" id="user-select" class="form-select" name="user_id" onchange="updateUsername()">
-            <option value="all">جميع المستخدمين</option> <!-- New Option for All Users -->
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    // Add $role_id as the value if it is not equal to 1
-                    $optionValue = $role_id != 1 ? $role_id : $row['id'];
-                    $selected = $selectedUser == $row['id'] ? 'selected' : '';
-                    echo "<option value='" . $optionValue . "' $selected>" . $row['username'] . "</option>";
-                }
-            } else {
-                echo "<option value=''>لا يوجد مستخدمون</option>";
-            }
-            ?>
-        </select>
-        <input type="hidden" id="username" name="username" value="">
-    </div>
-<?php } ?>
+<!-- Image Header -->
+<div class="text-center mb-2">
+    <img src="../images/header.png" class="header-image" alt="Header Image">
+    <h2 class="mt-2">التقرير اليومي</h2>
+    <span>بتاريخ</span> : <?php echo date('d/m/Y | H:i'); ?>
+</div>
+
+<!-- User Info -->
+<div class="use-info">
+    <span class="date">
+        <strong>مـــــــن: </strong> <?php echo (new DateTime($start_date))->format('d/m/Y'); ?>
+        <strong>إلــــــى:</strong> <?php echo (new DateTime($end_date))->format('d/m/Y'); ?>
+    </span>
+    <br>
+    <span class="date"><strong>اسم المستخدم:</strong> <?php echo htmlspecialchars($username); ?></span>
+</div>
 
 
-                <!-- Date Range -->
-                <div class="form-group">
-                    <label for="start-date">من:</label>
-                    <input id="start-date" type="date" class="form-date" name="start_date" value="<?= $selectedStartDate ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="end-date">إلى:</label>
-                    <input id="end-date" type="date" class="form-date" name="end_date" value="<?= $selectedEndDate ?>" required>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="form-group">
-                    <button type="submit"><i class="bi bi-check-square"></i> تأكيد العملية</button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-
-    <div style="text-align: center; margin-bottom: -15px;">
-        <img src="../images/header.png" width="100%" alt="Header Image">
-        <h2 style="margin-top: 5px;">التقرير اليومي</h2>
-        <span >بتاريخ</span> : <?php echo date('d/m/Y | H:i'); ?>
-    </div>
-
-    <div class="use-info" style="margin-bottom: -12px;">
-        <span class="date">
-            <strong style="font-size: 18px; ">مـــــــن: </strong> <?php echo (new DateTime($start_date))->format('d/m/Y'); ?>
-            <strong style="font-size: 18px;">إلــــــى:</strong> <?php echo (new DateTime($end_date))->format('d/m/Y'); ?>
-        </span>
-        <span class="date"><strong style="font-size: 18px;">اسم المستخدم:</strong> <?php echo htmlspecialchars($username); ?></span>
-    </div>
-
-
-    <table>
-        <thead>
-            <tr>
-                <th rowspan="2" style="width: 12%;">بتاريخ</th>
-                <th rowspan="2">التفاصــــــــــــــــــــــــــــيل</th>
-                <th colspan="2">الصنــــــــــــــدوق</th>
-                <th colspan="3">البنــــــــــــــوك</th>
-            </tr>
-            <tr>
-                <th>الداخل</th>
-                <th>الخارج</th>
-                <th>البنوك</th>
-                <th>الداخل</th>
-                <th>الخارج</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($transactions as $transaction): ?>
-                <?php if (!empty($transaction['transaction_description'])): ?>
-                    <tr>
-                        <td> <?php echo htmlspecialchars($transaction['transaction_date']) ?></td>
-                        <td style="text-align: start;">
-                            <?php 
-                                echo htmlspecialchars($transaction['transaction_description']) . 
-                                    ' <strong>/ رقم الوصل: </strong>' . 
-                                    htmlspecialchars($transaction['receipt_id']); 
-                                ?>
-                        </td>
-                        <td><?php echo ($transaction['transaction_type'] == 'plus' && !$transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                        <td><?php echo ($transaction['transaction_type'] == 'minus' && !$transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
-                        <td><?php echo htmlspecialchars($transaction['bank_name']); ?></td>
-                        <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                        <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
-                    </tr>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </tbody>
-       
-            <tr class="table-footer">
-                <td colspan="2"><strong>المجاميع:</strong></td>
-                <td><?php echo htmlspecialchars($total_addition_amount); ?></td>
-                <td><?php echo htmlspecialchars($total_subtraction_amount); ?></td>
-                <td><strong>المجاميع:</strong></td>
-                <td><?php echo htmlspecialchars($total_addition_bank); ?></td>
-                <td><?php echo htmlspecialchars($total_subtraction_bank); ?></td>
-            </tr>
-            <tr class="table-footer">
-                <td  colspan="2"><strong>الرصيد الكلي:</strong></td>
-                <td colspan="2" ><?php echo htmlspecialchars($total_addition_amount - $total_subtraction_amount); ?></td>
-
-                <td><strong>الرصيد الكلي:</strong></td>
-                <td colspan="2"><?php echo htmlspecialchars($total_addition_bank - $total_subtraction_bank); ?></td>
-            </tr>
+    <div class="table-responsive tbl">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 12%;">بتاريخ</th>
+                    <th rowspan="2">التفاصــــــــــــــــــــــــــــيل</th>
+                    <th colspan="2">الصنــــــــــــــدوق</th>
+                    <th colspan="3">البنــــــــــــــوك</th>
+                </tr>
+                <tr>
+                    <th>الداخل</th>
+                    <th>الخارج</th>
+                    <th>البنوك</th>
+                    <th>الداخل</th>
+                    <th>الخارج</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($transactions as $transaction): ?>
+                    <?php if (!empty($transaction['transaction_description'])): ?>
+                        <tr>
+                            <td> <?php echo htmlspecialchars($transaction['transaction_date']) ?></td>
+                            <td style="text-align: start;">
+                                <?php 
+                                    echo htmlspecialchars($transaction['transaction_description']) . 
+                                        ' <strong>/ رقم الوصل: </strong>' . 
+                                        htmlspecialchars($transaction['receipt_id']); 
+                                    ?>
+                            </td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && !$transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && !$transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                            <td><?php echo htmlspecialchars($transaction['bank_name']); ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                        </tr>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </tbody>
         
-    </table>
-    
+                <tr class="table-footer">
+                    <td colspan="2"><strong>المجاميع:</strong></td>
+                    <td><?php echo htmlspecialchars($total_addition_amount); ?></td>
+                    <td><?php echo htmlspecialchars($total_subtraction_amount); ?></td>
+                    <td><strong>المجاميع:</strong></td>
+                    <td><?php echo htmlspecialchars($total_addition_bank); ?></td>
+                    <td><?php echo htmlspecialchars($total_subtraction_bank); ?></td>
+                </tr>
+                <tr class="table-footer">
+                    <td  colspan="2"><strong>الرصيد الكلي:</strong></td>
+                    <td colspan="2" ><?php echo htmlspecialchars($total_addition_amount - $total_subtraction_amount); ?></td>
+
+                    <td><strong>الرصيد الكلي:</strong></td>
+                    <td colspan="2"><?php echo htmlspecialchars($total_addition_bank - $total_subtraction_bank); ?></td>
+                </tr>
+            
+        </table>
+    </div>
 <!-- Signatures Section -->
 <div class="signatures" style="margin-top: 20px; display: flex; justify-content: space-between;">
     <div class="signature-row">

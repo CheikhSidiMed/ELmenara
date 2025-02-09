@@ -216,7 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 margin-top: 10px;
             }
             body {
-                font-size: 12px; 
+                font-size: 12px;
             }
 
             .form-container, table{
@@ -285,9 +285,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             .p-head{
                 font-size: 15px !important;
             }
+            .tbl{
+                padding-left: 20px;
+            }
         }
         .p-head{
             font-size: 21px !important;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
         }
     </style>
     <script>
@@ -357,14 +368,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
 
-    <div class="button-group">
-        <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> 
-        </button>
-        <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-            الصفحة الرئيسية <i class="bi bi-house-door-fill me-2"></i> 
-        </button>
-    </div>
+        <div class="button-group">
+            <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
+                طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i>
+            </button>
+            <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
+                الصفحة الرئيسية <i class="bi bi-house-door-fill me-2"></i>
+            </button>
+        </div>
         <div class="sheet-header receipt-header">
             <img src="../images/header.png" width="100%" alt="Header Image">
             <p class="p-head">  نتائج تقييم </p>
@@ -373,60 +384,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="p-head">القسم: <?php echo $class_name; ?></p>
             <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 15%; font-size: 18px">الاسم الكامل</th>
-                    <th style="width: 18%; font-size: 18px">  التقييم (الكيف) </th>
-                    <th style="width: 18%; font-size: 18px">  الحصيلة ( الكم)</th>
-                    <th style="width: 18%; font-size: 18px">   مستوى الأداء </th>
-                    <th style="width: 18%; font-size: 18px">   النتيجة </th>
-                    <th style="width: 18%; font-size: 18px">  التقدير النهائي</th>
-                   
+        <div class="table-responsive tbl">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%; font-size: 18px">الاسم الكامل</th>
+                        <th style="width: 18%; font-size: 18px">  التقييم (الكيف) </th>
+                        <th style="width: 18%; font-size: 18px">  الحصيلة ( الكم)</th>
+                        <th style="width: 18%; font-size: 18px">   مستوى الأداء </th>
+                        <th style="width: 18%; font-size: 18px">   النتيجة </th>
+                        <th style="width: 18%; font-size: 18px">  التقدير النهائي</th>
+                    
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($students as $student): ?>
+                    <tr>
+                        <td><?php echo $student['student_name']; ?></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php for ($i = 0; $i < 3; $i++): ?>
+                    <tr>
+                        <td contenteditable="true"></td>            
+                        <?php for ($j = 0; $j < 4; $j++): ?>
+                        <td contenteditable="true"></td>
+                    <?php endfor; ?>
+                    <td contenteditable="true"></td>
+                    
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($students as $student): ?>
-                <tr>
-                    <td><?php echo $student['student_name']; ?></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-               
-                </tr>
-                <?php endforeach; ?>
-                <?php for ($i = 0; $i < 3; $i++): ?>
-                <tr>
-                    <td contenteditable="true"></td>            
-                    <?php for ($j = 0; $j < 4; $j++): ?>
-                    <td contenteditable="true"></td>
                 <?php endfor; ?>
-                <td contenteditable="true"></td>
-                
-            </tr>
-            <?php endfor; ?>
-                
-            </tbody>
-        </table>
+                    
+                </tbody>
+            </table>
+        </div>
         <div class="signature-section">
-            <div class="signature">
-                <p>الأستاذ </p>
+            <div class="signature col-md-6">
+                <p style="font-size: 18px;">الأستاذ </p>
                 <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-                <p style="margin-top: -35px;">__________________</p>
+                <p style="margin-top: -35px;">_________</p>
             </div>
-            <div class="signature">
-                <p>تاريخ التسليم</p>
-                <p style="margin-top: -15px;">__________________</p>
+            <div class="signature col-md-6">
+                <p style="font-size: 18px;">تاريخ التسليم</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
-            <div class="signature">
-                <p>توقيع الأستاذ</p>
-                <p style="margin-top: -15px;">__________________</p>
+            <div class="signature col-md-6">
+                <p style="font-size: 18px;">توقيع الأستاذ</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
-            <div class="signature">
-                <p>توقيع الإدارة</p>
-                <p style="margin-top: -15px;">__________________</p>
+            <div class="signature col-md-6">
+                <p style="font-size: 18px;">توقيع الإدارة</p>
+                <p style="margin-top: -15px;">_________</p>
             </div>
         </div>
     </div>

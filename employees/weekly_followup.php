@@ -180,6 +180,7 @@ if ($result->num_rows > 0) {
         th, td {
             border: 1px solid black;
             padding: 1px;
+            white-space: nowrap !important;
         }
         th {
             background-color: #f8f9fa;
@@ -240,12 +241,23 @@ if ($result->num_rows > 0) {
             table {
                 width: 100%;
             }
+            .tbl{
+                padding-left: 20px;
+            }
             .p-head{
                 font-size: 15px !important;
             }
         }
         .p-head{
             font-size: 21px !important;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
         }
     </style>
     <script>
@@ -273,56 +285,54 @@ if ($result->num_rows > 0) {
 <body>
 
 
-    <div class="container-fluid">
-        <div class="form-container">
-            <h2 >إنشاء استمارة المتابعة الأسبوعية</h2>
-            <form method="POST" action="">
-                <div class="form-row">
-                    <div class="form-group col-md-3">
-                        <label for="branch">الفرع</label>
-                        <select class="form-control" id="branch" name="branch" required>
-                            <option value="">اختر الفرع</option>
-                            <?php
-                            if ($branchesResult->num_rows > 0) {
-                                while($row = $branchesResult->fetch_assoc()) {
-                                    echo "<option value='{$row['branch_id']}'" . ($selectedBranch == $row['branch_id'] ? " selected" : "") . ">{$row['branch_name']}</option>";
-                                }
-                            } else {
-                                echo "<option value=''>لا يوجد فروع</option>";
+<div class="container-fluid">
+    <div class="form-container">
+        <h2 class="text-center">إنشاء استمارة المتابعة الأسبوعية</h2>
+        <form method="POST" action="">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="branch">الفرع</label>
+                    <select class="form-control" id="branch" name="branch" required>
+                        <option value="">اختر الفرع</option>
+                        <?php
+                        if ($branchesResult->num_rows > 0) {
+                            while($row = $branchesResult->fetch_assoc()) {
+                                echo "<option value='{$row['branch_id']}'" . ($selectedBranch == $row['branch_id'] ? " selected" : "") . ">{$row['branch_name']}</option>";
                             }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="class">الصف</label>
-                        <select class="form-control" id="class" name="class" required>
-                            <option value="">اختر الصف</option>
-                            <?php
-                            if ($selectedBranch && $classesResult->num_rows > 0) {
-                                while($classRow = $classesResult->fetch_assoc()) {
-                                    echo "<option value='{$classRow['class_id']}'" . ($selectedClass == $classRow['class_id'] ? " selected" : "") . ">{$classRow['class_name']}</option>";
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="start_date">من تاريخ</label>
-                        <!-- <input type="date" class="form-control" id="start_date" name="start_date" required> -->
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo isset($start_date) ? $start_date : ''; ?>" required>
-
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="end_date">إلى تاريخ</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo isset($end_date) ? $end_date : ''; ?>" required>
-                        </div>
-                    <div class="form-group col-md-2 align-self-end">
-                        <button type="sibmit" class="btn btn-primary btn-block" id="generate-button">إنشاء الاستمارة</button>
-                    </div>
+                        } else {
+                            echo "<option value=''>لا يوجد فروع</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
-            </form>
-        </div>
+                <div class="form-group col-md-3">
+                    <label for="class">الصف</label>
+                    <select class="form-control" id="class" name="class" required>
+                        <option value="">اختر الصف</option>
+                        <?php
+                        if ($selectedBranch && $classesResult->num_rows > 0) {
+                            while($classRow = $classesResult->fetch_assoc()) {
+                                echo "<option value='{$classRow['class_id']}'" . ($selectedClass == $classRow['class_id'] ? " selected" : "") . ">{$classRow['class_name']}</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="fform-group col-md-2">
+                    <label for="start_date">من تاريخ</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo isset($start_date) ? $start_date : ''; ?>" required>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="end_date">إلى تاريخ</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo isset($end_date) ? $end_date : ''; ?>" required>
+                </div>
+                <div class="form-group col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-block w-100">إنشاء الاستمارة</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
 
     
@@ -344,104 +354,107 @@ if ($result->num_rows > 0) {
         <p>العام الدراسي : <?php echo htmlspecialchars($last_year); ?></p>
     </div>
     
-    <table>
-        <thead>
-            <tr>
-                <th rowspan="2">رقم النداء</th>
-                <th colspan="4" rowspan="2">الاسم الكامل</th>
-                <th colspan="5">البرنامج اليومي من الكتابة</th>
-                <th colspan="5">البرنامج اليومي من المحفوظات</th>
-                <th rowspan="2">الزرك</th>
-                <th rowspan="2">الأحزاب</th>
-                <th rowspan="2">الغياب</th>
-                <th colspan="4" rowspan="2">الملاحظات</th>
-            </tr>
-            <tr>
-                <th>السبت</th>
-                <th>الأحد</th>
-                <th>الاثنين</th>
-                <th>الثلاثاء</th>
-                <th>الأربعاء</th>
-                <th>السبت</th>
-                <th>الأحد</th>
-                <th>الاثنين</th>
-                <th>الثلاثاء</th>
-                <th>الأربعاء</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($students as $student): ?>
-            <tr>
-                <td colspan="1"><?php echo $student['id']; ?></td>
-                
-                <td colspan="4"><?php echo $student['student_name']; ?></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
+    <div class="table-responsive tbl">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 3%;"> النداء</th>
+                    <th colspan="4" rowspan="2">الاسم الكامل</th>
+                    <th colspan="5">البرنامج اليومي من الكتابة</th>
+                    <th colspan="5">البرنامج اليومي من المحفوظات</th>
+                    <th rowspan="2">الزرك</th>
+                    <th rowspan="2">الأحزاب</th>
+                    <th rowspan="2">الغياب</th>
+                    <th colspan="4" rowspan="2">الملاحظات</th>
+                </tr>
+                <tr>
+                    <th>السبت</th>
+                    <th>الأحد</th>
+                    <th>الاثنين</th>
+                    <th>الثلاثاء</th>
+                    <th>الأربعاء</th>
+                    <th>السبت</th>
+                    <th>الأحد</th>
+                    <th>الاثنين</th>
+                    <th>الثلاثاء</th>
+                    <th>الأربعاء</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($students as $student): ?>
+                <tr>
+                    <td colspan="1"><?php echo $student['id']; ?></td>
+                    
+                    <td colspan="4"><?php echo $student['student_name']; ?></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td colspan="4" contenteditable="true"></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php for ($i = 0; $i < 3; $i++): ?>
+                <tr>
+                    <td ></td>
+                    <td colspan="4"></td>
+                <?php for ($j = 0; $j < 13; $j++): ?>
+                    <td contenteditable="true"></td>
+                <?php endfor; ?>
                 <td colspan="4" contenteditable="true"></td>
-            </tr>
-            <?php endforeach; ?>
-        <?php for ($i = 0; $i < 3; $i++): ?>
-            <tr>
-                <td ></td>
-                <td colspan="4"></td>
-            <?php for ($j = 0; $j < 13; $j++): ?>
-                <td contenteditable="true"></td>
+
+                </tr>
             <?php endfor; ?>
-            <td colspan="4" contenteditable="true"></td>
 
-            </tr>
-        <?php endfor; ?>
+                <tr>
+                <td colspan="5" class="total-cell">المجموع :</td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="4" style="height: 30px;" contenteditable="true"></td>
+                </tr>
 
-            <tr>
-            <td colspan="5" class="total-cell">المجموع :</td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="4" style="height: 30px;" contenteditable="true"></td>
-            </tr>
+                <!-- Continue the rest of the rows if necessary -->
+            </tbody>
+        </table>
+    </div>
 
-            <!-- Continue the rest of the rows if necessary -->
-        </tbody>
-    </table>
 
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ </p>
+            <p style="font-size: 18px;">الأستاذ </p>
             <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-            <p style="margin-top: -35px;">__________________</p>
+            <p style="margin-top: -35px;">_________</p>
         </div>
         <div class="signature">
-            <p>تاريخ التسليم</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px">تاريخ التسليم</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px;">توقيع الأستاذ</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الإدارة</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px;">توقيع الإدارة</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
     </div>
 

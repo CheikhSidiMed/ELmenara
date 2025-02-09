@@ -254,6 +254,7 @@ $conn->close();
                 padding: 0px;
                 font-size: 12px;
                 text-align: center;
+                white-space: nowrap !important;
             }
             th {
                 font-size: 13px;
@@ -362,12 +363,23 @@ $conn->close();
             tr {
                 page-break-inside: avoid;
             }
+            .tbl{
+                padding-left: 20px;
+            }
             .p-head{
                 font-size: 15px !important;
             }
         }
         .p-head{
             font-size: 21px !important;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px; /* Ajustez selon votre besoin */
+            border-collapse: collapse;
         }
     </style>
     <script>
@@ -441,7 +453,7 @@ $conn->close();
 
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-        طباعة <i class="fas fa-print" style="margin-right: 8px;"></i> 
+        طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>
         </button>
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
         الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
@@ -458,127 +470,129 @@ $conn->close();
         <p class="print-date">التاريخ : <?php echo date('d/m/Y'); ?></p>
 
     </div>
+    <div class="table-responsive tbl">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="3" > التعريف</th>
+                    <th colspan="12">الاسم الكامل</th>
+                    <th colspan="5">1هاتف</th>
+                    <th colspan="5">هاتف2 </th>
+                    <th colspan="2" style="min-width: 30px;">01</th>
+                    <th colspan="2" style="min-width: 30px;">02</th>
+                    <th colspan="2" style="min-width: 30px;">03</th>
+                    <th colspan="2" style="min-width: 30px;">04</th>
+                    <th colspan="2" style="min-width: 30px;">05</th>
+                    <th colspan="2" style="min-width: 30px;">06</th>
+                    <th colspan="2" style="min-width: 30px;">07</th>
+                    <th colspan="2" style="min-width: 30px;">08</th>
+                    <th colspan="2" style="min-width: 30px;">09</th>
+                    <th colspan="2" style="min-width: 30px;">10</th>
+                    <th colspan="2" style="min-width: 30px;">11</th>
+                    <th colspan="2" style="min-width: 30px;">12</th>
+                    <th colspan="2" style="min-width: 30px;">13</th>
+                    <th colspan="2" style="min-width: 30px;">14</th>
+                    <th colspan="2" style="min-width: 30px;">15</th>
+                    <th colspan="2" style="min-width: 30px;">16</th>
+                    <th colspan="2" style="min-width: 30px;">17</th>
+                    <th colspan="2" style="min-width: 30px;">18</th>
+                    <th colspan="2" style="min-width: 30px;">19</th>
+                    <th colspan="2" style="min-width: 30px;">20</th>
+                    <th colspan="2" style="min-width: 30px;">21</th>
+                    <th colspan="2" style="min-width: 30px;">22</th>
+                    <th colspan="2" style="min-width: 30px;">23</th>
+                    <th colspan="2" style="min-width: 30px;">24</th>
+                    <th colspan="2" style="min-width: 30px;">25</th>
+                    <th colspan="2" style="min-width: 30px;">26</th>
+                    <th colspan="2" style="min-width: 30px;">27</th>
+                    <th colspan="2" style="min-width: 30px;">28</th>
+                    <th colspan="2" style="min-width: 30px;">29</th>
+                    <th colspan="2" style="min-width: 30px;">30</th>
+                    <th colspan="2" style="min-width: 30px;">31</th>
 
-    <table>
-        <thead>
-            <tr>
-                <th colspan="3" > التعريف</th>
-                <th colspan="12">الاسم الكامل</th>
-                <th colspan="5">1هاتف</th>
-                <th colspan="5">هاتف2 </th>
-                <th colspan="2" style="min-width: 30px;">01</th>
-                <th colspan="2" style="min-width: 30px;">02</th>
-                <th colspan="2" style="min-width: 30px;">03</th>
-                <th colspan="2" style="min-width: 30px;">04</th>
-                <th colspan="2" style="min-width: 30px;">05</th>
-                <th colspan="2" style="min-width: 30px;">06</th>
-                <th colspan="2" style="min-width: 30px;">07</th>
-                <th colspan="2" style="min-width: 30px;">08</th>
-                <th colspan="2" style="min-width: 30px;">09</th>
-                <th colspan="2" style="min-width: 30px;">10</th>
-                <th colspan="2" style="min-width: 30px;">11</th>
-                <th colspan="2" style="min-width: 30px;">12</th>
-                <th colspan="2" style="min-width: 30px;">13</th>
-                <th colspan="2" style="min-width: 30px;">14</th>
-                <th colspan="2" style="min-width: 30px;">15</th>
-                <th colspan="2" style="min-width: 30px;">16</th>
-                <th colspan="2" style="min-width: 30px;">17</th>
-                <th colspan="2" style="min-width: 30px;">18</th>
-                <th colspan="2" style="min-width: 30px;">19</th>
-                <th colspan="2" style="min-width: 30px;">20</th>
-                <th colspan="2" style="min-width: 30px;">21</th>
-                <th colspan="2" style="min-width: 30px;">22</th>
-                <th colspan="2" style="min-width: 30px;">23</th>
-                <th colspan="2" style="min-width: 30px;">24</th>
-                <th colspan="2" style="min-width: 30px;">25</th>
-                <th colspan="2" style="min-width: 30px;">26</th>
-                <th colspan="2" style="min-width: 30px;">27</th>
-                <th colspan="2" style="min-width: 30px;">28</th>
-                <th colspan="2" style="min-width: 30px;">29</th>
-                <th colspan="2" style="min-width: 30px;">30</th>
-                <th colspan="2" style="min-width: 30px;">31</th>
+                    <th colspan="3" style="width: 3%;">عدد الغياب</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($students as $student_id => $student): ?>
+                <tr>
+                    <td colspan="3"><?= $student_id ?></td>
+                    <td colspan="12"><?= $student['name'] ?></td>
+                    <td colspan="5"><?= $student['phone2'] ?? $student['phone1'] ?></td>
+                    <td colspan="5"><?= $student['phone3'] ?? $student['phone1'] ?></td>
 
-                <th colspan="3" style="width: 3%;">عدد الغياب</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($students as $student_id => $student): ?>
-            <tr>
-                <td colspan="3"><?= $student_id ?></td>
-                <td colspan="12"><?= $student['name'] ?></td>
-                <td colspan="5"><?= $student['phone2'] ?? $student['phone1'] ?></td>
-                <td colspan="5"><?= $student['phone3'] ?? $student['phone1'] ?></td>
+                    <?php
+                        $days_in_month = cal_days_in_month(CAL_GREGORIAN, $monthToUse, date('Y'));
 
-                <?php
-                    $days_in_month = cal_days_in_month(CAL_GREGORIAN, $monthToUse, date('Y'));
+                        for ($day = 1; $day <= 31; $day++):
+                            $formatted_day = sprintf('%02d', $day);
+                            $formatted_month = sprintf('%02d', $monthToUse);
+                            
+                            $absence_found = false;
+                            foreach ($student['absences'] as $date => $absence_data) {
+                                // Extraire mois et jour de la clé de date
+                                [$absence_year, $absence_month, $absence_day] = explode('-', $date);
 
-                    for ($day = 1; $day <= 31; $day++):
-                        $formatted_day = sprintf('%02d', $day);
-                        $formatted_month = sprintf('%02d', $monthToUse);
-                        
-                        $absence_found = false;
-                        foreach ($student['absences'] as $date => $absence_data) {
-                            // Extraire mois et jour de la clé de date
-                            [$absence_year, $absence_month, $absence_day] = explode('-', $date);
-
-                            if ($absence_month == $formatted_month && $absence_day == $formatted_day) {
-                                $absence_found = true;
-                                $morning_absent = !empty($absence_data['morning']);
-                                $evening_absent = !empty($absence_data['evening']);
-                                break; // Arrêter la recherche pour ce jour
+                                if ($absence_month == $formatted_month && $absence_day == $formatted_day) {
+                                    $absence_found = true;
+                                    $morning_absent = !empty($absence_data['morning']);
+                                    $evening_absent = !empty($absence_data['evening']);
+                                    break; // Arrêter la recherche pour ce jour
+                                }
                             }
-                        }
 
-                        if (!$absence_found) {
-                            $morning_absent = false;
-                            $evening_absent = false;
-                        }
-                    ?>
-                    <td style="width: 1.1%; height: 4px;" contenteditable="true" class="<?= $morning_absent ? 'absent' : 'present' ?>">
-                        <?= $morning_absent ? 'X' : '' ?>
-                    </td>
-                    <td style="width: 1.1%;  height: 4px;" contenteditable="true" class="<?= $evening_absent ? 'absent' : 'present' ?>">
-                        <?= $evening_absent ? 'X' : '' ?>
-                    </td>
+                            if (!$absence_found) {
+                                $morning_absent = false;
+                                $evening_absent = false;
+                            }
+                        ?>
+                        <td style="width: 1.1%; height: 4px;" contenteditable="true" class="<?= $morning_absent ? 'absent' : 'present' ?>">
+                            <?= $morning_absent ? 'X' : '' ?>
+                        </td>
+                        <td style="width: 1.1%;  height: 4px;" contenteditable="true" class="<?= $evening_absent ? 'absent' : 'present' ?>">
+                            <?= $evening_absent ? 'X' : '' ?>
+                        </td>
+                    <?php endfor; ?>
+
+                    <td contenteditable="true" colspan="3"><?= $student['total_absences'] ?? 0 ?></td>
+                </tr>
+            <?php endforeach; ?>
+
+
+            <?php for ($i = 0; $i < 3; $i++): ?>
+                <tr>
+                    <td colspan="3"></td>
+                        <td colspan="12"></td>
+                        <td colspan="5" contenteditable="true"></td>
+                        <td colspan="5" contenteditable="true"></td>
+                        <?php for ($j = 0; $j < 62; $j++): ?>
+                        <td contenteditable="true"></td>
+                    <?php endfor; ?>
+                    <td colspan ="3" contenteditable="true"></td>
+                </tr>
                 <?php endfor; ?>
+            </tbody>
 
-                <td contenteditable="true" colspan="3"><?= $student['total_absences'] ?? 0 ?></td>
-            </tr>
-        <?php endforeach; ?>
+        </table>
+    </div>
 
-
-        <?php for ($i = 0; $i < 3; $i++): ?>
-            <tr>
-                <td colspan="3"></td>
-                    <td colspan="12"></td>
-                    <td colspan="5" contenteditable="true"></td>
-                    <td colspan="5" contenteditable="true"></td>
-                    <?php for ($j = 0; $j < 62; $j++): ?>
-                    <td contenteditable="true"></td>
-                <?php endfor; ?>
-                <td colspan ="3" contenteditable="true"></td>
-            </tr>
-            <?php endfor; ?>
-        </tbody>
-
-    </table>
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ </p>
+            <p style="font-size: 18px;">الأستاذ </p>
             <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-            <p style="margin-top: -35px;">__________________</p>
+            <p style="margin-top: -35px;">_________</p>
         </div>
         <div class="signature">
-            <p>تاريخ التسليم</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px;">تاريخ التسليم</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px;">توقيع الأستاذ</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الإدارة</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px;">توقيع الإدارة</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
     </div>
 

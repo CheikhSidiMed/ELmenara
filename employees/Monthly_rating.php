@@ -233,11 +233,15 @@ $conn->close();
                 border: 1px solid black;
                 padding: 1px;
                 text-align: center;
-                height:   174px; 
+                white-space: nowrap !important;
+
+                height:   174px;
             }
             th {
                 background-color: #f8f9fa;
                 border: 1px solid black;
+                white-space: nowrap !important;
+
                 padding: 1px;
                 text-align: center;
             }
@@ -271,74 +275,85 @@ $conn->close();
         }
 
         @media print {
-            @page {
-        size: landscape;
-        margin: 0;
-        }
-    body {
-        margin: 0;
-        padding: 0;
-        font-size: 15px; /* Small base font */
-    }
-    .sheet-header, .sheet-header p, .signature-section p {
-        font-weight: bold;
-        font-size: 14px; 
-    }
-    .sheet {
-        page-break-before: always;
-    }
-    h3 {
-        margin-top: 13px;
-        font-weight: bold;
-        font-size: 20px; 
-    }
-    .print-date {
-        display: block;
-        text-align: right;
-        font-weight: bold;
-        margin-top: 5px;
-        font-size: 10px;
-    }
-    .button-group, .form-container {
-        display: none; /* Hide buttons and form elements */
-    }
+                @page {
+                size: landscape;
+                margin: 0;
+                }
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 15px; /* Small base font */
+            }
+            .sheet-header, .sheet-header p, .signature-section p {
+                font-weight: bold;
+                font-size: 14px;
+            }
+            .sheet {
+                page-break-before: always;
+            }
+            h3 {
+                margin-top: 13px;
+                font-weight: bold;
+                font-size: 20px;
+            }
+            .print-date {
+                display: block;
+                text-align: right;
+                font-weight: bold;
+                margin-top: 5px;
+                font-size: 10px;
+            }
+            .button-group, .form-container {
+                display: none; /* Hide buttons and form elements */
+            }
 
-    .sheet-header {
-        width: 100%;
-        max-width: 100%;
-        table-layout: fixed;
-        border-collapse: collapse;
-    }
+            .sheet-header {
+                width: 100%;
+                max-width: 100%;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
 
-    table {
-        width: 100%;
-        max-width: 92%;
-        table-layout: fixed;
-        border-collapse: collapse;
-        margin-right: 47px;
-    }
-    th, td {
-        font-size: 15px !important; 
-        padding: 2px; 
-        border: 1px solid black;
-        white-space: wrap; 
-        overflow: hidden; 
-        text-align: center;
-    }
-    th {
-        font-weight: bold;
-    }
-
-    .pagination {
-        display: none;
-    }
-    .p-head{
+            table {
+                width: 100%;
+                max-width: 92%;
+                table-layout: fixed;
+                border-collapse: collapse;
+                margin-right: 47px;
+            }
+            th, td {
                 font-size: 15px !important;
+                padding: 2px;
+                border: 1px solid black;
+                white-space: nowrap;
+                text-align: center;
+            }
+            th {
+                font-weight: bold;
+            }
+
+            .pagination {
+                display: none;
+            }
+            .p-head{
+                    font-size: 15px !important;
             }
         }
         .p-head{
             font-size: 21px !important;
         }
+        .tbl{
+                padding-left: 20px;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px; /* Ajustez selon votre besoin */
+            border-collapse: collapse;
+        }
+
 
     </style>
     <script>
@@ -424,45 +439,47 @@ $conn->close();
 
         </div>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th colspan="4">الاسم الكامل</th>
-                <th colspan="2">اللوح</th>
-                <th colspan="16">العدد المقوم من الأحزاب و الملاحظات العامة و المحددة</th>
-                <th colspan="1" style="width: 10%">مستوى الأداء</th>
-                <th colspan="1" style="width: 10%">التقدير النهائي</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($students as $student): ?>
-            <tr>
-                <td colspan="4"><?php echo $student['student_name']; ?></td>
-                <td colspan="2" contenteditable="true"></td>
-                <td colspan="16" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-                <td colspan="1" contenteditable="true"></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="table-responsive tbl">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="4">الاسم الكامل</th>
+                    <th colspan="2">اللوح</th>
+                    <th colspan="16">العدد المقوم من الأحزاب و الملاحظات العامة و المحددة</th>
+                    <th colspan="1" style="width: 10%">مستوى الأداء</th>
+                    <th colspan="1" style="width: 10%">التقدير النهائي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($students as $student): ?>
+                <tr>
+                    <td colspan="4"><?php echo $student['student_name']; ?></td>
+                    <td colspan="2" contenteditable="true"></td>
+                    <td colspan="16" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true"></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
     <div class="signature-section">
         <div class="signature">
-            <p>الأستاذ </p>
+            <p style="font-size: 18px">الأستاذ </p>
             <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-            <p style="margin-top: -35px;">__________________</p>
+            <p style="margin-top: -35px;">_________</p>
         </div>
         <div class="signature">
-            <p>تاريخ التسليم</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px">تاريخ التسليم</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الأستاذ</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px">توقيع الأستاذ</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p>توقيع الإدارة</p>
-            <p style="margin-top: -15px;">__________________</p>
+            <p style="font-size: 18px">توقيع الإدارة</p>
+            <p style="margin-top: -15px;">_________</p>
         </div>
     </div>
 
