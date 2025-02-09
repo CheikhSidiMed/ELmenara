@@ -285,57 +285,55 @@ if ($result->num_rows > 0) {
 <body>
 
 
-<div class="container-fluid">
-    <div class="form-container">
-        <h2 class="text-center">إنشاء استمارة المتابعة الأسبوعية</h2>
-        <form method="POST" action="">
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label for="branch">الفرع</label>
-                    <select class="form-control" id="branch" name="branch" required>
-                        <option value="">اختر الفرع</option>
-                        <?php
-                        if ($branchesResult->num_rows > 0) {
-                            while($row = $branchesResult->fetch_assoc()) {
-                                echo "<option value='{$row['branch_id']}'" . ($selectedBranch == $row['branch_id'] ? " selected" : "") . ">{$row['branch_name']}</option>";
+    <div class="container-fluid">
+        <div class="form-container">
+            <h2 class="text-center">إنشاء استمارة المتابعة الأسبوعية</h2>
+            <form method="POST" action="">
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label for="branch">الفرع</label>
+                        <select class="form-control" id="branch" name="branch" required>
+                            <option value="">اختر الفرع</option>
+                            <?php
+                            if ($branchesResult->num_rows > 0) {
+                                while($row = $branchesResult->fetch_assoc()) {
+                                    echo "<option value='{$row['branch_id']}'" . ($selectedBranch == $row['branch_id'] ? " selected" : "") . ">{$row['branch_name']}</option>";
+                                }
+                            } else {
+                                echo "<option value=''>لا يوجد فروع</option>";
                             }
-                        } else {
-                            echo "<option value=''>لا يوجد فروع</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="class">الصف</label>
-                    <select class="form-control" id="class" name="class" required>
-                        <option value="">اختر الصف</option>
-                        <?php
-                        if ($selectedBranch && $classesResult->num_rows > 0) {
-                            while($classRow = $classesResult->fetch_assoc()) {
-                                echo "<option value='{$classRow['class_id']}'" . ($selectedClass == $classRow['class_id'] ? " selected" : "") . ">{$classRow['class_name']}</option>";
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="class">الصف</label>
+                        <select class="form-control" id="class" name="class" required>
+                            <option value="">اختر الصف</option>
+                            <?php
+                            if ($selectedBranch && $classesResult->num_rows > 0) {
+                                while($classRow = $classesResult->fetch_assoc()) {
+                                    echo "<option value='{$classRow['class_id']}'" . ($selectedClass == $classRow['class_id'] ? " selected" : "") . ">{$classRow['class_name']}</option>";
+                                }
                             }
-                        }
-                        ?>
-                    </select>
+                            ?>
+                        </select>
+                    </div>
+                    <div class="fform-group col-md-2">
+                        <label for="start_date">من تاريخ</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo isset($start_date) ? $start_date : ''; ?>" required>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="end_date">إلى تاريخ</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo isset($end_date) ? $end_date : ''; ?>" required>
+                    </div>
+                    <div class="form-group col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary btn-block w-100">إنشاء الاستمارة</button>
+                    </div>
                 </div>
-                <div class="fform-group col-md-2">
-                    <label for="start_date">من تاريخ</label>
-                    <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo isset($start_date) ? $start_date : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="end_date">إلى تاريخ</label>
-                    <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo isset($end_date) ? $end_date : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary btn-block w-100">إنشاء الاستمارة</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-
-    
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
             طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>

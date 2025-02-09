@@ -8,16 +8,17 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
-
+$user_id = $_SESSION['userid'];
+$role_id = $_SESSION['role_id'];
 
 // Fetch branches and their associated classes
-$sql = "
-    SELECT b.branch_id, b.branch_name, GROUP_CONCAT(c.class_id, ':', c.class_name ORDER BY c.class_name SEPARATOR ', ') AS classes
-    FROM branches b
-    LEFT JOIN classes c ON b.branch_id = c.branch_id
-    GROUP BY b.branch_id, b.branch_name
-    ORDER BY b.branch_id
-";
+$sql = "SELECT b.branch_id, b.branch_name, GROUP_CONCAT(c.class_id, ':', c.class_name ORDER BY c.class_name SEPARATOR ', ') AS classes
+        FROM branches b
+        LEFT JOIN classes c ON b.branch_id = c.branch_id
+        JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = '$role_id'
+        GROUP BY b.branch_id, b.branch_name
+        ORDER BY b.branch_id
+    ";
 
 
 
@@ -100,27 +101,34 @@ $result = $conn->query($sql);
             background-color: #e9ecef;
         }
         .search-box input {
-            border: 2px solid #708090;      
+            border: 2px solid #708090;
             padding: 10px;
             border-radius: 5px;
             width: 100%;
+        }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>لائحة الفروع و الأقسام</h2>
-        <!-- Branches Navigation -->
         <ul class="nav nav-tabs" id="branchTab" role="tablist">
             <?php
-            $first = true;
-            while ($branch = $result->fetch_assoc()) {
-                $active_class = $first ? ' active' : '';
-                echo "<li class='nav-item'>
-                        <a class='nav-link$active_class' id='tab-{$branch['branch_id']}' data-toggle='tab' href='#' data-branch-id='{$branch['branch_id']}'>{$branch['branch_name']}</a>
-                      </li>";
-                $first = false;
-            }
+                $first = true;
+                while ($branch = $result->fetch_assoc()) {
+                    $active_class = $first ? ' active' : '';
+                    echo "<li class='nav-item'>
+                            <a class='nav-link$active_class' id='tab-{$branch['branch_id']}' data-toggle='tab' href='#' data-branch-id='{$branch['branch_id']}'>{$branch['branch_name']}</a>
+                        </li>";
+                    $first = false;
+                }
             ?>
         </ul>
 
@@ -137,24 +145,24 @@ $result = $conn->query($sql);
             <div class="search-box mb-4">
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
             </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th> الرقم</th>
-                        <th>اسم الطالب</th>
-                        <th>تاريخ الملاد</th>
-                        <th>تاريخ التسجيل</th>
-                        <th>تاريخ آخر استعادة</th>
-                        <th>  هاتف الطالب </th>
-                        <th>  هاتف الوكيل </th>
-
+            <div class="table-responsive tbl">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th> الرقم</th>
+                            <th>اسم الطالب</th>
+                            <th>تاريخ الملاد</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>تاريخ آخر استعادة</th>
+                            <th>  هاتف الطالب </th>
+                            <th>  هاتف الوكيل </th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-list">
                         
-                    </tr>
-                </thead>
-                <tbody id="students-list">
-                    
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -162,39 +170,35 @@ $result = $conn->query($sql);
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Load classes when a branch is clicked
             $('.nav-link').on('click', function (e) {
-                e.preventDefault(); // Prevent default anchor behavior
-                var branchId = $(this).data('branch-id'); // Get selected branch ID
-                var branchId = $(this).data('branch-id'); // Get selected branch ID
+                e.preventDefault();
+                var branchId = $(this).data('branch-id');
+                var branchId = $(this).data('branch-id');
 
-                // Remove 'selected-item' class from other branches and add to selected branch
-                $('.nav-link').removeClass('selected-item'); // Remove class from all links
-                $(this).addClass('selected-item'); 
-                // Fetch classes for the selected branch
+                $('.nav-link').removeClass('selected-item');
+                $(this).addClass('selected-item');
                 $.ajax({
-                    url: 'fetch_classes_.php', // A script that returns classes for the branch
+                    url: 'fetch_classes_.php',
                     method: 'POST',
                     data: { branch_id: branchId },
                     success: function (response) {
-                        $('#classes-list').html(response); // Display classes in classes list
-                        $('#students-container').hide(); // Hide students container initially
+                        $('#classes-list').html(response);
+                        $('#students-container').hide();
                     }
                 });
             });
 
             // Load students when a class is clicked
             $('#classes-list').on('click', '.list-group-item', function () {
-                var classId = $(this).data('class-id'); // Get selected class ID
+                var classId = $(this).data('class-id');
 
-                // Fetch students for the selected class
                 $.ajax({
                     url: 'fetch_students.php',
                     method: 'POST',
                     data: { class_id: classId },
                     success: function (response) {
-                        $('#students-list').html(response); 
-                        $('#students-container').show(); 
+                        $('#students-list').html(response);
+                        $('#students-container').show();
                     }
                 });
             });

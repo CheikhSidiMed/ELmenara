@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
     echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
     exit();
 }
+$role_id = $_SESSION['role_id'];
 
 
 $message = '';
@@ -62,25 +63,30 @@ if (isset($_GET['delete_id'])) {
 }
 
 // Fetch all classes
-$sql_fetch = "SELECT 
-    c.class_id, 
-    c.branch_id, 
-    c.class_name, 
-    b.branch_name, 
-    COUNT(s.id) AS count 
-FROM 
-    classes c
-LEFT JOIN 
-    branches b ON c.branch_id = b.branch_id
-LEFT JOIN 
-    students s ON c.class_id = s.class_id
-GROUP BY 
-    c.class_id, c.branch_id, c.class_name, b.branch_name;";
+$sql_fetch = "SELECT
+                    c.class_id,
+                    c.branch_id,
+                    c.class_name,
+                    b.branch_name,
+                    COUNT(s.id) AS count
+                FROM
+                    classes c
+                LEFT JOIN
+                    branches b ON c.branch_id = b.branch_id
+                    JOIN
+                    user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = '$role_id'
+                LEFT JOIN
+                    students s ON c.class_id = s.class_id
+                GROUP BY
+                    c.class_id, c.branch_id, c.class_name, b.branch_name;";
 $result = $conn->query($sql_fetch);
 $classes = $result->fetch_all(MYSQLI_ASSOC);
 
 // Fetch all branches for the dropdown
-$sql_branches = "SELECT branch_id, branch_name FROM branches ORDER BY branch_name";
+$sql_branches = "SELECT b.branch_id, b.branch_name
+                 FROM branches b
+                 JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = '$role_id'
+                 ORDER BY b.branch_name";
 $branch_result = $conn->query($sql_branches);
 $branches = $branch_result->fetch_all(MYSQLI_ASSOC);
 

@@ -309,7 +309,7 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
                         <div class="form-group w-100" id="branchContainer">
                             <label for="branch">الفروع</label>
                             <select class="form-control" id="branch" name="branch[]" multiple required>
-                            <option value="">اختر فرع</option>
+                                <option value="">اختر فرع</option>
 
                                 <?php
                                 if ($branchesResult->num_rows > 0) {
@@ -334,7 +334,7 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
                                 if ($selectedBranch && $classesResult->num_rows > 0) {
                                     echo "<!-- Debug: classes trouvées -->";
                                     while ($classRow = $classesResult->fetch_assoc()) {
-                                        var_dump($classRow); // Vérifier chaque ligne retournée
+                                        var_dump($classRow);
                                         echo "<option value='{$classRow['class_id']}'>{$classRow['class_name']}</option>";
                                     }
                                 } else {
@@ -359,111 +359,105 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
-    function addUser() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
-        let class_id = document.getElementById('class').value;
+        function addUser() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            let class_id = document.getElementById('class').value;
 
-        const branchSelect = document.getElementById('branch');
-        const branches = Array.from(branchSelect.selectedOptions).map(option => option.value);
+            const branchSelect = document.getElementById('branch');
+            const branches = Array.from(branchSelect.selectedOptions).map(option => option.value);
 
-        if (username && password && role && branches.length > 0) {
-            const formData = new FormData();
-            formData.append('username', username);
-            formData.append('password', password);
-            formData.append('role', role);
-            formData.append('class', class_id);
+            if (username && password && role && branches.length > 0) {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('role', role);
+                formData.append('class', class_id);
 
-            branches.forEach(branch => {
-                formData.append('branches[]', branch);
-            });
+                branches.forEach(branch => {
+                    formData.append('branches[]', branch);
+                });
 
-            fetch('add_user_process.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'تمت إضافة المستخدم بنجاح',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
+                fetch('add_user_process.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تمت إضافة المستخدم بنجاح',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'حدث خطأ أثناء الإضافة',
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'حدث خطأ أثناء الإضافة',
                     });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'حدث خطأ أثناء الإضافة',
                 });
-            });
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'الرجاء ملء جميع الحقول',
-                text: 'يجب إدخال جميع البيانات المطلوبة.'
-            });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'الرجاء ملء جميع الحقول',
+                    text: 'يجب إدخال جميع البيانات المطلوبة.'
+                });
+            }
         }
-    }
-</script>
-</body> <!-- Assurez-vous que ceci est la fin du document -->
+    </script>
 
 
 
-<script>
-    function toggleFields() {
-        let role = document.getElementById('role').value;
-        let branchSelect = document.getElementById('branch');
-        let branchContainer = document.getElementById('branchContainer');
-        let classContainer = document.getElementById('classContainer');
+    <script>
+        function toggleFields() {
+            let role = document.getElementById('role').value;
+            let branchSelect = document.getElementById('branch');
+            let branchContainer = document.getElementById('branchContainer');
+            let classContainer = document.getElementById('classContainer');
 
-        if (role == "6") { // Si le rôle est enseignant
-            branchSelect.removeAttribute("multiple"); // Désactiver multiple
-            branchContainer.innerHTML = branchContainer.innerHTML.replace("multiple", ""); // Supprimer multiple si existant
-            classContainer.classList.remove("d-none"); // Afficher la sélection de classe
-        } else {
-            branchSelect.setAttribute("multiple", "multiple"); // Activer multiple
-            classContainer.classList.add("d-none"); // Cacher la sélection de classe
+            if (role == "6") { // Si le rôle est enseignant
+                branchSelect.removeAttribute("multiple"); // Désactiver multiple
+                branchContainer.innerHTML = branchContainer.innerHTML.replace("multiple", ""); // Supprimer multiple si existant
+                classContainer.classList.remove("d-none"); // Afficher la sélection de classe
+            } else {
+                branchSelect.setAttribute("multiple", "multiple"); // Activer multiple
+                classContainer.classList.add("d-none"); // Cacher la sélection de classe
+            }
         }
-    }
-</script>
+    </script>
 
-<script>
+    <script>
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.id === 'branch') {
+                let branchId = event.target.value;
+                let classSelect = document.getElementById('class');
 
-
-
-
-document.addEventListener('change', function (event) {
-    if (event.target && event.target.id === 'branch') {
-        let branchId = event.target.value;
-        let classSelect = document.getElementById('class');
-
-        if (branchId) {
-            fetch('get_classe_s.php?branch_id=' + branchId)
-                .then(response => response.text())
-                .then(data => {
-                    console.log("Données reçues:", data);
-                    classSelect.innerHTML = data;
-                })
-                .catch(error => console.error('Erreur:', error));
-        } else {
-            classSelect.innerHTML = '<option value="">اختر القسم</option>';
-        }
-    }
-});
-
-</script>
+                if (branchId) {
+                    fetch('get_classe_s.php?branch_id=' + branchId)
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log("Données reçues:", data);
+                            classSelect.innerHTML = data;
+                        })
+                        .catch(error => console.error('Erreur:', error));
+                } else {
+                    classSelect.innerHTML = '<option value="">اختر القسم</option>';
+                }
+            }
+        });
+    </script>
 
 </body>
 
