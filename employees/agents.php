@@ -17,7 +17,7 @@ if (!isset($_SESSION['userid'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الوكلاء</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="css/fontawesome.min.css">
     <link rel="stylesheet" href="css/tajawal.css">
@@ -82,7 +82,7 @@ if (!isset($_SESSION['userid'])) {
 </head>
 <body>
     <div class="container mt-5">
-        <button id="goHomeButton" class="btn btn-primary mb-3" onclick="window.location.href='home.php';">الذهاب إلى الصفحة الرئيسية</button>
+        <a href="home.php" class="btn btn-primary py-2 px-4"> الصفحة الرئيسية</a>
         <h2>تسجيل الوكلاء</h2>
 
         <form id="AgnetForm" method="POST" action="insert_agent.php">

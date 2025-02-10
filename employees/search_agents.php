@@ -30,13 +30,16 @@ if ($result->num_rows > 0) {
                 <td>{$row['profession']}</td>
                 <td>{$row['whatsapp_phone']}</td>
                 <td>
-                    <button class='btn btn-sm btn-primary edit-btn' data-id='{$row['agent_id']}'
-                            data-name='{$row['agent_name']}' 
-                            data-phone='{$row['phone']}' 
-                            data-phone2='{$row['phone_2']}' 
-                            data-job='{$row['profession']}' 
+                    <button class='btn btn-sm btn-primary bny edit-btn' data-id='{$row['agent_id']}'
+                            data-name='{$row['agent_name']}'
+                            data-phone='{$row['phone']}'
+                            data-phone2='{$row['phone_2']}'
+                            data-job='{$row['profession']}'
                             data-whatsapp='{$row['whatsapp_phone']}'>
-                        تعديل
+                        <i class='bi bi-pencil-square'></i> تعديل
+                    </button>
+                    <button class='btn btn-sm btn-danger bny del-btn' data-id='{$row['agent_id']}'>
+                        <i class='bi bi-trash'></i> حذف
                     </button>
                 </td>
               </tr>";

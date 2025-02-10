@@ -416,10 +416,28 @@
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                         <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
 
-
                     </ul>
                 </li>
                 </li>
+                <li>
+                    <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-balance-scale"></i><span> المحاسبة</span></a>
+                    <ul class="collapse">
+                        <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
+                            <ul class="collapse list-unstyled">
+                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
+                                <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
+                            <ul class="collapse list-unstyled">
+                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i>      اليومية </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                
                 <li>
                     <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-user"></i><span> المستخدم</span></a>
                     <ul class="collapse">
