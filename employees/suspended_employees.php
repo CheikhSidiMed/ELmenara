@@ -43,7 +43,7 @@ $result = $conn->query($query);
         }
 
         .header-title {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: bold;
             color: #1BA078;
             margin-bottom: 20px;
@@ -79,58 +79,67 @@ $result = $conn->query($query);
         .btn-return:hover {
             opacity: 0.8;
         }
+        .tbl {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            min-width: 900px;
+            border-collapse: collapse;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h2 class="header-title"><i class="bi bi-people-fill"></i> الموظفون المفصولون</h2>
-
-        <table class="table table-bordered">
-            <thead class="table-success">
-                <tr>
-                    <th>رقم الموظف</th>
-                    <th>اسم الموظف</th>
-                    <th>رقم الهاتف</th>
-                    <th>سبب الفصل</th>
-                    <th>الرصيد المستحق</th>
-                    <th>تاريخ الفصل</th>
-                    <th>الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>{$row['id_number']}</td>";
-                        echo "<td>{$row['full_name']}</td>";
-                        echo "<td>{$row['phone']}</td>";
-                        echo "<td>{$row['suspension_reason']}</td>";
-                        echo "<td>{$row['balance']}</td>";
-                        echo "<td>{$row['subscription_date']}</td>";
-                        echo "<td>
-                                <form method='post' action='manage_suspended.php' style='display: inline-block;'>
-                                    <input type='hidden' name='id' value='{$row['suspension_id']}'>
-                                    <button type='submit' name='return_employee' class='btn-action btn-return'>
-                                        <i class='bi bi-arrow-return-left'></i> إرجاع
-                                    </button>
-                                </form>
-                                <form method='post' action='manage_suspended.php' style='display: inline-block;'>
-                                    <input type='hidden' name='id' value='{$row['suspension_id']}'>
-                                    <button type='submit' name='delete_employee' class='btn-action btn-delete'>
-                                        <i class='bi bi-trash'></i> حذف
-                                    </button>
-                                </form>
-                              </td>";
-                        echo "</tr>";
+        <div class="table-responsive tbl">
+            <table class="table table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>رقم الموظف</th>
+                        <th>اسم الموظف</th>
+                        <th>رقم الهاتف</th>
+                        <th>سبب الفصل</th>
+                        <th>الرصيد المستحق</th>
+                        <th>تاريخ الفصل</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>{$row['id_number']}</td>";
+                            echo "<td>{$row['full_name']}</td>";
+                            echo "<td>{$row['phone']}</td>";
+                            echo "<td>{$row['suspension_reason']}</td>";
+                            echo "<td>{$row['balance']}</td>";
+                            echo "<td>{$row['subscription_date']}</td>";
+                            echo "<td>
+                                    <form method='post' action='manage_suspended.php' style='display: inline-block;'>
+                                        <input type='hidden' name='id' value='{$row['suspension_id']}'>
+                                        <button type='submit' name='return_employee' class='btn-action btn-return'>
+                                            <i class='bi bi-arrow-return-left'></i> إرجاع
+                                        </button>
+                                    </form>
+                                    <form method='post' action='manage_suspended.php' style='display: inline-block;'>
+                                        <input type='hidden' name='id' value='{$row['suspension_id']}'>
+                                        <button type='submit' name='delete_employee' class='btn-action btn-delete'>
+                                            <i class='bi bi-trash'></i> حذف
+                                        </button>
+                                    </form>
+                                </td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6'>لا يوجد موظفون مفصولون حاليًا.</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='6'>لا يوجد موظفون مفصولون حاليًا.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
+        </div>
         <div class="actions" style="text-align: center; margin-top: 20px;">
     <a href="home.php" class="btn btn-success">الصفحة الرئيسية</a>
     <a href="fire_employee.php" class="btn btn-warning">فصل موظف</a>

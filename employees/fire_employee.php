@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         );
 
         if ($stmtInsert->execute()) {
-            // Supprimez l'employé de la table employees
             $deleteSQL = "DELETE FROM employees WHERE id = ?";
             $stmtDelete = $conn->prepare($deleteSQL);
             $stmtDelete->bind_param('i', $subscription_id);
@@ -92,14 +91,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
 
     <link rel="stylesheet" href="css/jquery-base-ui.css">
     <style>
         body {
-            font-family: 'Amiri', serif;
+            font-family: 'Cairo', serif;
             direction: rtl;
-            background-color: #f4f7f6;
+            background-color: #ECF0F1;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -110,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
             padding: 20px;
             max-width: 1000px;
             background-color: white;
-            border: 2px solid #1BA078;
+            border: 2px solid #2C3E50;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
@@ -118,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         .header-title {
             font-size: 26px;
             font-weight: bold;
-            color: #1BA078;
+            color: #2C3E50;
             margin-bottom: 20px;
         }
 
@@ -130,8 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         .search-container input {
             width: 100%;
             padding: 10px;
-            border: 2px solid #1BA078;
-            border-radius: 25px;
+            border: 2px solid #2C3E50;
+            border-radius: 8px;
             padding-left: 40px;
             font-size: 16px;
         }
@@ -142,19 +141,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
             top: 50%;
             transform: translateY(-50%);
             font-size: 20px;
-            color: #1BA078;
+            color: #2C3E50;
         }
 
         .form-section-title {
             font-size: 22px;
             font-weight: bold;
-            color: #1BA078;
+            color: #2C3E50;
             margin-top: 20px;
             margin-bottom: 15px;
         }
 
         .form-group label {
-            font-size: 16px;
+            font-size: 19px;
+            font-weight: bold;
+
             color: #333;
             margin-bottom: 5px;
         }
@@ -163,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         .form-group textarea {
             width: 100%;
             padding: 10px;
-            border: 2px solid #1BA078;
+            border: 2px solid #2C3E50;
             border-radius: 8px;
             font-size: 16px;
         }
@@ -175,18 +176,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
             gap: 10px;
             font-size: 18px;
             font-weight: bold;
-            color: #1BA078;
+            color: #2C3E50;
         }
 
         .checkbox-container input {
             transform: scale(1.5);
-            accent-color: #1BA078;
+            accent-color: #2C3E50;
         }
 
         .btn-confirm {
-            background-color: white;
-            color: #1BA078;
-            border: 2px solid #1BA078;
+            background-color: #F39C12;
+            color: white;
+            border: 2px solid #F39C12;
             border-radius: 8px;
             font-size: 20px;
             padding: 15px;
@@ -201,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         }
 
         .btn-confirm:hover {
-            background-color: #f9f9f9;
+            background-color: #D68910;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
@@ -216,8 +217,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         .financial-section .form-group {
             margin-bottom: 20px;
         }
-        
+
     </style>
+
 </head>
 
 <body>
@@ -351,10 +353,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
         const financialReceivables = $('#financialReceivables').val().trim();
 
         console.log({
-        employeePhone,
-        terminationReason,
-        financialReceivables
-    });
+            employeePhone,
+            terminationReason,
+            financialReceivables
+        });
 
 
         // Envoi des données via AJAX
@@ -380,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fire_employee'])) {
             success: function (response) {
                 if (response.status === 'success') {
                     Swal.fire('نجاح', response.message, 'success').then(() => {
-                        location.reload(); // Recharge la page après succès
+                        location.reload();
                     });
                 } else {
                     Swal.fire('خطأ', response.message, 'error');
