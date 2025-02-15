@@ -12,14 +12,17 @@ if (!isset($_SESSION['userid'])) {
 
 $user_id = $_SESSION['userid'];
 $role_id = $_SESSION['role_id'];
-
 // Include database connection
 include 'db_connection.php';
 
-// Initialize selected branch and class
-$selectedBranch = $_POST['branch'] ?? null;
-$selectedClass = $_POST['class'] ?? null;
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $selectedBranch = $_POST['branch'] ?? null;
+    $selectedClass = $_POST['class'] ?? null;
+} else {
+    $selectedBranch = null;
+    $selectedClass = null;
+}
 
 $sql = "SELECT b.branch_id, b.branch_name
     FROM branches b
@@ -32,12 +35,13 @@ $branchesResult = $stmt->get_result();
 // Fetch classes based on selected branch
 $classesResult = [];
 if ($selectedBranch) {
+    
     $classesQuery = '';
     if($role_id == 6){
         $classesQuery = "SELECT c.class_id, c.class_name
             FROM classes c
             JOIN branches AS b ON c.branch_id = b.branch_id
-            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id AND ub.user_id = '$user_id'
             WHERE c.branch_id = ?";
     }else{
         $classesQuery = "SELECT class_id, class_name
@@ -47,14 +51,12 @@ if ($selectedBranch) {
     $stmt->bind_param("i", $selectedBranch);
     $stmt->execute();
     $classesResult = $stmt->get_result();
-    $stmt->close(); // Close the statement after use
+    $stmt->close();
 }
 
-// Initialize arrays to hold branch, class, and student data
 $branches = [];
 $students = [];
 
-// Initialize variables to prevent undefined variable warnings
 $start_date = '';
 $end_date = '';
 $branch_name = '';
@@ -70,11 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Fetch class name and branch name
 
-    $sql = "SELECT c.class_name, b.branch_name, u.username
+    $sql = "SELECT c.class_name, b.branch_name, e.full_name
             FROM classes AS c
             JOIN branches AS b ON c.branch_id = b.branch_id
             LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
             LEFT JOIN users AS u ON u.id = ub.user_id
+            LEFT JOIN employees AS e ON e.id = u.employee_id
             WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
@@ -292,7 +295,7 @@ if ($result->num_rows > 0) {
                 <div class="row">
                     <div class="form-group col-md-3">
                         <label for="branch">الفرع</label>
-                        <select class="form-control" id="branch" name="branch" required>
+                        <select class="form-control" id="branch" name="branch" required onchange="this.form.submit()">
                             <option value="">اختر الفرع</option>
                             <?php
                             if ($branchesResult->num_rows > 0) {

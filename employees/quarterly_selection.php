@@ -71,7 +71,7 @@ if (!empty($branch_id)) {
         $classesQuery = "SELECT c.class_id, c.class_name
             FROM classes c
             JOIN branches AS b ON c.branch_id = b.branch_id
-            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id AND ub.user_id = '$user_id'
             WHERE c.branch_id = ?";
     }else{
         $classesQuery = "SELECT class_id, class_name

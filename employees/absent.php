@@ -63,12 +63,17 @@ if ($resultBranches->num_rows > 0) {
 $classes = [];
 
 // Initialize variables
-$branch_id = $_POST['branch'] ?? '';
 $students = [];
 $branch_name = '';
 $class_name = '';
 $username = '';
 $student_by = [];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $branch_id = $_POST['branch'] ?? null;
+} else {
+    $branch_id = null;
+}
 
 // Fetch classes based on selected branch
 if (!empty($branch_id)) {
@@ -77,7 +82,7 @@ if (!empty($branch_id)) {
         $classesQuery = "SELECT c.class_id, c.class_name
             FROM classes c
             JOIN branches AS b ON c.branch_id = b.branch_id
-            JOIN user_branch AS ub ON ub.class_id = c.class_id
+            JOIN user_branch AS ub ON ub.class_id = c.class_id AND ub.user_id = '$user_id'
             WHERE c.branch_id = ?";
     }else{
         $classesQuery = "SELECT class_id, class_name
@@ -104,11 +109,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $class_id = $_POST['class'];
     $month = $_POST['month'];
 
-    $sql = "SELECT c.class_name, b.branch_name, u.username
+    $sql = "SELECT c.class_name, b.branch_name, e.full_name
             FROM classes AS c
             JOIN branches AS b ON c.branch_id = b.branch_id
             LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
             LEFT JOIN users AS u ON u.id = ub.user_id
+            LEFT JOIN employees AS e ON e.id = u.employee_id
             WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
