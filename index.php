@@ -97,9 +97,6 @@ if (isset($_POST['signin'])) {
                         <div class="submit-btn-area">
                             <button id="form_submit" type="submit" name="signin">تسجيل الدخول <i class="ti-arrow-right"></i></button>
                         </div>
-                        
-                        
-
                     </div>
                 </form>
             </div>

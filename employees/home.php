@@ -238,9 +238,10 @@
             <ul class="collapse">
                 <!-- User-related options -->
                 <li class="dropdown">
+                    
                     <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                     <ul class="collapse list-unstyled">
-                        <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                        <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li>
                         <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                     </ul>
                 </li>
@@ -356,7 +357,8 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li>
+
                             <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                         </ul>
 
@@ -447,7 +449,7 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li>
                             <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                         </ul>
                 </li>
@@ -594,7 +596,7 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li>
                             <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                         </ul>
 
@@ -620,7 +622,7 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li>
                             <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                         </ul>
 
