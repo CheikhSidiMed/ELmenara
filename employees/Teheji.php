@@ -98,11 +98,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $month = $_POST['month'];
 
     // Fetch class name and branch name
-    $sql = "SELECT c.class_name, b.branch_name, u.username
+    $sql = "SELECT c.class_name, b.branch_name, e.full_name
             FROM classes AS c
             JOIN branches AS b ON c.branch_id = b.branch_id
             LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
             LEFT JOIN users AS u ON u.id = ub.user_id
+            LEFT JOIN employees AS e ON e.id = u.employee_id
             WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
@@ -374,15 +375,14 @@ $conn->close();
     </div>
 
     <div class="button-group">
-    <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-    طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>
-    </button>
-    <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-        الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
-    </button>
-
-
-</div>
+        <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
+        طباعة <i class="fas fa-print" style="margin-right: 8px;"></i>
+        </button>
+        <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
+            الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
+        </button>
+    </div>
+    
     <div class="sheet-header receipt-header">
         <img src="../images/header.png" alt="Header Image">
         <h3>استمارة تقييم أقسام التهجي</h3>

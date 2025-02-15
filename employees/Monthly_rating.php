@@ -99,12 +99,13 @@ $arabic_months = [
 if (!empty($branch_id) && !empty($selectedClass)) {
 
 
-    $sql = "SELECT c.class_name, b.branch_name, u.username
-    FROM classes AS c
-    JOIN branches AS b ON c.branch_id = b.branch_id
-    LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
-    LEFT JOIN users AS u ON u.id = ub.user_id
-    WHERE c.class_id = ?";
+    $sql = "SELECT c.class_name, b.branch_name, e.full_name
+            FROM classes AS c
+            JOIN branches AS b ON c.branch_id = b.branch_id
+            LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
+            LEFT JOIN users AS u ON u.id = ub.user_id
+            LEFT JOIN employees AS e ON e.id = u.employee_id
+            WHERE c.class_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $selectedClass);
 $stmt->execute();

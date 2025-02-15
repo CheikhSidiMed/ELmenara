@@ -82,11 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $month = $_POST['month'];
     $year = $_POST['year'];
 
-    $sql = "SELECT c.class_name, b.branch_name, u.username
+    $sql = "SELECT c.class_name, b.branch_name, e.full_name
             FROM classes AS c
             JOIN branches AS b ON c.branch_id = b.branch_id
             LEFT JOIN user_branch AS ub ON ub.class_id = c.class_id
             LEFT JOIN users AS u ON u.id = ub.user_id
+            LEFT JOIN employees AS e ON e.id = u.employee_id
             WHERE c.class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
@@ -423,26 +424,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tbody>
             </table>
         </div>
+     
         <div class="signature-section">
-            <div class="signature col-md-6">
-                <p style="font-size: 18px;">الأستاذ </p>
-                <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
-                <p style="margin-top: -35px;">_________</p>
+            <div class="signature">
+                <p style="font-size: 18px;"> الأستاذ</p>
+                <p style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></p>
+                <p style="margin-top: -32px;">_________</p>
             </div>
-            <div class="signature col-md-6">
+            <div class="signature">
                 <p style="font-size: 18px;">تاريخ التسليم</p>
                 <p style="margin-top: -15px;">_________</p>
             </div>
-            <div class="signature col-md-6">
+            <div class="signature">
                 <p style="font-size: 18px;">توقيع الأستاذ</p>
                 <p style="margin-top: -15px;">_________</p>
             </div>
-            <div class="signature col-md-6">
+            <div class="signature">
                 <p style="font-size: 18px;">توقيع الإدارة</p>
                 <p style="margin-top: -15px;">_________</p>
             </div>
         </div>
-    </div>
+
+    
 
 
 </body>
