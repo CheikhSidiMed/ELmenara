@@ -16,6 +16,7 @@ if (!isset($_SESSION['userid'])) {
 
 $user_id = $_SESSION['userid'];
 
+
 ?>
 
 
@@ -70,8 +71,8 @@ $user_id = $_SESSION['userid'];
         .header-row {
             display: flex;
             align-items: center;
-            justify-content: space-between; 
-            margin-bottom: 1rem; 
+            justify-content: space-between;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -93,18 +94,21 @@ $user_id = $_SESSION['userid'];
                 <select id="session_time" name="session_time" class="form-select" required>
                     <option value="">-- اختر التوقيت --</option>
                     <?php
-                    // Options prédéfinies pour les heures des séances
-                    $session_times = [
-                        'صباحًا' => ' صباحًا',
-                        'مساءً' => ' مساءً',
-                    ];
+                        $session_times = [
+                            'صباحًا' => ' صباحًا',
+                            'مساءً' => ' مساءً',
+                        ];
 
-                    // Générer les options
-                    foreach ($session_times as $time => $label) {
-                        echo "<option value=\"$label\">$label</option>";
-                    }
+                        foreach ($session_times as $time => $label) {
+                            echo "<option value=\"$label\">$label</option>";
+                        }
                     ?>
                 </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="date_time" class="form-label">توقيت :</label>
+                <input type="date" id="date_time" name="date_time" class="form-control" />
             </div>
 
             <div class="mb-3">

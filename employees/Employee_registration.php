@@ -11,6 +11,12 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
+$rolesQuery = "SELECT * FROM roles WHERE id NOT IN (1, 2, 3, 5)";
+$rolesResult = $conn->query($rolesQuery);
+
+$branchesQuery = "SELECT branch_id, branch_name FROM branches";
+$branchesResult = $conn->query($branchesQuery);
+
 
 // Access session variables safely
 $userid = $_SESSION['userid'];
@@ -50,6 +56,7 @@ if ($result->num_rows > 0) {
         body {
             font-family: 'Tajawal', serif;
             background-color: #f8f9fa;
+            direction: ltr;
         }
         .container {
             background: #ffffff;
@@ -148,12 +155,103 @@ if ($result->num_rows > 0) {
                     <input type="date" class="form-control form-control-lg" id="Date" name="Date" required>
                 </div>
             </div>
+
+
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="role">الدور</label>
+                    <select class="form-select text-primary form-control form-control-lg" id="role" name="role" onchange="toggleFields()">
+                        <option value="">اختر الدور</option>
+                        <?php
+                        if ($rolesResult->num_rows > 0) {
+                            while ($role = $rolesResult->fetch_assoc()) {
+                                $selected = ($editing_employee && $editing_employee['role_id'] == $role['id']) ? "selected" : "";
+                                echo "<option value='{$role['id']}' $selected>{$role['role_name']}</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="branch">الفرع</label>
+                    <select class="form-select text-primary font-weight-bold form-control form-control-lg" id="branch" name="branch" required>
+                        <option value="">اختر فرع</option>
+                        <?php
+                        if ($branchesResult->num_rows > 0) {
+                            while ($row = $branchesResult->fetch_assoc()) {
+                                $selected = ($editing_employee && $editing_employee['branch_id'] == $row['branch_id']) ? "selected" : "";
+                                echo "<option value='{$row['branch_id']}' $selected>{$row['branch_name']}</option>";
+                            }
+                        } else {
+                            echo "<option value=''>لا يوجد فروع</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row w-100 <?php echo ($editing_employee['class_id'] !== 0) ? '' : 'd-none'; ?> mb-4" id="classContainer">
+                <label for="class">القسم</label>
+                <select class="form-select text-danger form-control form-control-lg" id="class" name="class">
+                    <option value="">اختر القسم</option>
+                    <?php
+                    $branch_id = $editing_employee['branch_id'];
+                    $q = "SELECT class_id, class_name FROM classes WHERE branch_id='$branch_id'";
+
+                    $classesResult = $conn->query($q);
+
+                    if (!empty($branch_id) && $classesResult->num_rows > 0) {
+                        while ($classRow = $classesResult->fetch_assoc()) {
+                            $selected = ($editing_employee['class_id'] == $classRow['class_id']) ? "selected" : "";
+                            echo "<option value='{$classRow['class_id']}' $selected>{$classRow['class_name']}</option>";
+                        }
+                    } else {
+                        echo "<option value=''>لا يوجد صفوف</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+
+
             <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary btn-lg">حفظ</button>
-        <a href="home.php" class="btn btn-secondary btn-lg ml-3">الصفحة الرئيسية</a>
-    </div>
+                <button type="submit" class="btn btn-primary btn-lg">حفظ</button>
+                <a href="home.php" class="btn btn-secondary btn-lg ml-3">الصفحة الرئيسية</a>
+            </div>
         </form>
     </div>
 
+
+    <script>
+        function toggleFields() {
+            let role = document.getElementById('role').value;
+            let classContainer = document.getElementById('classContainer');
+
+            if (role == "6") { // Si le rôle est enseignant
+                classContainer.classList.remove("d-none"); // Afficher la sélection de classe
+            } else {
+                classContainer.classList.add("d-none"); // Cacher la sélection de classe
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.id === 'branch') {
+                let branchId = event.target.value;
+                let classSelect = document.getElementById('class');
+
+                if (branchId) {
+                    fetch('get_classe_s.php?branch_id=' + branchId)
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log("Données reçues:", data);
+                            classSelect.innerHTML = data;
+                        })
+                        .catch(error => console.error('Erreur:', error));
+                } else {
+                    classSelect.innerHTML = '<option value="">اختر القسم</option>';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

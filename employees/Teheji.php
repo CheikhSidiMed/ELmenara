@@ -436,7 +436,7 @@ $conn->close();
 
     <div class="signature-section">
         <div class="signature">
-            <p style="font-size: 18px;">توقيع الأستاذ: <strong><?php echo $username; ?></strong></p>
+            <p style="font-size: 18px;">توقيع الأستاذ(ة): <strong><?php echo $username; ?></strong></p>
             <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">

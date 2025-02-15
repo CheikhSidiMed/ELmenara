@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
     if ($stmt->execute()) {
         $emply_id = $stmt->insert_id;
 
-        // Check if a user exists for this employee
         $user_stmt = $conn->prepare("SELECT id FROM users WHERE employee_id = ?");
         $user_stmt->bind_param("i", $emply_id);
         $user_stmt->execute();
@@ -186,12 +185,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
 $employees =
     $conn->query("SELECT e.*, j.job_name, b.branch_name
         FROM employees e
-        JOIN users u ON e.id=u.employee_id
+        LEFT JOIN users u ON e.id=u.employee_id
             -- AND u.role_id NOT IN (1, 2, 3, 5)
-        JOIN user_branch ub ON ub.user_id=u.id
-            AND ub.branch_id IN (SELECT branch_id FROM user_branch WHERE user_id = '$user_d')
+        LEFT JOIN user_branch ub ON ub.user_id=u.id
+            -- AND ub.branch_id IN (SELECT branch_id FROM user_branch WHERE user_id = '$user_d')
         JOIN jobs j ON e.job_id = j.id
-        JOIN branches b ON ub.branch_id=b.branch_id");
+        LEFT JOIN branches b ON ub.branch_id=b.branch_id
+        GROUP BY e.id");
 
 // Handle Edit
 $editing_employee = null;
@@ -372,12 +372,12 @@ if (isset($_GET['id'])) {
                     </select>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                <div class="d-flex align-content-center text-center">
+                    <!-- <div class="col-md-6 mb-3">
                         <button type="submit" name="add_employee" class="btn btn-primary w-100">
                             إضافة الموظف(ة)
                         </button>
-                    </div>
+                    </div> -->
                     <div class="col-md-6 mb-3">
                         <button type="submit" name="update_employee" class="btn btn-success w-100">
                             تحديث بيانات الموظف(ة)

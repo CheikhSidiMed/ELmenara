@@ -8,6 +8,7 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_d = $_SESSION['userid'];
 
 
 // Fetch job filter from the request
@@ -18,15 +19,20 @@ if (isset($_GET['job_id'])) {
 
 // Fetch employees data
 $employees = [];
-$employees_query = "
-    SELECT e.full_name, e.id, e.phone, e.balance, j.job_name
+$employees_query = "SELECT e.full_name,
+    e.id, e.phone, e.balance, j.job_name
     FROM employees e
+    JOIN users u ON e.id=u.employee_id
+        -- AND u.role_id NOT IN (1, 2, 3, 5)
+    JOIN user_branch ub ON ub.user_id=u.id
+        AND ub.branch_id IN (SELECT branch_id FROM user_branch WHERE user_id = '$user_d')
     JOIN jobs j ON e.job_id = j.id
-";
+    JOIN branches b ON ub.branch_id=b.branch_id";
 
 if ($job_filter) {
     $employees_query .= " WHERE e.job_id = ?";
 }
+$employees_query .= " GROUP BY e.id";
 
 $stmt = $conn->prepare($employees_query);
 

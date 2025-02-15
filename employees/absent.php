@@ -584,7 +584,7 @@ $conn->close();
 
     <div class="signature-section">
         <div class="signature">
-            <p style="font-size: 18px;">الأستاذ </p>
+            <p style="font-size: 18px;">الأستاذ(ة) </p>
             <P style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></P>
             <p style="margin-top: -35px;">_________</p>
         </div>
@@ -593,7 +593,7 @@ $conn->close();
             <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">
-            <p style="font-size: 18px;">توقيع الأستاذ</p>
+            <p style="font-size: 18px;">توقيع الأستاذ(ة)</p>
             <p style="margin-top: -15px;">_________</p>
         </div>
         <div class="signature">

@@ -427,7 +427,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      
         <div class="signature-section">
             <div class="signature">
-                <p style="font-size: 18px;"> الأستاذ</p>
+                <p style="font-size: 18px;"> الأستاذ(ة)</p>
                 <p style="margin-top: -20px; font-weight: bold;"><?php echo $username; ?></p>
                 <p style="margin-top: -32px;">_________</p>
             </div>
@@ -436,7 +436,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p style="margin-top: -15px;">_________</p>
             </div>
             <div class="signature">
-                <p style="font-size: 18px;">توقيع الأستاذ</p>
+                <p style="font-size: 18px;">توقيع الأستاذ(ة)</p>
                 <p style="margin-top: -15px;">_________</p>
             </div>
             <div class="signature">

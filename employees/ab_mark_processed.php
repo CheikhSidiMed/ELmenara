@@ -19,6 +19,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 if (isset($data['student_id'], $data['session_time'])) {
     $student_id = intval($data['student_id']);
     $session_time = htmlspecialchars($data['session_time'], ENT_QUOTES, 'UTF-8');
+    $created_at = htmlspecialchars($data['date_time'], ENT_QUOTES, 'UTF-8');
     $currentTime = time();
 
     // Check if the student was already processed recently
@@ -30,10 +31,10 @@ if (isset($data['student_id'], $data['session_time'])) {
     }
 
     // Insert into absences table
-    $sql = "INSERT INTO absences (student_id, session_time) VALUES (?, ?)";
+    $sql = "INSERT INTO absences (student_id, session_time, created_at) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param('is', $student_id, $session_time);
+        $stmt->bind_param('iss', $student_id, $session_time, $created_at);
 
         if ($stmt->execute()) {
             $_SESSION['processed_students'][$student_id] = $currentTime;
