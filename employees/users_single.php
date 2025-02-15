@@ -80,7 +80,7 @@
         h2 {
             color: #1BA078;
             font-weight: bold;
-            font-size: 32px;
+            font-size: 37px;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -149,7 +149,7 @@
 
 
     <div class="container mt-5">
-        <h2>تعديل المستخدم</h2>
+        <h2>تعديل </h2>
         <a href="home.php" class="home-btn"><i class="bi bi-house-fill"></i> الصفحة الرئيسية</a>
 
         <form id="editUserForm" method="POST">
@@ -162,7 +162,7 @@
                 <input type="password" class="form-control" id="password" name="password" value="<?= htmlspecialchars($user['password']); ?>" required>
             </div>
 
-            <button type="submit" name="edit_user" class="btn btn-primary">تحديث المستخدم</button>
+            <button type="submit" name="edit_user" class="btn btn-primary">تحديث </button>
         </form>
     </div>
 
