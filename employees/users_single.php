@@ -153,7 +153,7 @@
         <a href="home.php" class="home-btn"><i class="bi bi-house-fill"></i> الصفحة الرئيسية</a>
 
         <form id="editUserForm" method="POST">
-            <div class="mb-3">
+            <div class="my-3">
                 <label for="username" class="form-label">اسم المستخدم</label>
                 <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars($user['username']); ?>" required>
             </div>
