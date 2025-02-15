@@ -351,18 +351,18 @@ $conn->close();
                     <label>المبلغ <span style="color:red; ">*</span></label>
                     <input type="text" id="amount" name="amount" class="form-control mb-3" value="" style="width: 95%; text-align: center;" required>
                     <div style="width: 95%;">
-                        <!-- <label for="method" class="form-label" style="font-weight: bold; color: #1a73e8;">طريقة الدفع <span style="color:red;">*</span></label> -->
                         <select style="width: 100%;" id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
                             <option value="">اختر طريقة الدفع</option>
                             <option value="نقدي">نقدي</option>
                             <option value="بنكي">بنكي</option>
                         </select>
+                        <div id="selected-bank-name" style="margin-top: 15px; font-weight: bold; color: #1a73e8; text-align: center; font-size: 1.2rem;"></div>
+                        <input type="hidden" id="selected-bank-id" name="bank">
                     </div>
                 </div>
                 <div class="mt-2 w-50 wdth">
                     <label for="transaction_description">بيان العملية <span style="color:red;">*</span></label>
                     <textarea type="text" rows="3" id="transaction_description" name="transaction_description" class="form-control" value="" style="width: 98%;background-color: white; padding: 5px; border-radius: 5px;" required></textarea>
-                    
                 </div>
             </div>
             <div class="text-center mt-4">

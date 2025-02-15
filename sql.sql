@@ -21,10 +21,25 @@ AFTER INSERT ON employees
 FOR EACH ROW
 BEGIN
     INSERT INTO users (employee_id, username, password)
-    VALUES (NEW.id, NEW.full_name, NEW.phone);
+    VALUES (NEW.id, NEW.phone, NEW.phone);
 END $$
 
 DELIMITER ;
 
 DROP TRIGGER IF EXISTS after_employee_insert;
+
+
+-- Programmer l'exécution automatique avec le Planificateur de tâches
+-- Ouvre le Planificateur de tâches (tape Planificateur de tâches dans la barre de recherche Windows).
+-- Clique sur Créer une tâche de base.
+-- Nom de la tâche : "Backup MySQL XAMPP".
+-- Déclencheur :
+-- Sélectionne Quotidien.
+-- Mets l’heure à 00:00.
+-- Action :
+-- Choisis Démarrer un programme.
+-- Dans Programme/script, clique sur Parcourir et sélectionne ton fichier backup.bat.
+-- Valide et Enregistre.
+
+
 

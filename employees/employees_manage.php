@@ -11,8 +11,9 @@ if (!isset($_SESSION['userid'])) {
     header("Location: home.php");
     exit;
 }
+$user_d = $_SESSION['userid'];
 
-$rolesQuery = "SELECT * FROM roles WHERE id != 1";
+$rolesQuery = "SELECT * FROM roles WHERE id NOT IN (1, 2, 3, 5)";
 $rolesResult = $conn->query($rolesQuery);
 
 $branchesQuery = "SELECT branch_id, branch_name FROM branches";
@@ -75,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
     }
 }
 
-
 // Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
     // Sanitize input values
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
     $subscription_date = $_POST['subscription_date'];
     $id_number = $_POST['id_number'];
     $role_p = $_POST['role'];
-    $class_id_p = $_POST['class'] ?? null; // Peut être NULL
+    $class_id_p = $_POST['class'] ?? null;
     $branch_id = $_POST['branch'];
 
     // Mise à jour des informations de l'employé
@@ -108,32 +108,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
     $stmt->close();
 
     // Vérifier si l'utilisateur existe
-    $user_stmt = $conn->prepare("SELECT id FROM users WHERE employee_id = ?");
+    $user_stmt = $conn->prepare("SELECT id, role_id FROM users WHERE employee_id = ?");
     if (!$user_stmt) {
         echo json_encode(['success' => false, 'message' => 'Erreur préparation user check: ' . $conn->error]);
         exit;
     }
     $user_stmt->bind_param("i", $id);
     $user_stmt->execute();
-    $user_stmt->bind_result($user_id);
+    $user_stmt->bind_result($user_id, $role_id_t);
     $user_stmt->fetch();
     $user_stmt->close();
 
     if ($user_id) {
-        $update_user_sql = "UPDATE users SET role_id = ?, username = ?, password = ? WHERE id = ?";
-        $update_user_stmt = $conn->prepare($update_user_sql);
-        
-        if (!$update_user_stmt) {
-            echo json_encode(['success' => false, 'message' => 'Erreur préparation user update: ' . $conn->error]);
-            exit;
-        }
 
-        $update_user_stmt->bind_param("issi", $role_p, $full_name, $phone, $user_id);
-        if (!$update_user_stmt->execute()) {
-            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour de l\'utilisateur']);
-            exit;
+        if($role_id_t != 1 || $role_id_t != 3 || $role_id_t != 3 || $role_id_t != 5){
+            $update_user_sql = "UPDATE users SET role_id = ? WHERE id = ? ";
+            $update_user_stmt = $conn->prepare($update_user_sql);
+            
+            if (!$update_user_stmt) {
+                echo json_encode(['success' => false, 'message' => 'Erreur préparation user update: ' . $conn->error]);
+                exit;
+            }
+
+            $update_user_stmt->bind_param("ii", $role_p, $user_id);
+            if (!$update_user_stmt->execute()) {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour de l\'utilisateur']);
+                exit;
+            }
+            $update_user_stmt->close();
         }
-        $update_user_stmt->close();
     } else {
         $insert_user_sql = "INSERT INTO users (employee_id, role_id, username, password) VALUES (?, ?, ?, ?)";
         $insert_user_stmt = $conn->prepare($insert_user_sql);
@@ -143,12 +146,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
             exit;
         }
 
-        $insert_user_stmt->bind_param("iiss", $id, $role_p, $full_name, $phone);
+        $insert_user_stmt->bind_param("iiss", $id, $role_p, $phone, $phone);
         if (!$insert_user_stmt->execute()) {
             echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout de l\'utilisateur']);
             exit;
         }
-        $user_id = $insert_user_stmt->insert_id; // Récupérer l'ID de l'utilisateur nouvellement inséré
+        $user_id = $insert_user_stmt->insert_id;
         $insert_user_stmt->close();
     }
 
@@ -173,7 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
         $br_us_stmt->close();
     }
 
-    // Message de succès
     $success_message =  "تم تعديل بيانات الموظف بنجاح!";
 
 }
@@ -182,12 +184,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
 
 // Fetch Employees
 $employees =
-    $conn->query("SELECT e.*, j.job_name, b.branch_name FROM employees e
-        LEFT JOIN users u ON e.id=u.employee_id
-            -- AND u.role_id != 1
-        LEFT JOIN user_branch ub ON ub.user_id=u.id
-        LEFT JOIN branches b ON ub.branch_id=b.branch_id
-                           LEFT JOIN jobs j ON e.job_id = j.id");
+    $conn->query("SELECT e.*, j.job_name, b.branch_name
+        FROM employees e
+        JOIN users u ON e.id=u.employee_id
+            -- AND u.role_id NOT IN (1, 2, 3, 5)
+        JOIN user_branch ub ON ub.user_id=u.id
+            AND ub.branch_id IN (SELECT branch_id FROM user_branch WHERE user_id = '$user_d')
+        JOIN jobs j ON e.job_id = j.id
+        JOIN branches b ON ub.branch_id=b.branch_id");
 
 // Handle Edit
 $editing_employee = null;
@@ -444,7 +448,7 @@ if (isset($_GET['id'])) {
         });
     </script>
 
-<script>
+    <script>
         function toggleFields() {
             let role = document.getElementById('role').value;
             let classContainer = document.getElementById('classContainer');
@@ -458,7 +462,7 @@ if (isset($_GET['id'])) {
     </script>
 
 
-<script>
+    <script>
         document.addEventListener('change', function (event) {
             if (event.target && event.target.id === 'branch') {
                 let branchId = event.target.value;

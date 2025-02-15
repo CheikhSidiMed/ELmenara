@@ -282,7 +282,7 @@ $conn->close();
         @media (max-width: 768px) {
             body {
             padding: 4px;
-        }
+            }
             .container-main {
                 width: 100%;
                 padding: 15px;
