@@ -240,6 +240,7 @@
                 <li class="dropdown">
                     <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                     <ul class="collapse list-unstyled">
+                        <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
                         <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
                     </ul>
                 </li>
@@ -355,8 +356,9 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
+                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+                        </ul>
 
                     <!-- Menu items accessible to both role_id = 1 and role_id = 2 -->
                     <?php elseif($role_id == 2): ?>
@@ -424,14 +426,14 @@
                     <ul class="collapse">
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
-                                <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
+                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i> تسديد رسوم التلاميذ </a></li>
+                                <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i> التسديد الأسري</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
                             <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i>      اليومية </a></li>
+                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -445,8 +447,9 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
+                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+                        </ul>
                 </li>
 
             <!-- Menu items accessible to both role_id = 1 and role_id = 3 -->
@@ -591,8 +594,9 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
+                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+                        </ul>
 
 
             <!-- Restricted Access for role_id = 6 -->
@@ -616,8 +620,9 @@
                         <li class="dropdown">
                         <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i> الإجراءات </a>
                         <ul class="collapse list-unstyled">
-                        <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
-                    </ul>
+                            <!-- <li><a href="users_single.php"><i class="fa fa-user"></i> المستخدم </a></li> -->
+                            <li><a href="logout.php"><i class="fa fa-sign-out-alt"></i> تسجيل الخروج </a></li>
+                        </ul>
 
                 </li>
             <?php endif; ?>

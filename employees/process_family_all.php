@@ -39,7 +39,7 @@ try {
 
     // Query to select students with remaining balance
     $query_count = "SELECT s.id, s.student_name
-                    FROM students
+                    FROM students s
                     WHERE s.agent_id = ?
                       AND s.remaining > 0.00";
     $stmt_count = $conn->prepare($query_count);
@@ -105,6 +105,7 @@ try {
             throw new Exception("No rows were updated during payment processing for student ID: $student_id.");
         }
     }
+    $stmt_count->close();
 
     mysqli_commit($conn);
     header("Location: agent_receipt_re.php?payment_id=" . urlencode($receipts_id) . "&agent_name=" . urlencode($agent_name));
@@ -113,10 +114,8 @@ try {
 } catch (Exception $e) {
     mysqli_rollback($conn);
     echo json_encode(['status' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
-} finally {
-    $stmt_count->close();
-    $conn->close();
 }
+$conn->close();
 
 
 function insertTransaction($conn, $type, $student_id, $description, $amount, $bank_id, $user_id, $agent_id, $fund_id) {
