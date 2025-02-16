@@ -120,22 +120,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_employee'])) {
 
     if ($user_id) {
 
-        if($role_id_t != 1 || $role_id_t != 3 || $role_id_t != 3 || $role_id_t != 5){
-            $update_user_sql = "UPDATE users SET role_id = ? WHERE id = ? ";
-            $update_user_stmt = $conn->prepare($update_user_sql);
-            
-            if (!$update_user_stmt) {
-                echo json_encode(['success' => false, 'message' => 'Erreur préparation user update: ' . $conn->error]);
-                exit;
-            }
-
-            $update_user_stmt->bind_param("ii", $role_p, $user_id);
-            if (!$update_user_stmt->execute()) {
-                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour de l\'utilisateur']);
-                exit;
-            }
-            $update_user_stmt->close();
+        // if($role_id_t != 1 || $role_id_t != 3 || $role_id_t != 3 || $role_id_t != 5){
+        $update_user_sql = "UPDATE users SET role_id = ? WHERE id = ? ";
+        $update_user_stmt = $conn->prepare($update_user_sql);
+        
+        if (!$update_user_stmt) {
+            echo json_encode(['success' => false, 'message' => 'Erreur préparation user update: ' . $conn->error]);
+            exit;
         }
+
+        $update_user_stmt->bind_param("ii", $role_p, $user_id);
+        if (!$update_user_stmt->execute()) {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour de l\'utilisateur']);
+            exit;
+        }
+        $update_user_stmt->close();
+        // }
     } else {
         $insert_user_sql = "INSERT INTO users (employee_id, role_id, username, password) VALUES (?, ?, ?, ?)";
         $insert_user_stmt = $conn->prepare($insert_user_sql);

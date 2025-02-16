@@ -209,8 +209,11 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
     <div class="container">
         <h2>قائمة المستخدمين و الأدوار</h2>
         <a href="home.php" class="home-btn"><i class="bi bi-house-fill"></i> الصفحة الرئيسية</a>
-        <button class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-fill-add ms-1"></i> إضافة مستخدم جديد</button>
+        <button class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-fill-add ms-1"></i> إضافة مستخدم</button>
 
+        <div class="search-box ">
+            <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم ...">
+        </div>
         <!-- User Table -->
         <div class="table-container">
             <table class="table table-bordered">
@@ -226,7 +229,7 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
                         <?php endif; ?>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="employeeTableBody">
                     <?php
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -280,7 +283,7 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #1BA078;">
-                    <h5 class="modal-title text-white" id="addUserModalLabel">إضافة مستخدم جديد</h5>
+                    <h5 class="modal-title text-white" id="addUserModalLabel">إضافة مستخدم </h5>
                     <button type="button" class="btn-close text-white ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -456,6 +459,19 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
                     classSelect.innerHTML = '<option value="">اختر القسم</option>';
                 }
             }
+        });
+    </script>
+
+
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchInput').on('input', function() {
+                const value = $(this).val().toLowerCase();
+                $('#employeeTableBody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().includes(value));
+                });
+            });
         });
     </script>
 
