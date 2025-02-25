@@ -21,7 +21,7 @@ $userid = $_SESSION['userid'];
 $role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; // Use role_id instead of role_name
 
 
-$levelsQuery = "SELECT id, level_name FROM levels"; 
+$levelsQuery = "SELECT id, level_name FROM levels";
 $levelsResult = $conn->query($levelsQuery);
 
 if ($levelsResult === false) {
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($phone_count > 0) {
         $response = array('success' => false, 'message' => 'رقم الهاتف موجود بالفعل');
     } else {
-        $sql = "INSERT INTO agents (phone, agent_name, phone_2, profession, whatsapp_phone) 
+        $sql = "INSERT INTO agents (phone, agent_name, phone_2, profession, whatsapp_phone)
                 VALUES (?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);

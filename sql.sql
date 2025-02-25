@@ -1,3 +1,17 @@
+CREATE TABLE etudiants_certified (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    NNI VARCHAR(50) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    birth_date VARCHAR(50) NOT NULL,
+    birth_city VARCHAR(50) NOT NULL,
+    photo VARCHAR(250) NULL,
+    type ENUM('نافع', 'ورش', 'قالون', 'حفص') NOT NULL
+);
+
+
+
+
 CREATE TABLE user_branch (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,

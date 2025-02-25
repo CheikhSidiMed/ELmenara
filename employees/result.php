@@ -281,7 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 page-break-inside: avoid;
             } */
             table{
-                margin-top: -71px !important;
+                margin-top: 1px !important;
             }
             .p-head{
                 font-size: 15px !important;
@@ -412,7 +412,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php endforeach; ?>
                     <?php for ($i = 0; $i < 3; $i++): ?>
                     <tr>
-                        <td contenteditable="true"></td>            
+                        <td contenteditable="true"></td>
                         <?php for ($j = 0; $j < 4; $j++): ?>
                         <td contenteditable="true"></td>
                     <?php endfor; ?>

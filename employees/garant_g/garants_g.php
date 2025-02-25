@@ -352,7 +352,7 @@ $result = $conn->query("SELECT * FROM garants ORDER BY created_at DESC");
             <th class="cnt">الإجراءات</th>
         </tr>
         </thead>
-        <tbody  id="garantsTableBody">
+        <tbody id="garantsTableBody">
         <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= $row['id'] ?></td>

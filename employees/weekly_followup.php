@@ -235,6 +235,7 @@ if ($result->num_rows > 0) {
                 font-weight: bold;
                 font-size: 16px;
             }
+
             th, td {
                 font-size: 19px;
                 padding: 2px;
@@ -432,8 +433,6 @@ if ($result->num_rows > 0) {
                     <td colspan="1" contenteditable="true"></td>
                     <td colspan="4" style="height: 30px;" contenteditable="true"></td>
                 </tr>
-
-                <!-- Continue the rest of the rows if necessary -->
             </tbody>
         </table>
     </div>

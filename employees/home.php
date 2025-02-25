@@ -218,6 +218,7 @@
                     <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                     <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                     <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
+                    <li><a href="certifications/student_certf.php">📚  أرشيف الحفاظ</a></li>
 
                 </ul>
             </li>
