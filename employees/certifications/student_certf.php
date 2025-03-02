@@ -148,7 +148,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
-$niveauColors = ['نافع' => '#007bff', 'ورش' => '#28a745', 'قالون' => '#281745', 'حفص' => '#dc3545'];
+$niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '#28a745', 'حفص' => '#007bff'];
 
 ?>
 
@@ -160,191 +160,64 @@ $niveauColors = ['نافع' => '#007bff', 'ورش' => '#28a745', 'قالون' =>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/sweetalert2.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-        
-        body {
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            direction: rtl;
-            text-align: right;
-        }
-        h1 {
-            text-align: center;
-            color: #343a40;
-        }
-        .container {
-            max-width: 94%;
-            margin: auto;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .box {
-            min-width: 240px;
-            max-width: 340px;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            color: white;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-        .box:hover {
-            transform: scale(1.05);
-        }
-        .total { background-color: #17a2b8; }
-        .licence { background-color: #007bff; }
-        .master { background-color: #28a745; }
-        .doctorat { background-color: #281745; }
-        .doctorat1 { background-color: #dc3545; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            padding: 12px;
-            text-align: right;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .floating-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #0d6efd;
-            color: white;
-            font-size: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .floating-button:hover {
-            background-color: #0b5ed7;
-            transform: scale(1.1);
-        }
-
-        .floating-button:active {
-            transform: scale(0.9);
-        }
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 40px 12px 12px; /* Padding for the icon */
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #333;
-            background-color: #f9f9f9;
-            outline: none;
-            transition: border-color 0.3s ease;
-            margin-bottom: 5px;
-        }
-
-        .search-box input:focus {
-            border-color: #007bff;
-        }
-
-        .search-box::after {
-            content: "\f002"; /* FontAwesome search icon */
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            color: #007bff;
-            pointer-events: none;
-
-        }
-
-
-
-        /* Responsive table */
-        @media (max-width: 768px) {
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-            .box {
-                min-width: 180px;
-                padding: 20px;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                flex-wrap: wrap;
-                color: white;
-                text-align: center;
-                font-size: 16px;
-                font-weight: bold;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease-in-out;
-            }
-        }
-        .tbl {
-            overflow-x: auto;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="css/css.css">
 </head>
 <body>
+    <nav class="navbar">
+        <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
+        <div class="nav-links">
+            <a href="student_certf.php">أرشيف الحفاظ 📚 </a>
+            <a href="#" onclick="window.location.href='../home.php'">الرئيسية</a>
+            <div class="dropdown">
+                <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
+                <div class="dropdown-content">
+                    <a href="#">حفظ القرآن</a>
+                    <a href="Certificat_45_HizbeGirl.html">حفـظ ثلاث أرباع القرآن</a>
+                    <a href="#">حفـظ نصف القرآن</a>
+                    <a href="Certificat_15_HizbeGirl.html">حفـظ ربع القرآن</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">الإفادات &#9662;</a>
+                <div class="dropdown-content">
+                    <a href="#">طالب من طلاب المحظرة</a>
+                    <a href="#"> طالب من خارج المحظرة</a>
+                    <a href="#"> طالبة من طلاب المحظرة</a>
+                    <a href="#"> طالب من خارج المحظرة</a>
+                </div>
+            </div>
 
+            <a href="#">تعزية </a>
+            <a href="#">معلومات</a>
+        </div>
+    </nav>
     <div class="container">
-        <div class="row mb-5">
+        <!-- <div class="row mb-5">
             <h1 class="col">📚  أرشيف الحفاظِ</h1>
             <button type="button" class="btn btn-primary col-12 col-md-1" onclick="window.location.href='../home.php'">
              الصفحة الرئيسية
             </button>
-        </div>
+        </div> -->
         <div class="stats">
             <div class="box total">
                 <h2><?php echo $totalEtudiants; ?></h2>
                 <p>إجمالي الحفاظ</p>
             </div>
             <div class="box licence">
+                <h2><?php echo isset($etudiantsParNiveau['حفص']) ? $etudiantsParNiveau['حفص'] : 0; ?></h2>
+                <p>حفص</p>
+            </div>
+            <div class="box master">
                 <h2><?php echo isset($etudiantsParNiveau['نافع']) ? $etudiantsParNiveau['نافع'] : 0; ?></h2>
                 <p>نافع</p>
             </div>
-            <div class="box master">
+            <div class="box doctorat1">
                 <h2><?php echo isset($etudiantsParNiveau['ورش']) ? $etudiantsParNiveau['ورش'] : 0; ?></h2>
                 <p>ورش</p>
             </div>
-            <div class="box doctorat1">
-                <h2><?php echo isset($etudiantsParNiveau['قالون']) ? $etudiantsParNiveau['قالون'] : 0; ?></h2>
-                <p>قالون</p>
-            </div>
             <div class="box doctorat">
-                <h2><?php echo isset($etudiantsParNiveau['حفص']) ? $etudiantsParNiveau['حفص'] : 0; ?></h2>
-                <p>حفص</p>
+                <h2><?php echo isset($etudiantsParNiveau['نافع']) ? $etudiantsParNiveau['نافع'] : 0; ?></h2>
+                <p>نافع</p>
             </div>
         </div>
 
@@ -435,6 +308,12 @@ $niveauColors = ['نافع' => '#007bff', 'ورش' => '#28a745', 'قالون' =>
         }
     </script>
 
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('show');
+        }
+    </script>
+
     <!-- Edit Student Modal -->
     <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -475,8 +354,6 @@ $niveauColors = ['نافع' => '#007bff', 'ورش' => '#28a745', 'قالون' =>
                             <label for="edit_type" class="form-label">القرءاة</label>
                             <select class="form-select" id="edit_type" name="edit_type" required>
                                 <option value="نافع">نافع</option>
-                                <option value="ورش">ورش</option>
-                                <option value="قالون">قالون</option>
                                 <option value="حفص">حفص</option>
                             </select>
                         </div>
@@ -520,8 +397,6 @@ $niveauColors = ['نافع' => '#007bff', 'ورش' => '#28a745', 'قالون' =>
                             <select class="form-select" name="type" required>
                                 <option value="">-- القرءاة --</option>
                                 <option value="نافع">نافع</option>
-                                <option value="ورش">ورش</option>
-                                <option value="قالون">قالون</option>
                                 <option value="حفص">حفص</option>
                             </select>
                         </div>
