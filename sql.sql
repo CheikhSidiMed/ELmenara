@@ -6,7 +6,7 @@ CREATE TABLE etudiants_certified (
     birth_date VARCHAR(50) NOT NULL,
     birth_city VARCHAR(50) NOT NULL,
     photo VARCHAR(250) NULL,
-    type ENUM('نافع', 'ورش', 'قالون', 'حفص') NOT NULL
+    type ENUM('نافع', 'حفص') NOT NULL
 );
 
 

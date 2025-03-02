@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body {
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+    direction: rtl;
+    text-align: right;
+}
+h1 {
+    text-align: center;
+    color: #343a40;
+}
+.container {
+    max-width: 94%;
+    margin: auto;
+    padding: 20px;
+
+}
+.stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.box {
+    min-width: 240px;
+    max-width: 340px;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+.box:hover {
+    transform: scale(1.05);
+}
+.total { background-color: #17a2b8; }
+.licence { background-color: #007bff; }
+.master { background-color: #28a745; }
+.doctorat { background-color: #281745; }
+.doctorat1 { background-color: #dc3545; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+th, td {
+    padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #007bff;
+    color: white;
+}
+tr:hover {
+    background-color: #f1f1f1;
+}
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    font-size: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.floating-button:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.1);
+}
+
+.floating-button:active {
+    transform: scale(0.9);
+}
+.search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 40px 12px 12px; /* Padding for the icon */
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.search-box input:focus {
+    border-color: #007bff;
+}
+
+.search-box::after {
+    content: "\f002"; /* FontAwesome search icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #007bff;
+    pointer-events: none;
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #008CBA;
+    padding: 15px;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+.navbar a:hover {
+    background: #005f73;
+    border-radius: 5px;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 120px;
+    margin-top: 13px;
+    text-wrap: nowrap;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+.dropdown-content a {
+    display: block;
+    color: #008CBA;
+    padding: 10px;
+    text-align: right;
+}
+.dropdown-content a:hover {
+    background: #ddd;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.menu-icon {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .menu-icon {
+        display: block;
+    }
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #008CBA;
+    }
+    .nav-links a {
+        padding: 15px;
+        display: block;
+        text-align: right;
+    }
+    .nav-links.show {
+        display: flex;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .box {
+        min-width: 180px;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        color: white;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+}
+.tbl {
+    overflow-x: auto;
+    width: 100%;
+}
