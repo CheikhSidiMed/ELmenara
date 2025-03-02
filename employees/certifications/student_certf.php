@@ -196,7 +196,7 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
             <h1 class="col">📚  أرشيف الحفاظِ</h1>
             <button type="button" class="btn btn-primary col-12 col-md-1" onclick="window.location.href='../home.php'">
              الصفحة الرئيسية
-            </button> 
+            </button>
         </div> -->
         <div class="stats">
             <div class="box total">
