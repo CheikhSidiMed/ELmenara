@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_student'])) {
     $birth_date = $conn->real_escape_string($_POST["birth_date"]);
     $type = $conn->real_escape_string($_POST["type"]);
     $phone = $conn->real_escape_string($_POST["phone"]);
+    $year = $conn->real_escape_string($_POST["year"]);
+    $date = $conn->real_escape_string($_POST["date"]);
+    $type_ijaza = $conn->real_escape_string($_POST["type_ijaza"]);
 
     $photoContent = NULL;
     $photoUrl = '';
@@ -46,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_student'])) {
         echo "Erreur dans le téléchargement ou aucun fichier sélectionné.";
     }
 
-    $sql = "INSERT INTO etudiants_certified (full_name, NNI, birth_city, birth_date, phone, photo, type)
+    $sql = "INSERT INTO etudiants_certified (full_name, NNI, birth_city, birth_date, phone, photo, type, year, date, type_ijaza)
                 VALUES
-            ('$full_name', '$NNI', '$birth_city', '$birth_date', '$phone', '$photoUrl', '$type')";
+            ('$full_name', '$NNI', '$birth_city', '$birth_date', '$phone', '$photoUrl', '$type', '$year', '$date', '$type_ijaza')";
 
     if ($conn->query($sql) === TRUE) {
         $_SESSION['message'] = ['icon' => 'success', 'title' => 'تمت الإضافة بنجاح!', 'text' => 'تمت إضافة الطالب بنجاح.'];
@@ -68,6 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_student'])) {
     $birth_city = $conn->real_escape_string($_POST["edit_birth_city"]);
     $birth_date = $conn->real_escape_string($_POST["edit_birth_date"]);
     $type = $conn->real_escape_string($_POST["edit_type"]);
+    $_date = $conn->real_escape_string($_POST["edit_date"]);
+    $ijaza = $conn->real_escape_string($_POST["edit_type_ijaza"]);
+    $_year = $conn->real_escape_string($_POST["edit_year"]);
 
     // Vérifier si un fichier a été uploadé
     if (!empty($_FILES["edit_photo"]["name"])) {
@@ -96,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_student'])) {
 
             // Déplacer la nouvelle image
             if (move_uploaded_file($photo_tmp, $photo_path)) {
-                $sql = "UPDATE etudiants_certified SET full_name='$nom', nni='$nni', phone='$phone', birth_city='$birth_city', birth_date='$birth_date', type='$type', photo='$new_photo_name' WHERE id=$id";
+                $sql = "UPDATE etudiants_certified SET full_name='$nom', nni='$nni', date='$_date', type_ijaza='$ijaza', year='$_year', phone='$phone', birth_city='$birth_city', birth_date='$birth_date', type='$type', photo='$new_photo_name' WHERE id=$id";
             } else {
                 $_SESSION['message'] = ['icon' => 'error', 'title' => 'خطأ!', 'text' => 'فشل تحميل الصورة.'];
                 header("Location: student_certf.php");
@@ -109,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_student'])) {
         }
     } else {
         // Si aucune image n'est uploadée, ne pas modifier la colonne 'photo'
-        $sql = "UPDATE etudiants_certified SET full_name='$nom', nni='$nni', phone='$phone', birth_city='$birth_city', birth_date='$birth_date', type='$type' WHERE id=$id";
+        $sql = "UPDATE etudiants_certified SET full_name='$nom', nni='$nni', phone='$phone', date='$_date', type_ijaza='$ijaza', year='$_year', birth_city='$birth_city', birth_date='$birth_date', type='$type' WHERE id=$id";
     }
 
     if ($conn->query($sql) === TRUE) {
@@ -138,7 +144,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_student'])) {
 
 
 
-$totalEtudiants = $conn->query("SELECT COUNT(*) AS total FROM etudiants_certified")->fetch_assoc()['total'];
+$totalEtudiants_m = $conn->query("SELECT COUNT(*) AS total FROM etudiants_certified WHERE type_ijaza='مجازي'")->fetch_assoc()['total'];
+$totalEtudiants_h = $conn->query("SELECT COUNT(*) AS total FROM etudiants_certified WHERE type_ijaza='حافظ'")->fetch_assoc()['total'];
 
 
 $result = $conn->query("SELECT type, COUNT(*) as count FROM etudiants_certified GROUP BY type");
@@ -166,8 +173,8 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
     <nav class="navbar">
         <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
         <div class="nav-links">
-            <a href="student_certf.php">أرشيف الحفاظ 📚 </a>
             <a href="#" onclick="window.location.href='../home.php'">الرئيسية</a>
+            <a href="student_certf.php">أرشيف الحفاظ 📚 </a>
             <div class="dropdown">
                 <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
                 <div class="dropdown-content">
@@ -192,15 +199,10 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
         </div>
     </nav>
     <div class="container">
-        <!-- <div class="row mb-5">
-            <h1 class="col">📚  أرشيف الحفاظِ</h1>
-            <button type="button" class="btn btn-primary col-12 col-md-1" onclick="window.location.href='../home.php'">
-             الصفحة الرئيسية
-            </button>
-        </div> -->
+
         <div class="stats">
             <div class="box total">
-                <h2><?php echo $totalEtudiants; ?></h2>
+                <h2><?php echo $totalEtudiants_h; ?></h2>
                 <p>إجمالي الحفاظ</p>
             </div>
             <div class="box licence">
@@ -215,9 +217,9 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                 <h2><?php echo isset($etudiantsParNiveau['ورش']) ? $etudiantsParNiveau['ورش'] : 0; ?></h2>
                 <p>ورش</p>
             </div>
-            <div class="box doctorat">
-                <h2><?php echo isset($etudiantsParNiveau['نافع']) ? $etudiantsParNiveau['نافع'] : 0; ?></h2>
-                <p>نافع</p>
+            <div class="box total">
+                <h2><?php echo $totalEtudiants_m; ?></h2>
+                <p>إجمالي المجازين</p>
             </div>
         </div>
 
@@ -233,15 +235,18 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                         <th>الإسم الكامل</th>
                         <th>الرقم الوطني</th>
                         <th>رقم الهاتف</th>
-                        <th>محل الميلاد</th>
+                        <th>العام الدراسي </th>
+                        <th>بتاريخ </th>
                         <th>تاريخ الميلاد</th>
+                        <th>محل الميلاد</th>
+                        <th>النوع</th>
                         <th>القرءاة</th>
                         <th>الإجراء</th>
                     </tr>
                 </thead>
                 <tbody id="sTableBody">
                     <?php
-                    $students = $conn->query("SELECT id, full_name, phone, NNI, birth_date, birth_city, photo, type FROM etudiants_certified");
+                    $students = $conn->query("SELECT * FROM etudiants_certified");
                     while ($student = $students->fetch_assoc()):
                     ?>
                         <tr>
@@ -251,7 +256,7 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                                 <?php else: ?>
                                     <div style="
                                         width: 75px; height: 75px;
-                                        display: flex; align-items: center; justify-content: center; 
+                                        display: flex; align-items: center; justify-content: center;
                                         background-color: #007bff; color: white;
                                         font-size: 25px; font-weight: bold;
                                         border-radius: 50%; border: 3px solid blue;
@@ -261,15 +266,20 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                                 <?php endif; ?>
                             </td>
                             <td><?php echo htmlspecialchars($student['full_name']); ?></td>
-                            <td><?php echo htmlspecialchars($student['phone']); ?></td>
                             <td><?php echo htmlspecialchars($student['NNI']); ?></td>
+                            <td><?php echo htmlspecialchars($student['phone']); ?></td>
+                            <td><?php echo htmlspecialchars($student['year']); ?></td>
+                            <td><?php echo htmlspecialchars($student['date']); ?></td>
                             <td><?php echo htmlspecialchars($student['birth_date']); ?></td>
                             <td><?php echo htmlspecialchars($student['birth_city']); ?></td>
+                            <td style="color: #281745; font-weight: bold;">
+                                <?php echo htmlspecialchars($student['type_ijaza']); ?>
+                            </td>
                             <td style="color: <?php echo $niveauColors[$student['type']]; ?>; font-weight: bold;">
                                 <?php echo htmlspecialchars($student['type']); ?>
                             </td>
                             <td>
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal" 
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
                                     onclick="fillEditForm(<?= $student['id']; ?>,
                                          '<?= $student['full_name']; ?>',
                                          '<?= $student['phone']; ?>',
@@ -277,7 +287,10 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                                          '<?= $student['birth_date']; ?>',
                                          '<?= $student['birth_city']; ?>',
                                          '<?= $student['photo']; ?>',
-                                         '<?= $student['type']; ?>')">تعديل</button>
+                                         '<?= $student['type']; ?>',
+                                         '<?= $student['date']; ?>',
+                                         '<?= $student['type_ijaza']; ?>',
+                                         '<?= $student['year']; ?>')">تعديل</button>
                                 <form method="POST" style="display:inline;">
                                     <input type="hidden" name="student_id" value="<?= $student['id']; ?>">
                                     <button type="submit" name="delete_student" class="btn btn-danger btn-sm">حذف</button>
@@ -296,15 +309,25 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
     <script src="../js/sweetalert2.min.js"></script>
 
     <script>
-        function fillEditForm(studentId, studentFullName, studentPhone, studentNNI, studentDate, studentCD, studentPh, studentTy) {
+        function fillEditForm(studentId, studentFullName, studentPhone, studentNNI, studentDate, studentCD, studentPh, studentTy,
+            editDate, editTIjaza, editYear
+        ) {
+            console.log('ndqnnqinrnn ---- ', editDate);
             document.getElementById("editStudentId").value = studentId;
             document.getElementById("edit_full_name").value = studentFullName;
             document.getElementById("edit_phone").value = studentPhone;
             document.getElementById("edit_NNI").value = studentNNI;
             document.getElementById("edit_birth_date").value = studentDate;
             document.getElementById("edit_birth_city").value = studentCD;
-            document.getElementById("edit_photo").value = studentPh;
+            // document.getElementById("edit_photo").value = studentPh;
             document.getElementById("edit_type").value = studentTy;
+            document.getElementById("edit_date").value = editDate;
+            document.getElementById("edit_type_ijaza").value = editTIjaza;
+            document.getElementById("edit_year").value = editYear;
+
+            if (studentPh) {
+                document.getElementById("edit_photo").src = 'uploads/' + studentPh;
+            }
         }
     </script>
 
@@ -326,35 +349,75 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                     <!-- Form to Edit Student -->
                     <form method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="editStudentId" name="student_id">
-                        <div class="mb-3">
+                        <div class="">
                             <label for="edit_full_name" class="form-label">الإسم الكامل</label>
                             <input type="text" class="form-control" id="edit_full_name" name="edit_full_name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_NNI" class="form-label">الرقم الوطني</label>
-                            <input type="text" class="form-control" id="edit_NNI" name="edit_NNI" required>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="edit_NNI" class="form-label">الرقم الوطني</label>
+                                <input type="text" class="form-control" id="edit_NNI" name="edit_NNI" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="edit_phone" class="form-label">رقم الهاتف</label>
+                                <input type="text" class="form-control" id="edit_phone" name="edit_phone" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_phone" class="form-label">رقم الهاتف</label>
-                            <input type="text" class="form-control" id="edit_phone" name="edit_phone" required>
-                        </div>
-                        <div class="mb-3">
+                        <div class="">
                             <label for="edit_birth_city" class="form-label">محل الميلاد</label>
                             <input type="text" class="form-control" id="edit_birth_city" name="edit_birth_city" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_birth_date" class="form-label">تاريخ الميلاد</label>
-                            <input type="date" class="form-control" id="edit_birth_date" name="edit_birth_date" required>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="edit_birth_date">تاريخ الميلاد</label>
+                                <input type="date" class="form-control" id="edit_birth_date" name="edit_birth_date" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="edit_date">بتاريخ </label>
+                                <input type="date" class="form-control" id="edit_date" name="edit_date" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="">
                             <label for="edit_photo" class="form-label">الصورة</label>
                             <input type="file" class="form-control" id="edit_photo" name="edit_photo"  accept="image/*">
                         </div>
-                        <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
                             <label for="edit_type" class="form-label">القرءاة</label>
-                            <select class="form-select" id="edit_type" name="edit_type" required>
-                                <option value="نافع">نافع</option>
-                                <option value="حفص">حفص</option>
+                                <select class="form-select" id="edit_type" name="edit_type" required>
+                                    <option value="نافع">نافع</option>
+                                    <option value="حفص">حفص</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="edit_type_ijaza" class="form-label">النوع</label>
+                                <select class="form-select" id="edit_type_ijaza" name="edit_type_ijaza" required>
+                                    <option value="مجازي">مجازي</option>
+                                    <option value="حافظ">حافظ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_year" class="form-label">السنة</label>
+                            <select class="form-select" id="edit_year" name="edit_year" required>
+                                <option value="">-- السنة --</option>
+                                <option value="2016-2017">2016-2017</option>
+                                <option value="2017-2018">2017-2018</option>
+                                <option value="2018-2019">2018-2019</option>
+                                <option value="2019-2020">2019-2020</option>
+                                <option value="2020-2021">2020-2021</option>
+                                <option value="2021-2022">2021-2022</option>
+                                <option value="2022-2023">2022-2023</option>
+                                <option value="2023-2024">2023-2024</option>
+                                <option value="2024-2025">2024-2025</option>
+                                <option value="2025-2026">2025-2026</option>
+                                <option value="2026-2027">2026-2027</option>
+                                <option value="2027-2028">2027-2028</option>
+                                <option value="2028-2029">2028-2029</option>
+                                <option value="2029-2030">2029-2030</option>
+                                <option value="2030-2031">2030-2031</option>
+                                <option value="2031-2032">2031-2032</option>
+                                <option value="2032-2033">2032-2033</option>
                             </select>
                         </div>
                         <button type="submit" name="edit_student" class="btn btn-success">تحديث البيانات</button>
@@ -384,20 +447,58 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                         <div class="mb-3">
                             <input type="text" class="form-control" name="phone" placeholder="رقم الهاتف" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-1">
                             <input type="text" class="form-control" name="birth_city" placeholder="محل الميلاد" required>
                         </div>
-                        <div class="mb-3">
-                            <input type="date" class="form-control" name="birth_date" placeholder="تاريخ الميلاد" required>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label for="">تاريخ الميلاد</label>
+                                <input type="date" class="form-control" name="birth_date" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="">بتاريخ </label>
+                                <input type="date" class="form-control" name="date" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
                             <input type="file" class="form-control" name="photo"  placeholder="الصورة" accept="image/*">
+                        <div class="mb-3">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <select class="form-select" name="type" required>
+                                    <option value="">-- القرءاة --</option>
+                                    <option value="نافع">نافع</option>
+                                    <option value="حفص">حفص</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <select class="form-select" name="type_ijaza" required>
+                                    <option value="">-- النوع --</option>
+                                    <option value="مجازي">مجازي</option>
+                                    <option value="حافظ">حافظ</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <select class="form-select" name="type" required>
-                                <option value="">-- القرءاة --</option>
-                                <option value="نافع">نافع</option>
-                                <option value="حفص">حفص</option>
+                            <select class="form-select" name="year" required>
+                                <option value="">-- السنة --</option>
+                                <option value="2016-2017">2016-2017</option>
+                                <option value="2017-2018">2017-2018</option>
+                                <option value="2018-2019">2018-2019</option>
+                                <option value="2019-2020">2019-2020</option>
+                                <option value="2020-2021">2020-2021</option>
+                                <option value="2021-2022">2021-2022</option>
+                                <option value="2022-2023">2022-2023</option>
+                                <option value="2023-2024">2023-2024</option>
+                                <option value="2024-2025">2024-2025</option>
+                                <option value="2025-2026">2025-2026</option>
+                                <option value="2026-2027">2026-2027</option>
+                                <option value="2027-2028">2027-2028</option>
+                                <option value="2028-2029">2028-2029</option>
+                                <option value="2029-2030">2029-2030</option>
+                                <option value="2030-2031">2030-2031</option>
+                                <option value="2031-2032">2031-2032</option>
+                                <option value="2032-2033">2032-2033</option>
                             </select>
                         </div>
                         <button type="submit" name="add_student" class="btn btn-success">إضافة</button>

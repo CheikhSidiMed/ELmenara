@@ -13,13 +13,13 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
 }
 
-$processed_year = $last_year;  
+$processed_year = $last_year;
 $sql = "SELECT month FROM processed_salaries WHERE year = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $processed_year);
@@ -208,7 +208,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="year-select col-3 ">
                     <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
                     <select id="financial-year" class="form-select w-100">
-                    <option><?php echo $last_year; ?></option>
+                        <option><?php echo $last_year; ?></option>
                     </select>
             </div>
         </div>
@@ -223,13 +223,13 @@ while ($row = $result->fetch_assoc()) {
         <div class="months-container">
             <?php
             $months = [
-                'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 
-                'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 
+                'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو',
+                'يونيو', 'يوليو', 'أغسطس', 'سبتمبر',
                 'أكتوبر', 'نوفمبر', 'ديسمبر'
             ];
 
             foreach ($months as $index => $month_name) {
-                $month_number = $index + 1; // Convert index to month number (1-12)
+                $month_number = $index + 1;
                 $is_disabled = in_array($month_name, $processed_months) ? 'disabled' : ''; // Check if the month is processed
                 ?>
                 <div class="month-box <?php echo $is_disabled ? 'disabled' : ''; ?>">
@@ -248,71 +248,71 @@ while ($row = $result->fetch_assoc()) {
     <script src="js/sweetalert2.min.js"></script>
     
 <script>
-document.querySelector('.btn-confirm').addEventListener('click', function() {
-    let selectedMonths = [];
-    let checkboxes = document.querySelectorAll('.month-box input[type="checkbox"]');
+    document.querySelector('.btn-confirm').addEventListener('click', function() {
+        let selectedMonths = [];
+        let checkboxes = document.querySelectorAll('.month-box input[type="checkbox"]');
 
-    checkboxes.forEach(checkbox => {
-        if (checkbox.checked && !checkbox.disabled) {
-            selectedMonths.push(checkbox.parentElement.querySelector('span').textContent.trim());
-        }
-    });
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked && !checkbox.disabled) {
+                selectedMonths.push(checkbox.parentElement.querySelector('span').textContent.trim());
+            }
+        });
 
-    if (selectedMonths.length > 0) {
-        fetch('process_salaries.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ months: selectedMonths })  // Change  dynamically if needed
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Swal.fire notification on success
-                Swal.fire({
-                    icon: 'success',
-                    title: 'نجاح',
-                    text: data.message,
-                    confirmButtonText: 'حسنًا'
-                }).then(() => {
-                    // Disable the processed months
-                    checkboxes.forEach(checkbox => {
-                        if (selectedMonths.includes(checkbox.parentElement.querySelector('span').textContent.trim())) {
-                            checkbox.disabled = true;
-                            checkbox.checked = false; // Uncheck the checkbox after processing
-                        }
+        if (selectedMonths.length > 0) {
+            fetch('process_salaries.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ months: selectedMonths })  // Change  dynamically if needed
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Swal.fire notification on success
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'نجاح',
+                        text: data.message,
+                        confirmButtonText: 'حسنًا'
+                    }).then(() => {
+                        // Disable the processed months
+                        checkboxes.forEach(checkbox => {
+                            if (selectedMonths.includes(checkbox.parentElement.querySelector('span').textContent.trim())) {
+                                checkbox.disabled = true;
+                                checkbox.checked = false; // Uncheck the checkbox after processing
+                            }
+                        });
                     });
-                });
-            } else {
-                // Swal.fire notification on failure
+                } else {
+                    // Swal.fire notification on failure
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: data.message,
+                        confirmButtonText: 'حسنًا'
+                    });
+                }
+            })
+            .catch(error => {
+                // Swal.fire for any unexpected errors
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
-                    text: data.message,
+                    text: 'حدث خطأ أثناء معالجة الرواتب',
                     confirmButtonText: 'حسنًا'
                 });
-            }
-        })
-        .catch(error => {
-            // Swal.fire for any unexpected errors
+            });
+        } else {
+            // Swal.fire notification if no month is selected
             Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ أثناء معالجة الرواتب',
+                icon: 'warning',
+                title: 'تحذير',
+                text: 'يرجى اختيار شهر واحد على الأقل',
                 confirmButtonText: 'حسنًا'
             });
-        });
-    } else {
-        // Swal.fire notification if no month is selected
-        Swal.fire({
-            icon: 'warning',
-            title: 'تحذير',
-            text: 'يرجى اختيار شهر واحد على الأقل',
-            confirmButtonText: 'حسنًا'
-        });
-    }
-});
+        }
+    });
 </script>
 
 

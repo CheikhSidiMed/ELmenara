@@ -19,8 +19,8 @@ while ($row = $result->fetch_assoc()) {
     $bankList[] = $row;
 }
 
-$sql = "SELECT m.id, m.student_id, a.agent_name, m.student_name, s.phone, a.phone AS a_a, a.whatsapp_phone,    
-    GROUP_CONCAT(m.month_name ORDER BY m.created_at ASC SEPARATOR ', ') AS months_not_paid, 
+$sql = "SELECT m.id, m.student_id, a.agent_name, m.student_name, s.phone, a.phone AS a_a, a.whatsapp_phone,
+    GROUP_CONCAT(m.month_name ORDER BY m.created_at ASC SEPARATOR ', ') AS months_not_paid,
     SUM(m.remaining_amount) AS total_remaining_amount, m.created_at FROM months_not_paid  m
     LEFT JOIN students s ON s.id = m.student_id
     LEFT JOIN agents a ON s.agent_id = a.agent_id

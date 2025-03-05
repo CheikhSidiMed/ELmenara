@@ -74,7 +74,7 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <link rel="stylesheet" href="css/jquery-base-ui.css">
     <style>
         body {
@@ -333,7 +333,6 @@ $conn->close();
                 <div>
                     <label>نوع العملية <span style="color:red;">*</span></label>
                     <div>
-                        <!-- Clickable icons -->
                         <label for="transaction_type_plus" style="cursor: pointer;">
                             <i id="plusIcon" class="bi bi-plus-circle-fill" style="color: green; font-size: 2rem;"></i>
                         </label>
@@ -351,11 +350,14 @@ $conn->close();
                     <label>المبلغ <span style="color:red; ">*</span></label>
                     <input type="text" id="amount" name="amount" class="form-control mb-3" value="" style="width: 95%; text-align: center;" required>
                     <div style="width: 95%;">
-                        <select style="width: 100%;" id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
-                            <option value="">اختر طريقة الدفع</option>
-                            <option value="نقدي">نقدي</option>
-                            <option value="بنكي">بنكي</option>
-                        </select>
+                        <div class="d-flex flex-column flex-sm-row gap-6">
+                            <select style="width: 100%;" id="method" name="payment_method" class="form-select form-select-lg mb-3" onchange="toggleBankModal(this.value)" style="border: 2px solid #1a73e8; border-radius: 5px;" required>
+                                <option value="">اختر طريقة الدفع</option>
+                                <option value="نقدي">نقدي</option>
+                                <option value="بنكي">بنكي</option>
+                            </select>
+                            <input type="date" id="date_time" name="date_time" class="form-control mb-3 me-2" />
+                        </div>
                         <div id="selected-bank-name" style="margin-top: 15px; font-weight: bold; color: #1a73e8; text-align: center; font-size: 1.2rem;"></div>
                         <input type="hidden" id="selected-bank-id" name="bank">
                     </div>

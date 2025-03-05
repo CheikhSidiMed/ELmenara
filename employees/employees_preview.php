@@ -14,7 +14,7 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -33,8 +33,7 @@ $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
 
 // Fetch employee details
 if ($employee_id) {
-    $stmt = $conn->prepare("
-        SELECT e.full_name, j.job_name, e.subscription_date, balance
+    $stmt = $conn->prepare("SELECT e.full_name, j.job_name, e.subscription_date, balance
         FROM employees e
         JOIN jobs j ON e.job_id = j.id
         WHERE e.id = ?
@@ -47,9 +46,8 @@ if ($employee_id) {
 
     // Fetch transactions with optional date filters
     $transactions = [];
-    $query = "
-        SELECT DATE_FORMAT(transaction_date, '%d-%m-%Y') as transaction_date, 
-               transaction_description, amount, transaction_type
+    $query = "SELECT DATE_FORMAT(transaction_date, '%d-%m-%Y') as transaction_date,
+               transaction_description, amount, transaction_type, sold_emp
         FROM transactions
         WHERE employee_id = ?
     ";
@@ -165,7 +163,8 @@ $conn->close();
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 padding: 10px;
-                font-size: 14px;
+                font-size: 17px;
+                font-weight: bold;
                 color: #333;
             }
 
@@ -300,7 +299,7 @@ $conn->close();
     
 
 <div class="container main-container">
-<div class="row align-items-center">
+    <div class="row align-items-center">
         <div class="col-12">
             <img src="../images/header.png" alt="Header Image" class="header-image">
         </div>
@@ -321,6 +320,11 @@ $conn->close();
             </div>
             <div class="col d-flex align-items-end summary-container">
                 <button type="submit" class="btn">تصفية</button>
+                <div class="home-button-container text-start me-5">
+                    <a href="home.php" class="btn">
+                        <i ></i> الصفحة الرئيسية
+                    </a>
+                </div>
             </div>
         </div>
     </form>
@@ -350,6 +354,7 @@ $conn->close();
                 <th>بيان العملية</th>
                 <th>مدين</th>
                 <th>دائن</th>
+                <th>الرصيد</th>
             </tr>
         </thead>
         <tbody>
@@ -359,6 +364,7 @@ $conn->close();
                 <td><?php echo htmlspecialchars($transaction['transaction_description']); ?></td>
                 <td><?php echo $transaction['transaction_type'] === 'minus' ? number_format($transaction['amount'], 2) : ''; ?></td>
                 <td><?php echo $transaction['transaction_type'] === 'plus' ? number_format($transaction['amount'], 2) : ''; ?></td>
+                <td><?php echo number_format($transaction['sold_emp']); ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

@@ -20,9 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $fund_id = $_POST['fund_id'] ?? null;
     $bank_account_id = !empty($_POST['bank_account_id']) ? $_POST['bank_account_id'] : null;
     $employee_id = !empty($_POST['employee_id']) ? $_POST['employee_id'] : null;
-    $transac_type = !empty($_POST['type']) ? $_POST['type'] : null;
+    $transac_type = !empty($_POST['type']) ? $_POST['type'] : 'plus';
     $student_id = !empty($_POST['student_id']) ? $_POST['student_id'] : null;
     $agent_id = !empty($_POST['agent_id']) ? $_POST['agent_id'] : null;
+    $date = !empty($_POST['date']) ? $_POST['date'] : date();
     $accountType = $_POST['account_type'];
     $t_n = $_POST['t_n'] ?? null;
 
@@ -33,9 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-
-    $amoun_t = (float)$ancAmount - (float)$amount;
-    $amount_t = $transac_type === 'minus' ?  -floatval($amoun_t) : floatval($amoun_t);
+                
+    $amoun_t = (float)$amount - (float)$ancAmount;
+    $amount_t = ($transac_type === 'minus') ?  -floatval($amoun_t) : floatval($amoun_t);
+    
 
     try {
         if ($bank_account_id) {
@@ -73,29 +75,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // اختيار الاستعلام المناسب
             if (!empty($student_id) && !empty($agent_id)) {
                 $stmt_agent = $conn->prepare("
-                    SELECT id, agent_id, month, student_id, due_amount 
-                    FROM combined_transactions 
+                    SELECT id, agent_id, month, student_id, due_amount
+                    FROM combined_transactions
                     WHERE description = ? AND agent_id = ? AND student_id = ?
                 ");
                 $stmt_agent->bind_param("sss", $t_n, $agent_id, $student_id);
             } elseif (!empty($student_id)) {
                 $stmt_agent = $conn->prepare("
                     SELECT id, student_id, month, agent_id, due_amount
-                    FROM combined_transactions 
+                    FROM combined_transactions
                     WHERE description = ? AND student_id = ?
                 ");
                 $stmt_agent->bind_param("ss", $t_n, $student_id);
             } elseif (!empty($employee_id)) {
                 $stmt_agent = $conn->prepare("
                     SELECT id, student_id, month, agent_id, due_amount
-                    FROM combined_transactions 
+                    FROM combined_transactions
                     WHERE description = ? AND employee_id = ?
                 ");
                 $stmt_agent->bind_param("ss", $t_n, $employee_id);
             } else {
                 $stmt_agent = $conn->prepare("
-                    SELECT id, agent_id, month, student_id, due_amount 
-                    FROM combined_transactions 
+                    SELECT id, agent_id, month, student_id, due_amount
+                    FROM combined_transactions
                     WHERE description = ?
                 ");
                 $stmt_agent->bind_param("s", $t_n);
@@ -126,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $rem_per_amount = (float)$due_amount - $per_amount;
 
                 foreach ($monthArray as $singleMonth) {
-                    $stmt_paymt = $conn->prepare("UPDATE payments 
+                    $stmt_paymt = $conn->prepare("UPDATE payments
                         SET paid_amount = ?, remaining_amount = ?
                         WHERE student_id = ? AND month = ?");
                     $stmt_paymt->bind_param("ddis", $per_amount, $rem_per_amount, $student_id, $singleMonth);
@@ -135,13 +137,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
 
                 
-                $stmt_empl = $conn->prepare("UPDATE combined_transactions 
-                SET description = ?, paid_amount = ?, remaining_amount =?
+                $stmt_empl = $conn->prepare("UPDATE combined_transactions
+                SET description = ?, paid_amount = ?, remaining_amount =?, date=?
                 WHERE id = ? ");
-                $stmt_empl->bind_param("sddi", $transactionDescription, $amount, $rem_amount, $id);
+                $stmt_empl->bind_param("sddsi", $transactionDescription, $amount, $rem_amount, $date, $id);
             }else{
-                $stmt_empl = $conn->prepare("UPDATE combined_transactions SET description = ?, paid_amount = ? WHERE id = ? ");
-                $stmt_empl->bind_param("sdi", $transactionDescription, $amount, $id);
+                $stmt_empl = $conn->prepare("UPDATE combined_transactions SET description = ?, paid_amount = ?, date=? WHERE id = ? ");
+                $stmt_empl->bind_param("sdsi", $transactionDescription, $amount, $date, $id);
             }
 
 
@@ -154,16 +156,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Update transaction
         if ($accountType === 'مصاريف') {
-            $stmt = $conn->prepare("UPDATE expense_transaction SET transaction_description = ?, amount = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE expense_transaction SET transaction_description = ?, amount = ?, transaction_date = ? WHERE id = ?");
         }elseif ($accountType === 'مداخيل') {
-            $stmt = $conn->prepare("UPDATE donate_transactions SET transaction_description = ?, amount = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE donate_transactions SET transaction_description = ?, amount = ?, transaction_date = ? WHERE id = ?");
         }
          else {
-            $stmt = $conn->prepare("UPDATE transactions SET transaction_description = ?, amount = ? WHERE id = ?");
+            $sold_emp = 0;
+            if (!empty($employee_id)) {
+                $sold_emp = $conn->query("SELECT balance FROM employees WHERE id='$employee_id'")->fetch_assoc()['balance'];
+            }
+            $stmt = $conn->prepare("UPDATE transactions SET transaction_description = ?, amount = ?, transaction_date = ?,sold_emp='$sold_emp' WHERE id = ?");
         }
 
         if ($stmt) {
-            $stmt->bind_param("sdi", $transactionDescription, $amount, $transactionId);
+            $stmt->bind_param("sdsi", $transactionDescription, $amount, $date, $transactionId);
             if ($stmt->execute()) {
                 $response['success'] = true;
                 $response['message'] = 'تم تحديث العملية بنجاح.';

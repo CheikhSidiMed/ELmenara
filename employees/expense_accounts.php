@@ -13,27 +13,29 @@ if (!isset($_SESSION['userid'])) {
 
 // Fetch all expense accounts initially
 $sql = "
-    SELECT 
+    SELECT
         ea.account_number,
         ea.account_name,
         ea.category,
         ea.account_balance,
         COALESCE(SUM(et.amount), 0) AS amount
-    FROM 
+    FROM
         expense_accounts AS ea
-    LEFT JOIN 
+    LEFT JOIN
          Expense_transaction AS et
-    ON 
+    ON
         ea.id = et.expense_account_id
-    GROUP BY 
+    GROUP BY
         ea.id, ea.account_number, ea.account_name
 ";
 
 $result = $conn->query($sql);
+$total_amount = 0;
 
 $accounts = [];
 while ($row = $result->fetch_assoc()) {
     $accounts[] = $row;
+    $total_amount += $row['amount'];
 }
 
 ?>
@@ -229,9 +231,26 @@ while ($row = $result->fetch_assoc()) {
             </td>
             <td><?= htmlspecialchars($account['account_name']) ?></td>
             <td><?= htmlspecialchars($account['category']) ?></td>
-            <td><?= htmlspecialchars(number_format($account['account_balance'] - $account['amount'])) ?></td>
+            <td >
+                <span style="font-weight: bold; font-size: 16px">
+                    <?= htmlspecialchars(number_format($account['account_balance'] - $account['amount'])) ?>
+                </span>
+            </td>
         </tr>
+        
     <?php endforeach; ?>
+        <tr>
+            <td colspan="3" style="text-align: left;">
+                <span style="margin-left: 5%; font-weight: bold; font-size: 23px; color: #1BA078;">
+                    <?= htmlspecialchars('الجميــــــــــــــــــــــــــــع') ?>
+                </span>
+            </td>
+            <td >
+                <span style="font-weight: bold; font-size: 18px">
+                    <?= htmlspecialchars(number_format($total_amount)) ?>
+                </span>
+            </td>
+        </tr>
 </tbody>
 
                 </table>

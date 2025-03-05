@@ -52,7 +52,7 @@ $branchesResult = $conn->query($branchesQuery);
 
 
 
-$selectedTeacher = ($_POST['role'] &&$_POST['role'] === 20) ?? null; // Récupérer le teacher depuis le formulaire
+$selectedTeacher = (isset($_POST['role']) && $_POST['role'] === 20) ? $_POST['role'] : null; // Récupérer le teacher depuis le formulaire
 $classesResult = [];
 
 if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélectionnés
@@ -98,11 +98,11 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
         }
 
         table {
-            margin-top: 20px;
+            margin-top: 2px;
             border: 2px solid #1BA078;
-            border-radius: 15px;
             background-color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
         }
 
         .table th, .table td {
@@ -155,21 +155,10 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
 
         /* Scrollbar styling */
         .table-container {
-            max-height: 500px;
-            overflow-y: auto;
+            overflow-x: auto;
+            width: 100%;
         }
 
-        .table-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background-color: #1BA078;
-        }
-
-        .table-container::-webkit-scrollbar-track {
-            background-color: #f1f1f1;
-        }
 
         .add-user-btn, .home-btn {
             display: inline-block;
@@ -199,7 +188,11 @@ if ($selectedBranch && $selectedTeacher) { // Vérifier que les deux sont sélec
             }
             th{
                 font-size: 15px !important;
-
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
             }
         }
     </style>

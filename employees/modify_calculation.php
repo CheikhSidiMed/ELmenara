@@ -12,6 +12,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
+
 $bankList = [];
 $sql = "SELECT account_id, bank_name FROM bank_accounts";
 $result = $conn->query($sql);
@@ -205,10 +206,13 @@ $conn->close();
             text-align: center;
             vertical-align: middle;
             border: 1px solid #ddd;
+            text-wrap: nowrap;
         }
 
         table th {
             background-color: #1BA078;
+            text-wrap: nowrap;
+
             color: white;
             font-weight: bold;
             position: sticky;
@@ -440,7 +444,7 @@ $conn->close();
             <!-- Account Type -->
             <div class="col-12 col-md-3">
                 <label for="account-type" class="form-label">نوعية الحساب:</label>
-                <select id="account-type" name="account_type" class="form-select" onchange="this.form.submit();">
+                <select id="account-type" name="account_type" class="form-select pe-5" onchange="this.form.submit();">
                     <option value="موظف" <?= (isset($_POST['account_type']) && $_POST['account_type'] == 'موظف') ? 'selected' : '' ?>>موظف</option>
                     <option value="صندوق" <?= (isset($_POST['account_type']) && $_POST['account_type'] == 'صندوق') ? 'selected' : '' ?>>صندوق</option>
                     <option value="البنك" <?= (isset($_POST['account_type']) && $_POST['account_type'] == 'البنك') ? 'selected' : '' ?>>البنك</option>
@@ -472,7 +476,7 @@ $conn->close();
                         <th>اسم الحساب</th>
                         <th>  حساب الدفع</th>
                         <th style="width: 60%">بيان العملية</th>
-                        <th>المبلغ</th>
+                        <th style="width: 9%">المبلغ</th>
                         <th>تحرير</th>
                         <th>إلغاء وصل</th>
                     </tr>
@@ -490,10 +494,16 @@ $conn->close();
                         ?>
                         <tr>
                             <td><?=  $index + 1 ?></td>
-                            <td><?= $transaction['tran_date'] ?></td>
+                            <td class="editable">
+                                <span class="transaction-description">
+                                    <?= $transaction['tran_date'] ?>
+                                </span>
+                                <input type="text" class="date-input form-control" value="<?= $transaction['tran_date'] ?>" style="display: none;">
+
+                            </td>
                             <td><?= $transaction['account_name'] ?></td>
                             <td>
-                                <select style="height: 40px; padding-right: 30px" name="payment_nature" class="form-select form-select-sm d-inline w-auto"
+                                <select style="height: 40px; padding-right: 30px" name="payment_nature" class="form-select form-select-sm d-inline w-auto pb-2 pt-1"
                                     onchange="toggleDiscountInput(this, <?= $transaction['id'] ?>,
                                         <?= $transaction['amount'] ?>,
                                         '<?= $transaction['payment_nature'] ?>',
@@ -519,7 +529,7 @@ $conn->close();
 
                             <td class="editable">
                                 <span class="transaction-amount"><?= number_format($transaction['amount'], 2) ?></span>
-                                <input type="number" class="amount-input form-control" value="<?= $transaction['amount'] ?>" style="display: none;">
+                                <input type="text" class="amount-input form-control" value="<?= $transaction['amount'] ?>" style="display: none;">
                                 <input type="number" class="anc-amount-input form-control" value="<?= $transaction['amount'] ?>" style="display: none;">
                                 <input type="text" class="employee_id form-control" value="<?= $transaction['employee_id'] ?>" style="display: none;">
                                 <input type="text" class="st_id form-control" value="<?= $transaction['student_id'] ?>" style="display: none;">
@@ -717,6 +727,7 @@ $conn->close();
         function editTransaction(button, id) {
             const row = button.closest('tr');
             row.querySelector('.transaction-input').style.display = 'block';
+            row.querySelector('.date-input').style.display = 'block';
             row.querySelector('.amount-input').style.display = 'block';
             row.querySelector('.transaction-description').style.display = 'none';
             row.querySelector('.transaction-amount').style.display = 'none';
@@ -727,6 +738,7 @@ $conn->close();
         function saveTransaction(button, id) {
             const row = button.closest('tr');
             const newDescription = row.querySelector('.transaction-input').value;
+            const date = row.querySelector('.date-input').value;
             const newAmount = row.querySelector('.amount-input').value;
             const ancAmount = row.querySelector('.anc-amount-input').value;
 
@@ -753,6 +765,7 @@ $conn->close();
             formData.append('ancAmount', ancAmount);
             formData.append('employee_id', employee_id);
             formData.append('type', ty_pe);
+            formData.append('date', date);
             formData.append('student_id', student_id);
             formData.append('agent_id', agent_id);
             formData.append('bank_account_id', bank_account_id);
@@ -766,6 +779,7 @@ $conn->close();
                         row.querySelector('.transaction-description').textContent = newDescription;
                         row.querySelector('.transaction-amount').textContent = parseFloat(newAmount).toFixed(2);
                         row.querySelector('.transaction-input').style.display = 'none';
+                        row.querySelector('.date-input').style.display = 'none';
                         row.querySelector('.amount-input').style.display = 'none';
                         row.querySelector('.transaction-description').style.display = 'block';
                         row.querySelector('.transaction-amount').style.display = 'block';

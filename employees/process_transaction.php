@@ -27,6 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payment_method = $_POST['payment_method'] ?? '';
     $bank_id = isset($_POST['bank']) && $_POST['bank'] !== '' ? $_POST['bank'] : null;
 
+    $date_time = $_POST['date_time'] ?
+                    $_POST['date_time'] . ' '.date('H:i:s') : date('Y-m-d H:i:s');
+
     // If no bank is provided, set a default fund_id value
     $fund_id = isset($_POST['bank']) && $_POST['bank'] !== '' ? null : 1;
     $transaction_description = $_POST['transaction_description'] ?? '';
@@ -37,14 +40,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert data into receipts
     $stmt = $conn->prepare("INSERT INTO receipts (receipt_date, total_amount, receipt_description, created_by)
-        VALUES (NOW(), ?, ?, ?)");
-    $stmt->bind_param("sss", $amount, $tr_ption, $user_id);
+        VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $date_time, $amount, $tr_ption, $user_id);
     $stmt->execute();
 
     $receipts_id = $conn->insert_id;
 
-    $stmt = $conn->prepare(" INSERT INTO combined_transactions (employee_id, type, description, paid_amount, payment_method, bank_id, user_id, fund_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("isssssss", $employee_id, $transaction_type, $tr_ption, $amount, $payment_method, $bank_id, $user_id, $fund_id);
+    $stmt = $conn->prepare(" INSERT INTO combined_transactions (date, employee_id, type, description, paid_amount, payment_method, bank_id, user_id, fund_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sisssssss", $date_time, $employee_id, $transaction_type, $tr_ption, $amount, $payment_method, $bank_id, $user_id, $fund_id);
     $stmt->execute();
     $transaction_id = $conn->insert_id;
 
@@ -54,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
     $conn->commit();
-
 
 
     // Begin transaction for data integrity
@@ -106,11 +108,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute();
         }
     
+        $sold_emp = $conn->query("SELECT balance FROM employees WHERE id='$employee_id'")->fetch_assoc()['balance'];
+
         // Insert transaction record
-        $sql = "INSERT INTO transactions (transaction_description, amount, transaction_type, fund_id, bank_account_id, employee_id, user_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO transactions (transaction_date, transaction_description, amount, transaction_type, fund_id, bank_account_id, employee_id, user_id, sold_emp)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sdsiiii', $tr_ption, $amount, $transaction_type, $fund_id, $bank_account_id, $employee_id, $user_id);
+        $stmt->bind_param('ssdsiiiid', $date_time, $tr_ption, $amount, $transaction_type, $fund_id, $bank_account_id, $employee_id, $user_id, $sold_emp);
         $stmt->execute();
         
         $conn->commit();

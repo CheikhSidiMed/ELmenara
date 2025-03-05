@@ -111,7 +111,6 @@ if (!empty($_POST['absent_students'])) {
 
 <script>
 function markAsProcessed(studentId, session_time, date_time) {
-    console.log(date_time);
     fetch('ab_mark_processed.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

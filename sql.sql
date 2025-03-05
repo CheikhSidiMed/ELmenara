@@ -3,12 +3,16 @@ CREATE TABLE etudiants_certified (
     full_name VARCHAR(100) NOT NULL,
     NNI VARCHAR(50) NOT NULL,
     phone VARCHAR(50) NOT NULL,
+    date VARCHAR(50) NOT NULL,
     birth_date VARCHAR(50) NOT NULL,
     birth_city VARCHAR(50) NOT NULL,
     photo VARCHAR(250) NULL,
-    type ENUM('نافع', 'حفص') NOT NULL
+    year VARCHAR(50) NOT NULL,
+    type_ijaza VARCHAR(50) NOT NULL,
+    type ENUM('نافع', 'حفص', 'أخر') NOT NULL
 );
 
+ALTER TABLE `processed_salaries` CHANGE `year` `year` VARCHAR(20) NOT NULL;
 
 
 

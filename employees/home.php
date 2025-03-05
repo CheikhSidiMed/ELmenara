@@ -345,8 +345,8 @@
                     <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
                     <ul class="collapse list-unstyled">
                         <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
-                        <li><a href="Debt report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
-                        <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
+                        <li><a href="debt_report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
+                        <li><a href="modify_calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
                     </ul>
                 </li>
                 </ul>
@@ -566,7 +566,7 @@
                     <li><a href="students_accounts.php"><i class="fa fa-user-graduate"></i> حسابات الطلاب </a></li>
                     <li><a href="employess.php"><i class="fa fa-user-tie"></i> حسابات الموظفين </a></li>
                     <li><a href="donations_ccounts.php"><i class="fa fa-receipt"></i>  حسابات المداخيل </a></li>
-                    <li><a href="Expense Accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
+                    <li><a href="expense_accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
                     <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
                     <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
                     <li><a href="discounts_list.php"><i class="fa fa-tags"></i> لائحة التخفيضات </a></li>
@@ -575,7 +575,7 @@
                 <li class="dropdown">
                     <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-cogs"></i>   الإجراءات </a>
                     <ul class="collapse list-unstyled">
-                    <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
+                    <li><a href="modify_calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
                     <!-- <li><a href="employees_salary.php"><i class="fa fa-money-bill-wave"></i>     إدخال الرواتب </a></li> -->
                     <li><a href="fire_employee.php"><i class="fa fa-user-slash"></i>  فصل موظف </a></li>
                     </ul>
@@ -584,7 +584,7 @@
                     <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i> التقارير المالية </a>
                     <ul class="collapse list-unstyled">
                     <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
-                    <li><a href="Debt report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
+                    <li><a href="debt_report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
                     <li><a href="exempted student report.php"><i class="fa fa-user-check"></i>الطلاب المعفيون </a></li>
                     </ul>
                     </li>
@@ -683,7 +683,7 @@
                                 <li><a href="students_accounts.php"><i class="fa fa-user-graduate"></i> حسابات الطلاب </a></li>
                                 <li><a href="employess.php"><i class="fa fa-user-tie"></i> حسابات الموظفين </a></li>
                                 <li><a href="donations_ccounts.php"><i class="fa fa-receipt"></i>  حسابات المداخيل </a></li>
-                                <li><a href="Expense Accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
+                                <li><a href="expense_accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
                                 <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
                                 <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
                                 <li><a href="discounts_list.php"><i class="fa fa-tags"></i> لائحة التخفيضات </a></li>
@@ -695,14 +695,14 @@
                                 <li><a href="employees_salary.php"><i class="fa fa-money-bill-wave"></i> إدخال الرواتب </a></li>
                                 <li><a href="fire_employee.php"><i class="fa fa-user-slash"></i> فصل موظف </a></li>
                                 <li><a href="employees_manage.php"><i class="fa fa-user-edit"></i> إدارة الموظفين </a></li>
-                                <li><a href="Modify a calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
+                                <li><a href="modify_calculation.php"><i class="fa fa-calculator"></i> تعديل عملية حسابية </a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
                             <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
                             <ul class="collapse list-unstyled">
                                 <li><a href="Daily.php"><i class="fa fa-calendar-day"></i>      اليومية </a></li>
-                                <li><a href="Debt report.php"><i class="fa fa-user-times"></i>      الطلاب المدينون </a></li>
+                                <li><a href="debt_report.php"><i class="fa fa-user-times"></i>      الطلاب المدينون </a></li>
                                 <li><a href="exempted student report.php"><i class="fa fa-user-check"></i>        الطلاب المعفيون </a></li>
                                 <li><a href="Report of the month.php"><i class="fa fa-chart-line"></i>        التقرير المالي الشهري </a></li>
                             </ul>

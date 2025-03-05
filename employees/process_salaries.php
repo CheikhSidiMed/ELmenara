@@ -60,12 +60,14 @@ try {
     $result = $conn->query("SELECT id, full_name, salary FROM employees");
     while ($row = $result->fetch_assoc()) {
         $t_d = "إدخال الرواتب: { $m_hs } للموظف(ة) {$row['full_name']}";
+        $emp_id = $row['id'];
+        $sold_emp = $conn->query("SELECT balance FROM employees WHERE id='$emp_id'")->fetch_assoc()['balance'];
 
-        $stmt = $conn->prepare("
-            INSERT INTO transactions (transaction_description, amount, transaction_type, employee_id, user_id)
-            VALUES (?, ?, 'plus', ?, ?)
+
+        $stmt = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, employee_id, user_id, sold_emp)
+            VALUES (?, ?, 'plus', ?, ?, ?)
         ");
-        $stmt->bind_param("ssii", $t_d, $row['salary'],  $row['id'], $user_id); 
+        $stmt->bind_param("ssiid", $t_d, $row['salary'],  $row['id'], $user_id, $sold_emp);
         $stmt->execute();
     }
 

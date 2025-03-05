@@ -81,11 +81,12 @@ if ($filterType === 'all') {
                 ";
 } else {
     $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month, a.whatsapp_phone,
-                p.remaining_amount
+                p.remaining_amount, l.price
                 FROM students s
                 LEFT JOIN payments p ON s.id = p.student_id
                 LEFT JOIN agents a ON s.agent_id = a.agent_id
                 JOIN classes c ON s.class_id = c.class_id
+                JOIN levels l ON s.level_id = l.id
                 WHERE c.class_name = ? AND s.remaining != 0.00 ";
 }
 
@@ -101,6 +102,7 @@ $result = $stmt_new->get_result();
 
 
 $students = [];
+$rem_tot = 0;
 while ($row = $result->fetch_assoc()) {
     $registrationDate = $row['registration_date'];
     $registrationYear = (int)date('Y', strtotime($registrationDate));
@@ -116,11 +118,15 @@ while ($row = $result->fetch_assoc()) {
             'remaining_amount' =>  0,
             'whatsapp_phone' => $row['whatsapp_phone'],
             'id' => $row['id'],
+            'rem_tot' => 0,
+            'price' => $row['price'],
             'paid_months' => [],
             'unpaid_months' => []
         ];
     }
     $students[$studentName]['remaining_amount'] += $row['remaining_amount'];
+    $students[$studentName]['rem_tot'] += $row['remaining_amount'];
+    $rem_tot += $row['remaining_amount'];
 
     if ($row['month']) {
         $students[$studentName]['paid_months'][] = $row['month'];
@@ -143,10 +149,14 @@ foreach ($students as $studentName => &$student) {
 
         if ((int)$month > 0 && isset($arabicMonths[(int)$month]) && !in_array($arabicMonths[(int)$month], $student['paid_months'])) {
             $student['unpaid_months'][] = $arabicMonths[(int)$month];
+            $student['rem_tot'] += $student['price'];
+            $rem_tot += $student['price'];
+
         }
         
     }
 }
+
 unset($student);
 
 $stmt_new->close();
@@ -416,6 +426,7 @@ $conn->close();
     </script>
 </head>
 <body>
+
 <div class="container main-contain">
     <!-- Header Section -->
     <div class="form-header d-flex flex-column mb-3 flex-md-row justify-content-between align-items-center">
@@ -429,66 +440,66 @@ $conn->close();
         </div>
     </div>
 
-    <!-- Form Section -->
+
     <form action="" method="get" class="row g-3 align-items-end">
-    <!-- Gestion des mois non payés -->
-    <div class="col-12 col-md-6 col-lg-3">
-        <button class="btn btn-primary w-100" onclick="window.location.href='months_not_paid.php'">
+        
+        <div class="col-12 col-md-6 col-lg-3">
+            <a class="btn btn-primary w-100" onclick="window.location.href='months_not_paid.php'">
             إدارة الأشهر غير المدفوعة
-        </button>
-    </div>
+            </a>
+        </div>
 
-    <!-- Sélection de l'année -->
-    <div class="col-12 col-md-6 col-lg-2">
-        <label for="year-select" class="form-label">السنة المالية:</label>
-        <select id="year-select" name="year" class="form-select">
-            <option><?php echo htmlspecialchars($last_year); ?></option>
-        </select>
-    </div>
+        <!-- Sélection de l'année -->
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="year-select" class="form-label">السنة المالية:</label>
+            <select id="year-select" name="year" class="form-select">
+                <option><?php echo htmlspecialchars($last_year); ?></option>
+            </select>
+        </div>
 
-    <!-- Sélection de la section -->
-    <div class="col-12 col-md-6 col-lg-2">
-        <label for="section" class="form-label">حسب القسم:</label>
-        <select id="section" name="class" class="form-select">
-            <?php foreach ($classes as $class): ?>
-                <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
+        <!-- Sélection de la section -->
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="section" class="form-label">حسب القسم:</label>
+            <select id="section" name="class" class="form-select">
+                <?php foreach ($classes as $class): ?>
+                    <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-    <!-- Sélection du filtre -->
-    <div class="col-12 col-md-6 col-lg-2">
-        <label for="filter-select" class="form-label">تصفية حسب:</label>
-        <select id="filter-select" name="filter" class="form-select">
-            <option value="class">حسب القسم</option>
-            <option value="all">حسب الجميع</option>
-        </select>
-    </div>
+        <!-- Sélection du filtre -->
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="filter-select" class="form-label">تصفية حسب:</label>
+            <select id="filter-select" name="filter" class="form-select">
+                <option value="class">حسب القسم</option>
+                <option value="all">حسب الجميع</option>
+            </select>
+        </div>
 
-    <!-- Boutons de validation et d'impression -->
-    <div class="col-12 col-md-6 col-lg-3 d-flex gap-2">
-        <button type="submit" class="btn btn-primary w-100">
-            <i class="bi bi-check-square"></i> تأكيد العملية
-        </button>
-        <button type="button" class="btn btn-secondary w-100" onclick="printTable()">
-            <i class="bi bi-printer"></i> طباعة
-        </button>
-    </div>
-</form>
+        <!-- Boutons de validation et d'impression -->
+        <div class="col-12 col-md-6 col-lg-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-check-square"></i> تأكيد العملية
+            </button>
+            <button type="button" class="btn btn-secondary w-100" onclick="printTable()">
+                <i class="bi bi-printer"></i> طباعة
+            </button>
+        </div>
+    </form>
 
 </div>
 
 
 <!-- Report Section -->
-    <div class="container main-contain mt-4">
-        <div class="text-center">
-            <img src="../images/header.png" class="img-fluid" alt="Header Image">
-            <h2 class="header-title mt-3">تقرير بالحسابات المدينة</h2>
-            
-            <?php if ($filterType === 'class'): ?>
-                <h3 class="header-title">الفصل: <?= htmlspecialchars($selectedClass) ?></h3>
-            <?php endif; ?>
-        </div>
+<div class="container main-contain mt-4">
+    <div class="text-center">
+        <img src="../images/header.png" class="img-fluid" alt="Header Image">
+        <h2 class="header-title mt-3">تقرير بالحسابات المدينة</h2>
+        
+        <?php if ($filterType === 'class'): ?>
+            <h3 class="header-title">الفصل: <?= htmlspecialchars($selectedClass) ?></h3>
+        <?php endif; ?>
+    </div>
 
 
     <div class="table-responsive tbl">
@@ -500,11 +511,12 @@ $conn->close();
                         <th>رقم الهاتف</th>
                         <th>الأشهر غير المدفوعة</th>
                         <th>المبلغ المتبقي</th>
+                        <th> الدبن</th>
                         <th><input type="checkbox" id="select-all" onclick="toggleSelectAll(this)" /></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($students as $name => $data): 
+                    <?php foreach ($students as $name => $data):
                         if (count($data['unpaid_months']) === 1 && in_array('كل الأشهر مدفوعة', $data['unpaid_months']) || (empty($data['unpaid_months']) && $data['remaining_amount'] <= 0.00)) {
                             continue;
                         } ?>
@@ -513,30 +525,34 @@ $conn->close();
                             <td><?= htmlspecialchars($name) ?></td>
                             <td><?= htmlspecialchars( $data['whatsapp_phone'] ?? $data['phone']) ?></td>
                             <td>
-                                <?= !empty($data['unpaid_months']) 
-                                ? implode(', ', $data['unpaid_months']) 
-                                : '<span class="text-success">كل الأشهر مدفوعة</span>' 
+                                <?= !empty($data['unpaid_months'])
+                                ? implode(', ', $data['unpaid_months'])
+                                : '<span class="text-success">كل الأشهر مدفوعة</span>'
                                 ?>
                             </td>
                             <td><?= htmlspecialchars($data['remaining_amount']) ?></td>
+                            <td><?= htmlspecialchars($data['rem_tot']) ?></td>
                             <td>
-                                <input type="checkbox" name="selected_students[]" 
-                                    value="<?= htmlspecialchars($data['id']) ?>|<?= htmlspecialchars($data['remaining_amount']) ?>|<?= htmlspecialchars(implode(',', $data['unpaid_months'] ?? [])) ?>" />
-                            </td>                        
+                                <input type="checkbox" name="selected_students[]"
+                                    value="<?= htmlspecialchars($data['rem_tot']) ?>|htmlspecialchars($data['id']) ?>|<?= htmlspecialchars($data['remaining_amount']) ?>|<?= htmlspecialchars(implode(',', $data['unpaid_months'] ?? [])) ?>" />
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5">
+                        <td colspan="4">
                             <button type="submit" class="btn btn-success">إرسال رسائل واتساب</button>
+                        </td>
+                        <td colspan="2" style="text-align: right; font-size: 20px; font-weight: bold;">
+                            <span style=""><?= str_replace('.', '.', sprintf("%0.2f", floatval($rem_tot))) ?></span>
                         </td>
                     </tr>
                 </tfoot>
             </form>
         </table>
-        </div>
     </div>
+</div>
 
     
 

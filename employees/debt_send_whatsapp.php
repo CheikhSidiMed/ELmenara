@@ -23,7 +23,7 @@ if (!isset($_SESSION['dept_students'])) {
     $_SESSION['dept_students'] = [];
 }
 
-$currentTime = time(); 
+$currentTime = time();
 
 // تنظيف الطلاب الذين تمت معالجتهم قبل أكثر من 10 دقائق
 foreach ($_SESSION['dept_students'] as $id => $timestamp) {
@@ -36,9 +36,9 @@ $selectedStudents = $_POST['selected_students'];
 
 foreach ($selectedStudents as $studentData) {
     // تقسيم البيانات المستلمة من خانة الاختيار
-    [$student_id, $remaining_amount, $unpaid_months] = explode('|', $studentData);
+    [$rem_tot, $student_id, $remaining_amount, $unpaid_months] = explode('|', $studentData);
     $student_id = intval($student_id);
-    $remaining_amount = floatval($remaining_amount);
+    $remaining_amount = floatval($rem_tot);
     $unpaid_months = array_filter(explode(',', $unpaid_months));
 
     if (isset($_SESSION['dept_students'][$student_id])) {
@@ -63,8 +63,8 @@ foreach ($selectedStudents as $studentData) {
 
     if ($result && $student = $result->fetch_assoc()) {
         $student_name = htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8');
-        $phone = !empty($student['phone']) && $student['phone'] != '0' 
-            ? $student['phone'] 
+        $phone = !empty($student['phone']) && $student['phone'] != '0'
+            ? $student['phone']
             : $student['whatsapp_phone'];
 
         if (!empty($phone)) {
@@ -76,19 +76,21 @@ foreach ($selectedStudents as $studentData) {
             
             🛑 *تذكير*
             
-            *السيد الوكيل - المحترم، شريكنا في العملية التعليمية،*  
-            تحية طيبة وبعد،  
-            تود إدارة الحسابات تذكيركم بضرورة الإسراع في دفع الرسوم الشهرية للطالب(ة):  
-            *: $student_name*  
-            *الأشهر غير المدفوعة: $unpaidMonthsText*  
+            *السيد الوكيل - المحترم، شريكنا في العملية التعليمية،*
+            تحية طيبة وبعد،
+            تود إدارة الحسابات تذكيركم بضرورة الإسراع في دفع الرسوم الشهرية للطالب(ة):
+            *: $student_name*
+            *الأشهر غير المدفوعة: $unpaidMonthsText,*
+
+            *  المبلغ : $remaining_amount,*
             
-            وذلك لضمان استمرار العملية التعليمية بكل سلاسة. 
+            وذلك لضمان استمرار العملية التعليمية بكل سلاسة.
             
-            🔴 *طرق الدفع المتاحة:*  
-            - الدفع المباشر  
+            🔴 *طرق الدفع المتاحة:*
+            - الدفع المباشر
             - التطبيقات البنكية: بنكيلي/مصرفي/السداد/بيم بانك (26056959)
             
-            *مع خالص التقدير والاحترام،*  
+            *مع خالص التقدير والاحترام،*
             إدارة الحسابات
             ";
             $encodedMessage = urlencode($message);
@@ -100,7 +102,7 @@ foreach ($selectedStudents as $studentData) {
                 <span style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>
                     📩 رسالة جاهزة للطالب : <strong style='color: #007bff;'>$student_name</strong>
                 </span>
-                <a href=\"$whatsappUrl\" target=\"_blank\" 
+                <a href=\"$whatsappUrl\" target=\"_blank\"
                     onclick=\"markAsProcessed($student_id)\"
                     style='display: inline-block; padding: 8px 12px; background-color: #25D366; color: #fff; text-decoration: none; border-radius: 5px; font-family: Arial, sans-serif; font-size: 14px;'>
                     📤 إرسال إلى $phone
