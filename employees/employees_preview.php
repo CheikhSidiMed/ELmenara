@@ -53,19 +53,26 @@ if ($employee_id) {
     ";
 
     // Add date filter to the query if dates are set
+    // if ($start_date && $end_date) {
+    //     $query .= " AND transaction_date BETWEEN ? AND ? ORDER BY id DESC";
+    // }
+
+    // $query .= " ORDER BY id DESC";
+
+    // $stmt = $conn->prepare($query);
+
     if ($start_date && $end_date) {
-        $query .= " AND transaction_date BETWEEN ? AND ?";
-    }
+        $stmt = $conn->prepare($query);
 
-    $query .= " ORDER BY id DESC";
-
-    $stmt = $conn->prepare($query);
-
-    if ($start_date && $end_date) {
+        $query .= " AND transaction_date BETWEEN ? AND ? ORDER BY id DESC";
         $end_date_plus_one = (new DateTime($end_date))->modify('+1 day')->format('Y-m-d');
 
         $stmt->bind_param('iss', $employee_id, $start_date, $end_date_plus_one);
     } else {
+        $query .= " ORDER BY id DESC";
+
+        $stmt = $conn->prepare($query);
+
         $stmt->bind_param('i', $employee_id);
     }
 
