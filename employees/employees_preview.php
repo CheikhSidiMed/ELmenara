@@ -1,5 +1,9 @@
 <?php
 include 'db_connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 session_start();
 
@@ -47,37 +51,31 @@ if ($employee_id) {
     // Fetch transactions with optional date filters
     $transactions = [];
     $query = "SELECT DATE_FORMAT(transaction_date, '%d-%m-%Y') as transaction_date,
-               transaction_description, amount, transaction_type, sold_emp
-        FROM transactions
-        WHERE employee_id = ?
-    ";
+                transaction_description, amount, transaction_type, sold_emp
+            FROM transactions
+            WHERE employee_id = ?";
 
-    // Add date filter to the query if dates are set
-    // if ($start_date && $end_date) {
-    //     $query .= " AND transaction_date BETWEEN ? AND ? ORDER BY id DESC";
-    // }
+    // Check if date filters are set
+    if (!empty($start_date) && !empty($end_date)) {
+        $query .= " AND transaction_date BETWEEN ? AND ?";
+    }
+    $query .= " ORDER BY id DESC";
 
-    // $query .= " ORDER BY id DESC";
+    // Prepare the statement
+    $stmt = $conn->prepare($query);
 
-    // $stmt = $conn->prepare($query);
-
-    if ($start_date && $end_date) {
-        $stmt = $conn->prepare($query);
-
-        $query .= " AND transaction_date BETWEEN ? AND ? ORDER BY id DESC";
+    // Bind parameters based on the condition
+    if (!empty($start_date) && !empty($end_date)) {
         $end_date_plus_one = (new DateTime($end_date))->modify('+1 day')->format('Y-m-d');
-
         $stmt->bind_param('iss', $employee_id, $start_date, $end_date_plus_one);
     } else {
-        $query .= " ORDER BY id DESC";
-
-        $stmt = $conn->prepare($query);
-
         $stmt->bind_param('i', $employee_id);
     }
 
+    // Execute the query
     $stmt->execute();
     $result = $stmt->get_result();
+
     while ($row = $result->fetch_assoc()) {
         $transactions[] = $row;
         if ($row['transaction_type'] === 'plus') {
