@@ -66,12 +66,12 @@ if ($employee_id) {
         $stmt = $conn->prepare($query);
 
         $end_date_plus_one = (new DateTime($end_date))->modify('+1 day')->format('Y-m-d');
-        $stmt->bind_param('iss', $employee_id, $start_date, $end_date_plus_one);
+        $stmt->bind_param('sss', $employee_id, $start_date, $end_date_plus_one);
     } else {
         $query .= " ORDER BY id DESC";
         $stmt = $conn->prepare($query);
 
-        $stmt->bind_param('i', $employee_id);
+        $stmt->bind_param('s', $employee_id);
     }
 
     // Execute the query
