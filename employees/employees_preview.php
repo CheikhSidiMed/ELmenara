@@ -55,27 +55,22 @@ if ($employee_id) {
             FROM transactions
             WHERE employee_id = ?";
 
+    // Check if date filters are set
+    if (!empty($start_date) && !empty($end_date)) {
+        $query .= " AND transaction_date BETWEEN ? AND ?";
+    }
+    $query .= " ORDER BY id DESC";
+
     // Prepare the statement
-    $stmt = false;
+    $stmt = $conn->prepare($query);
 
     // Bind parameters based on the condition
     if (!empty($start_date) && !empty($end_date)) {
-        $query .= " AND transaction_date BETWEEN ? AND ? ORDER BY transaction_date ASC"; // Changed ORDER BY to use transaction_date
-        $stmt = $conn->prepare($query);
-        if (!$stmt) {
-            die("Prepare failed: " . $conn->error);
-        }
         $end_date_plus_one = (new DateTime($end_date))->modify('+1 day')->format('Y-m-d');
         $stmt->bind_param('iss', $employee_id, $start_date, $end_date_plus_one);
     } else {
-        $query .= " ORDER BY transaction_date ASC"; // Changed ORDER BY to use transaction_date
-        $stmt = $conn->prepare($query);
-        if (!$stmt) {
-            die("Prepare failed: " . $conn->error);
-        }
         $stmt->bind_param('i', $employee_id);
     }
-
 
     // Execute the query
     $stmt->execute();
