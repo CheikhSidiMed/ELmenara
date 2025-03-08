@@ -55,9 +55,10 @@ if (!empty($_POST['absent_students'])) {
         ");
         $query->bind_param("i", $student_id);
         $query->execute();
-        $result = $query->get_result();
+        $student = $query->get_result()->fetch_assoc();
+        $query->close();
 
-        if ($result && $student = $result->fetch_assoc()) {
+        if ($student) {
             // Récupération des données de session
             $student_name = htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8');
 
