@@ -534,7 +534,7 @@ $conn->close();
                             <td><?= htmlspecialchars($data['rem_tot']) ?></td>
                             <td>
                                 <input type="checkbox" name="selected_students[]"
-                                    value="<?= htmlspecialchars($data['rem_tot']) ?>|htmlspecialchars($data['id']) ?>|<?= htmlspecialchars($data['remaining_amount']) ?>|<?= htmlspecialchars(implode(',', $data['unpaid_months'] ?? [])) ?>" />
+                                    value="<?= htmlspecialchars($data['rem_tot']) ?>|<?= htmlspecialchars($data['id']) ?>|<?= htmlspecialchars($data['remaining_amount']) ?>|<?= htmlspecialchars(implode(',', $data['unpaid_months'] ?? [])) ?>" />
                             </td>
                         </tr>
                     <?php endforeach; ?>
