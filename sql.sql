@@ -13,9 +13,13 @@ CREATE TABLE etudiants_certified (
 );
 
 ALTER TABLE `processed_salaries` CHANGE `year` `year` VARCHAR(20) NOT NULL;
+-------
+ALTER TABLE `students` ADD `rewaya` VARCHAR(100) NULL AFTER `level_id`, ADD `days` VARCHAR(200) NULL AFTER `rewaya`, ADD `tdate` VARCHAR(100) NULL AFTER `days`;
+ALTER TABLE `students` CHANGE `part_count` `part_count` INT(11) NOT NULL DEFAULT '0';
+ALTER TABLE `students` ADD `start` VARCHAR(100) NULL AFTER `tdate`;
+ALTER TABLE `students` ADD `is_active` INT NOT NULL DEFAULT '0' AFTER `start`;
 
-
-
+----
 CREATE TABLE user_branch (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,

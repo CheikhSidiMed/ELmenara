@@ -25,7 +25,7 @@ if (isset($data['student_id'], $data['session_time'])) {
     // Check if the student was already processed recently
     if (isset($_SESSION['processed_students'][$student_id]) &&
         ($currentTime - $_SESSION['processed_students'][$student_id] < 60)) { // 60 seconds cooldown
-        http_response_code(429); // Too many requests
+        http_response_code(429);
         echo json_encode(['status' => 'error', 'message' => 'تم معالجة هذا الطالب مؤخرًا.']);
         exit;
     }

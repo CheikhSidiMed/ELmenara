@@ -263,11 +263,11 @@
                         <li class="dropdown">
                             <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
+                                <li><a href="elmahdara/add_students.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
                                 <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                                <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                <li><a href="elmahdara/list_students_el.php"><i class="fa fa-edit"></i>  سجل الطلاب</a></li>
                                 <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
-                                <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
+                                <!-- <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li> -->
                             </ul>
                         </li>
                         <li class="dropdown">

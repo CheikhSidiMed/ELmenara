@@ -12,12 +12,12 @@ if (!isset($_SESSION['userid'])) {
 
 if (isset($_POST['phone'])) {
     $phone = $_POST['phone'];
-
+    $whats_phone = $phone;
     // Query to fetch agent information
-    $query = "SELECT * FROM agents 
-              WHERE phone LIKE '$phone%' 
-              OR phone_2 LIKE '$phone%' 
-              OR agent_name LIKE '$phone%' 
+    $query = "SELECT * FROM agents
+              WHERE phone LIKE '$phone%'
+              OR phone_2 LIKE '$phone%'
+              OR agent_name LIKE '$phone%'
               OR whatsapp_phone LIKE '$phone%'";
 
     $result = $conn->query($query);
@@ -26,21 +26,21 @@ if (isset($_POST['phone'])) {
         $agent = $result->fetch_assoc();
 
         // Fetch related students for this agent
-        $studentQuery = "SELECT a.id, a.student_name, c.class_name, b.branch_name 
+        $studentQuery = "SELECT a.id, a.student_name, c.class_name, b.branch_name
                          FROM students a
-                         LEFT JOIN classes c ON a.class_id = c.class_id 
-                         LEFT JOIN branches b ON a.branch_id = b.branch_id 
+                         LEFT JOIN classes c ON a.class_id = c.class_id
+                         LEFT JOIN branches b ON a.branch_id = b.branch_id
                          WHERE agent_id = " . $agent['agent_id'];
                          
         $studentResult = $conn->query($studentQuery);
-
+        $whats_phone = $agent['whatsapp_phone'];
         $students = [];
         while ($studentRow = $studentResult->fetch_assoc()) {
             $students[] = [
                 'id' => $studentRow['id'], // Fixed to use $studentRow
                 'name' => $studentRow['student_name'],
-                'class' => $studentRow['class_name'],  
-                'branch' => $studentRow['branch_name']  
+                'class' => $studentRow['class_name'],
+                'branch' => $studentRow['branch_name']
             ];
         }
 
@@ -48,6 +48,7 @@ if (isset($_POST['phone'])) {
             'exists' => true,
             'agent_name' => $agent['agent_name'],
             'agent_id' => $agent['agent_id'],
+            'agentP' => $whats_phone,
             'students' => $students
         ]);
     } else {
