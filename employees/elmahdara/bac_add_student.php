@@ -31,6 +31,7 @@ try {
         $days_s = $_POST['days'] ?? [];
         $days = implode(', ', $days_s);
         $start = $_POST['start'];
+        $elmoutoune = $_POST['elmoutoune'];
         $tdate = $_POST['tdate'];
         $class = $_POST['class'];
         $date_din = $_POST['date_din'];
@@ -76,13 +77,13 @@ try {
             $remaining = $_POST['remaining'];
         }
         
-        $sql = "INSERT INTO students (start, class_id, regstration_date_count, student_name, rewaya, days, gender, birth_date, birth_place, branch_id, tdate, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO students (elmoutoune, start, class_id, regstration_date_count, student_name, rewaya, days, gender, birth_date, birth_place, branch_id, tdate, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if ($stmt === false) {
             die(json_encode(array('success' => false, 'message' => 'Error preparing the statement: ' . $conn->error)));
         }
-        $stmt->bind_param('sssssssssisisiiisi',
-            $start, $class, $date_din, $student_name, $rewaya, $days, $gender, $birth_date, $birth_place,
+        $stmt->bind_param('ssssssssssisisiiisi',
+            $elmoutoune, $start, $class, $date_din, $student_name, $rewaya, $days, $gender, $birth_date, $birth_place,
             $branch_id, $tdate, $agent_id, $payment_nature, $fees, $discount, $remaining, $photoUrl, $student_phone
         );
 
@@ -101,8 +102,8 @@ try {
 
 
             $phone = $student_phone !== 0 ? $student_phone : $agent_phone;
-            // $encodedMessage = urlencode($msg);
-            $whatsappUrl = "https://wa.me/222$phone?text=$msg";
+            $enMSG = urlencode($msg);
+            $whatsappUrl = "https://wa.me/222$phone?text=$enMSG";
 
             $last_id = $conn->insert_id;
             echo json_encode(

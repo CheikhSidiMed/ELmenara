@@ -18,7 +18,7 @@ if (!isset($_SESSION['userid'])) {
 
 // Access session variables safely
 $userid = $_SESSION['userid'];
-$role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; // Use role_id instead of role_name
+$role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null;
 
 
 $query = "SELECT class_id, class_name FROM classes WHERE branch_id = 22";
@@ -31,7 +31,7 @@ if ($classResult === false) {
 $jours = [
     "Saturday"  => "السبت",
     "Sunday"    => "الأحد",
-    "Monday"    => "الاثنين",
+    "Monday"    => "الإثنين",
     "Tuesday"   => "الثلاثاء",
     "Wednesday" => "الأربعاء",
     "Thursday"  => "الخميس",
@@ -125,20 +125,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="form-group col-md-12">
                         <div class="card" id="agentInfoCard" style="display: none;">
-                            <!-- <div class="card-body bg-info-subtle p-4 rounded shadow"> -->
-                                <div>
-                                    <h2 class="card-title text-start text-success mb-3" id="agentName">
-                                        اسم الوكيل(ة):
-                                    </h2>
-                                </div>
-                                <h3 class="card-text text-end alert-light bg-white border border-success rounded p-2 mb-3">
-                                    <strong>الطلاب المرتبطين</strong>
-                                </h3>
-                                <div id="relatedStudentsList" class="list-group list-group-flush">
-                                    <!-- Liste des étudiants sera ajoutée ici -->
-                                </div>
-                            <!-- </div> -->
-
+                            <div>
+                                <h2 class="card-title text-start text-success mb-3" id="agentName">
+                                    اسم الوكيل(ة):
+                                </h2>
+                            </div>
+                            <h3 class="card-text text-end alert-light bg-white border border-success rounded p-2 mb-3">
+                                <strong>الطلاب المرتبطين</strong>
+                            </h3>
+                            <div id="relatedStudentsList" class="list-group list-group-flush">
+                                <!-- Liste des étudiants sera ajoutée ici -->
+                            </div>
                         </div>
                     </div>
 
@@ -186,6 +183,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="form-group col-md-4">
                             <label for="rewaya">الرواية </label>
                             <input type="text" class="form-control" id="rewaya" name="rewaya" placeholder="الرواية" >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="elmoutoune">المتون التجويدية </label>
+                            <input type="text" class="form-control" id="elmoutoune" name="elmoutoune" placeholder="المتون التجويدية" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="days">الأيام الماسبة</label>

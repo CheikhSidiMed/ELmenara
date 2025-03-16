@@ -18,7 +18,7 @@ $statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
 
 
 // Fetch student data from the database, including agent phone number
-$sql = "SELECT s.id, s.start, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
+$sql = "SELECT s.id, s.start, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name,
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
@@ -49,161 +49,9 @@ $result = $stmt->get_result();
     <script src="../js/sweetalert2.min.js"></script>
     <link href="../css/bootstrap-icons.css" rel="stylesheet">
     <link href="../fonts/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style1.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 5px;
-        }
-        
-        h2 {
-            font-family: 'Amiri', serif;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-            color: #017B6A;
-        }
-        .search-box input {
-            border: 2px solid #AB8568;
-            padding: 10px;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .is_active {
-            color:  #BD9237;
-        }
-        .container {
-            margin-top: 10px;
-        }
-        .navbar {
-            margin-bottom: 20px;
-            background-color: #017B6A;
-            padding-bottom: 10px;
-        }
-        .navbar a {
-            color: white;
-        }
-        .table-container {
-            position: relative;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-        .table {
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-            text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px; /* Add padding for better spacing */
-        }
-        .table th {
-            background-color: #017B6A;
-            color: #ffffff;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Add alternating row colors */
-        }
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        .btn-primary {
-            background-color: #017B6A;
-            border-color: #017B6A;
-        }
-        .btn-danger {
-            color: #fff !important;
-        }
-
-        .btn-primary:hover {
-            background-color: #AB8568;
-            border-color: #AB8568;
-        }
-        .btn-back {
-            margin-bottom: 20px;
-        }
-        .home-btn .btn {
-            font-size: 1.2rem;
-            padding: 10px 24px;
-            background-color: #017B6A;
-            color: white;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        a {
-            font-size: 1.6rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 5px 20px !important;
-        }
-        th, td{
-            text-wrap: nowrap;
-        }
-        .navbar-brand{
-            font-size: 1.8rem;
-            cursor: default;
-            border: none;
-        }
-
-        .home-btn .btn:hover {
-            background-color: #BD9237;
-        }
-        .how .nav-link:hover {
-            background-color: #BD9237;
-        }
-        .header-row .home-btn .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-        }
-        .home-btn .btn i {
-            margin-left: 8px;
-        }
-        .filter-box .form-select {
-            border: 2px solid #AB8568;
-            padding: 10px;
-            border-radius: 5px;
-            width: 200px;
-            text-align: right;
-        }
-        .search-filter-container {
-            gap: 10px;
-        }
-
-        .form-select {
-            border: 2px solid #AB8568;
-            padding: 10px;
-            border-radius: 5px;
-            width: 100%;
-        }
-
-
-        @media (max-width: 768px) {
-           
-            .search-filter-container {
-                flex-direction: column;
-            }
-            
-            .col-md-8, .col-md-4 {
-                width: 100%;
-            }
-            h2, .navbar-brand {
-                font-size: 1.5rem;
-            }
-            .nav-link {
-                font-size: 1.1rem;
-            }
-        }
-
-    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -245,6 +93,7 @@ $result = $stmt->get_result();
                         <th>الجنس</th>
                         <th>الرواية </th>
                         <th>البداية </th>
+                        <th>المتون التجويدية</th>
                         <th>الأيام المناسبة</th>
                         <th>القسم</th>
                         <th>التوقيت المناسب </th>
@@ -260,36 +109,47 @@ $result = $stmt->get_result();
                             $photoSrc = $row['student_photo'] !== '' ?
                                         $row['student_photo'] :
                                         '../uploads/avatar.png';
-                            echo "<tr>
+                            echo "<tr data-student-id='{$row['id']}'>
                                     <td>{$row['id']}</td>
-                                    <td>{$row['student_name']}</td>
-                                    <td>{$row['phone']}</td>
-                                    <td>{$row['birth_date']}</td>
-                                    <td>" . date("Y-m-d", strtotime($row['regstration_date_count'])) . "</td>
-                                    <td>{$row['birth_place']}</td>
-                                    <td>{$row['gender']}</td>
-                                    <td>{$row['rewaya']}</td>
-                                    <td>{$row['start']}</td>
-                                    <td>{$row['days']}</td>
-                                    <td>{$row['class_name']}</td>
-                                    <td>{$row['tdate']}</td>
-                                    <td>{$row['remaining']}</td>
-                                    <td>{$row['agent_phone']}</td>
-                                    <td>";
+                                    <td data-field='student_name'>{$row['student_name']}</td>
+                                    <td data-field='phone'>{$row['phone']}</td>
+                                    <td data-field='birth_date'>{$row['birth_date']}</td>
+                                    <td data-field='regstration_date_count'>" . date("Y-m-d", strtotime($row['regstration_date_count'])) . "</td>
+                                    <td data-field='birth_place'>{$row['birth_place']}</td>
+                                    <td data-field='gender'>{$row['gender']}</td>
+                                    <td data-field='rewaya'>{$row['rewaya']}</td>
+                                    <td data-field='start'>{$row['start']}</td>
+                                    <td data-field='elmoutoune'>{$row['elmoutoune']}</td>
+                                    <td data-field='days'>{$row['days']}</td>
+                                    <td data-field='class_name'>{$row['class_name']}</td>
+                                    <td data-field='tdate'>{$row['tdate']}</td>
+                                    <td data-field='remaining'>{$row['remaining']}</td>
+                                    <td data-field='agent_phone'>{$row['agent_phone']}</td>
+                                    <td>
+                                        <div class='edit-btn-group'>";
         
                                     if($selectedStatus == 0) {
-                                        echo "<a href='../modify_student.php?id={$row['id']}' class='h5 btn btn-primary'><i class='bi bi-pencil-square'></i> تعديل</a> ";
+                                        echo "<a class='h5 btn btn-sm btn-primary edit-btn' onclick='toggleEditMode(this)'><i class='bi bi-pencil-square'></i> تعديل</a>
+                                        <a class='btn btn-sm btn-success save-btn' style='display:none;' onclick='saveStudent(this)'>
+                                                <i class='bi bi-save'></i> حفظ
+                                            </a>
+                                            <a class='btn btn-sm btn-secondary cancel-btn' style='display:none;' onclick='cancelEdit(this)'>
+                                                <i class='bi bi-x'></i> إلغاء
+                                            </a>
+                                        
+                                        ";
                                     }
 
                                     $btnClass = ($selectedStatus == 0) ? 'danger' : 'primary';
                                     $btnText = ($selectedStatus == 0) ? 'تعليق' : 'تنشيط';
 
-                                    echo "<a class='h5 btn btn-{$btnClass}'
+                                    echo "<a class='h5 btn btn-{$btnClass} btn-action'
                                             onclick='confirmSuspend(event)'
                                             data-student-id='{$row['id']}'
                                             data-is-active='{$selectedStatus}'>
                                             <i class='bi bi-ban-fill'></i> {$btnText}
                                         </a>
+                                        </div>
                                         </td>
                                     </tr>";
                                     // <td><img src='{$photoSrc}' alt='student_photo' width='50' height='50' style='border-radius: 50%'></td>
@@ -315,6 +175,114 @@ $result = $stmt->get_result();
     });
 </script>
 
+<script>
+    function toggleEditMode(button) {
+        const row = button.closest('tr');
+        row.classList.add('edit-mode');
+        
+        row.querySelector('.edit-btn').style.display = 'none';
+        row.querySelector('.btn-action').style.display = 'none';
+        row.querySelector('.save-btn').style.display = 'inline-block';
+        row.querySelector('.cancel-btn').style.display = 'inline-block';
+
+        row.querySelectorAll('td[data-field]').forEach(td => {
+            const field = td.dataset.field;
+            const value = td.innerText;
+            
+            let input;
+            if(field === 'gender') {
+                input = `<select class="form-control">
+                            <option value="ذكر" ${value === 'ذكر' ? 'selected' : ''}>ذكر</option>
+                            <option value="أنثى" ${value === 'أنثى' ? 'selected' : ''}>أنثى</option>
+                        </select>`;
+            } else if (field === 'days') {
+                const daysList = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+                const selectedDays = value ? value.split(',').map(day => day.trim()) : []; // Ensure value is not empty
+
+                input = `<select class="form-control" name="days[]" multiple>`;
+                daysList.forEach(day => {
+                    const selected = selectedDays.includes(day) ? 'selected' : '';
+                    input += `<option value="${day}" ${selected}>${day}</option>`;
+                });
+                input += `</select>`;
+            } else if(field === 'birth_date' || field === 'regstration_date_count') {
+                input = `<input type="date" class="form-control" value="${value}">`;
+            } else {
+                input = `<input type="text" class="form-control" value="${value}">`;
+            }
+            
+            td.innerHTML = input;
+        });
+    }
+
+    function cancelEdit(button) {
+        const row = button.closest('tr');
+        row.classList.remove('edit-mode');
+        
+        row.querySelector('.edit-btn').style.display = 'inline-block';
+        row.querySelector('.btn-action').style.display = 'inline-block';
+        row.querySelector('.save-btn').style.display = 'none';
+        row.querySelector('.cancel-btn').style.display = 'none';
+        location.reload();
+    }
+
+    function saveStudent(button) {
+        const row = button.closest('tr');
+        const studentId = row.dataset.studentId;
+        const data = {};
+
+        row.querySelectorAll('td[data-field]').forEach(td => {
+            const field = td.dataset.field;
+            const input = td.querySelector('input, select');
+            if (input.multiple) {
+                data[field] = Array.from(input.selectedOptions).map(option => option.value);
+            } else {
+                data[field] = input.value;
+            }
+        });
+        console.log(data);
+
+
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: 'هل تريد حفظ التعديلات؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'نعم، احفظ التغييرات',
+            cancelButtonText: 'إلغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'update_student.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        student_id: studentId,
+                        ...data
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        if(response.success) {
+                            Swal.fire('تم الحفظ!', 'تم تحديث بيانات الطالب بنجاح', 'success');
+                            row.querySelectorAll('td[data-field]').forEach(td => {
+                                const field = td.dataset.field;
+                                td.innerHTML = data[field];
+                            });
+                            cancelEdit(button);
+                        } else {
+                            Swal.fire('خطأ!', response.error || 'فشل في تحديث البيانات', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire('خطأ!', 'حدث خطأ في الاتصال بالخادم', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>
 
 <script src="../js/sweetalert2.js"></script>
 

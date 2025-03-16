@@ -12,8 +12,26 @@ CREATE TABLE etudiants_certified (
     type ENUM('نافع', 'حفص', 'أخر') NOT NULL
 );
 
-ALTER TABLE `processed_salaries` CHANGE `year` `year` VARCHAR(20) NOT NULL;
+ALTER TABLE `students` ADD `elmoutoune` VARCHAR(255) NULL AFTER `is_active`;
+
+CREATE TABLE `ab_mahraa` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `student_id` INT(11) NOT NULL,
+  `num_ab_ac` INT(11) NOT NULL,
+  `num_ab_no` INT(2) NOT NULL,
+  `du` VARCHAR(20) NOT NULL,
+  `au` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_abmahraa_student` (`student_id`),
+  CONSTRAINT `fk_abmahraa_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+
+
 -------
+ALTER TABLE `processed_salaries` CHANGE `year` `year` VARCHAR(20) NOT NULL;
 ALTER TABLE `students` ADD `rewaya` VARCHAR(100) NULL AFTER `level_id`, ADD `days` VARCHAR(200) NULL AFTER `rewaya`, ADD `tdate` VARCHAR(100) NULL AFTER `days`;
 ALTER TABLE `students` CHANGE `part_count` `part_count` INT(11) NOT NULL DEFAULT '0';
 ALTER TABLE `students` ADD `start` VARCHAR(100) NULL AFTER `tdate`;
