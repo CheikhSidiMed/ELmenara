@@ -57,7 +57,7 @@ $result = $stmt->get_result();
     <nav class="navbar navbar-expand-lg">
         <div class="container pb-2">
             <div class="how">
-                <a class="nav-link" href="home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
+                <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
             </div>
             <a class="navbar-brand" href="#">سجل طلاب - مقرأة المنارة والرباط</a>
         </div>

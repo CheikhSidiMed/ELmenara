@@ -33,12 +33,10 @@ if ($classResult === false) {
 $sql = "SELECT s.id, s.student_name, a.du, a.au, a.num_ab_ac, a.num_ab_no,
                COALESCE(ag.whatsapp_phone, s.phone) AS whatsapp_phone
         FROM students s
-        LEFT JOIN branches b ON s.branch_id = b.branch_id
-        JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?
+        JOIN user_branch ub ON s.branch_id = ub.branch_id AND ub.user_id = ?
         LEFT JOIN ab_mahraa a ON a.student_id = s.id
         LEFT JOIN agents ag ON ag.agent_id = s.agent_id
-        LEFT JOIN classes c ON s.class_id = c.class_id
-        WHERE s.branch_id = 22 AND s.is_active = 0 GROUP BY s.id";
+        WHERE s.branch_id = 22 AND s.is_active = 0 ";
 
 // Ajouter les conditions de filtrage
 $params = [$user_id];
@@ -61,6 +59,8 @@ if (!empty($toDate)) {
     $params[] = $toDate;
     $types .= "s";
 }
+$sql .= " GROUP BY s.id";
+
 
 // Exécuter la requête préparée
 $stmt = $conn->prepare($sql);
@@ -89,7 +89,7 @@ $result = $stmt->get_result();
     <nav class="navbar navbar-expand-lg">
         <div class="container pb-2">
             <div class="how">
-                <a class="nav-link" href="home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
+                <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
             </div>
             <a class="navbar-brand" href="#"> حصيلة الغياب - مقرأة المنارة والرباط</a>
         </div>
@@ -98,22 +98,19 @@ $result = $stmt->get_result();
     
     <div class="container-full " style="direction: rtl;">
         <h2> حصيلة <span class="is_active">(الغياب)</span></h2>
-        <div class="search-filter-container mb-3 row align-items-center">
+        <div class="search-filter-container text-center mb-3 row align-items-center">
             <div class="col-md-5 mb-2 mb-md-0">
-            <label for="">-</label>
-
+                <label for="">-</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
             </div>
             <form method="GET" class="row" >
             <div class="col-md-6 mb-2 mb-md-0">
                 <label for="fromDate">من</label>
                     <input type="date" id="fromDate" name="from_date" class="form-control" value="<?= isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>" onchange="this.form.submit()">
-                
             </div>
                 <div class="col-md-6 mb-2 mb-md-0">
                     <label for="toDate">الى</label>
-                    
-                        <input type="date" id="toDate" name="to_date" class="form-control" value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" onchange="this.form.submit()">
+                    <input type="date" id="toDate" name="to_date" class="form-control" value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" onchange="this.form.submit()">
                 </div>
             </form>
             <div class="col-md-2">
@@ -141,7 +138,7 @@ $result = $stmt->get_result();
                         <th>الى</th>
                         <th>الغياب المبرر</th>
                         <th>الغياب الغير مبرر</th>
-                        <th>إجراءات</th>
+                        <th style="width: 10%;">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="suspendedStudentsTableBody">
@@ -157,18 +154,15 @@ $result = $stmt->get_result();
                                     <td data-field='num_ab_no'>{$row['num_ab_no']}</td>
                                     <td>
                                         <div class='edit-btn-group'>";
-        
                                     
-                                    echo "<a class='h5 btn btn-sm btn-primary edit-btn' onclick='toggleEditMode(this)'><i class='bi bi-pencil-square'></i> تعديل</a>
+                                echo "<a class='h5 btn btn-sm btn-primary edit-btn' onclick='toggleEditMode(this)'><i class='bi bi-pencil-square'></i> تعديل</a>
                                         <a class='btn btn-sm btn-success save-btn' style='display:none;' onclick='saveStudent(this)'>
                                                 <i class='bi bi-save'></i> حفظ
                                             </a>
                                             <a class='btn btn-sm btn-secondary cancel-btn' style='display:none;' onclick='cancelEdit(this)'>
                                                 <i class='bi bi-x'></i> إلغاء
                                             </a>
-                                        
                                         ";
-                                    
 
                                     echo "<a class='h5 btn btn-success btn-action' onclick=\"sendWhatsAppMessage(
                                                 '{$row['whatsapp_phone']}',
