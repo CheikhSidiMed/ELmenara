@@ -48,7 +48,6 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../css/sweetalert2.css">
     <script src="../js/sweetalert2.min.js"></script>
     <link href="../css/bootstrap-icons.css" rel="stylesheet">
-    <link href="../fonts/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style1.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
@@ -284,7 +283,7 @@ $result = $stmt->get_result();
     }
 </script>
 
-<script src="../js/sweetalert2.js"></script>
+<script src="../js/sweetalert2.min.js"></script>
 
 <script>
     function confirmSuspend(event) {

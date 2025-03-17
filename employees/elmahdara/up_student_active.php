@@ -6,11 +6,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $is_active = $_POST['is_active'];
     
     $stmt = $conn->prepare("UPDATE students SET is_active = ? WHERE id = ?");
-    if ($stmt->execute([$is_active,$studentId])) {
+    // Liez les paramètres avec bind_param. Ici, on suppose que les deux sont des entiers (ii)
+    $stmt->bind_param('ii', $is_active, $studentId);
+    if ($stmt->execute()) {
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false]);
     }
+    $stmt->close();
     exit;
 }
 ?>
