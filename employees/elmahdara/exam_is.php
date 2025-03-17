@@ -1,40 +1,73 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-include '../db_connection.php';
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-session_start();
+    include '../db_connection.php';
 
-if (!isset($_SESSION['userid'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-    header("Location: ../home.php");
-    exit;
-}
-$user_id = $_SESSION['userid'];
+    session_start();
 
-$selectedStatus = isset($_GET['status']) ? intval($_GET['status']) : 0;
-$statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
+    if (!isset($_SESSION['userid'])) {
+        echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+        header("Location: ../home.php");
+        exit;
+    }
+    $user_id = $_SESSION['userid'];
 
 
-// Fetch student data from the database, including agent phone number
-$sql = "SELECT s.id, s.start, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
-           s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name,
-           s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
-    FROM students s
-    LEFT JOIN branches b ON s.branch_id = b.branch_id
-    JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?
-    LEFT JOIN levels l ON s.level_id = l.id
-    LEFT JOIN classes c ON s.class_id = c.class_id
-    LEFT JOIN agents a ON s.agent_id = a.agent_id
-    WHERE s.branch_id = '22' AND s.is_active = ?
-";
+    $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
+    $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : '';
+    $toDate = isset($_GET['to_date']) ? $_GET['to_date'] : '';
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('ii', $user_id, $selectedStatus);
-$stmt->execute();
-$result = $stmt->get_result();
 
+
+
+    $query = "SELECT class_id, class_name FROM classes WHERE branch_id = 22";
+    $classResult = $conn->query($query);
+
+    if ($classResult === false) {
+        die("Error fetching levels: " . $conn->error);
+    }
+
+
+    // Fetch student data from the database, including agent phone number
+    $sql = "SELECT s.id, e.date, s.student_name, e.num_count, e.num_hivd, e.tjwid, e.houdour,
+               e.moyen, e.NB, COALESCE(ag.whatsapp_phone, s.phone) AS whatsapp_phone
+            FROM students s
+            JOIN user_branch ub ON s.branch_id = ub.branch_id AND ub.user_id = ?
+            LEFT JOIN exam e ON e.student_id = s.id
+            LEFT JOIN agents ag ON ag.agent_id = s.agent_id
+            WHERE s.branch_id = 22 AND s.is_active = 0 ";
+
+    // Ajouter les conditions de filtrage
+    $params = [$user_id];
+    $types = "i";
+
+    if (!empty($selectedClass)) {
+        $sql .= " AND s.class_id = ?";
+        $params[] = $selectedClass;
+        $types .= "i";
+    }
+
+    if (!empty($fromDate)) {
+        $sql .= " AND e.date >= ?";
+        $params[] = $fromDate;
+        $types .= "s";
+    }
+
+    if (!empty($toDate)) {
+        $sql .= " AND e.date <= ?";
+        $params[] = $toDate;
+        $types .= "s";
+    }
+    $sql .= " GROUP BY s.id";
+
+
+    // Exécuter la requête préparée
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -57,25 +90,41 @@ $result = $stmt->get_result();
     <nav class="navbar navbar-expand-lg">
         <div class="container pb-2">
             <div class="how">
-                <a class="nav-link" href="home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
+                <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
             </div>
-            <a class="navbar-brand" href="#">سجل طلاب - مقرأة المنارة والرباط</a>
+            <a class="navbar-brand" href="#"> حصيلة الغياب - مقرأة المنارة والرباط</a>
         </div>
     </nav>
 
     
     <div class="container-full " style="direction: rtl;">
-        <h2>بيانات الطلاب <span class="is_active">(<?= $statusText ?>)</span></h2>
-        <div class="search-filter-container mb-3 row align-items-center">
-            <div class="col-md-9 mb-2 mb-md-0">
+        <h2> حصيلة <span class="is_active">(الغياب)</span></h2>
+        <div class="search-filter-container text-center mb-3 row align-items-center">
+            <div class="col-md-5 mb-2 mb-md-0">
+                <label for="">-</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
             </div>
-            
+            <form method="GET" class="row" >
+            <div class="col-md-6 mb-2 mb-md-0">
+                <label for="fromDate">من</label>
+                    <input type="date" id="fromDate" name="from_date" class="form-control" value="<?= isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>" onchange="this.form.submit()">
+            </div>
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <label for="toDate">الى</label>
+                    <input type="date" id="toDate" name="to_date" class="form-control" value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" onchange="this.form.submit()">
+                </div>
+            </form>
             <div class="col-md-2">
-                <form method="GET" id="statusFilter" class="d-flex">
-                    <select class="form-select" name="status" onchange="this.form.submit()">
-                        <option value="0" <?= ($selectedStatus === 0) ? 'selected' : '' ?>>الطلاب النشطين</option>
-                        <option value="1" <?= ($selectedStatus === 1) ? 'selected' : '' ?>>الطلاب المعلقين</option>
+                <label for="class">-</label>
+                <form method="GET" class="d-flex">
+                    <select class="form-select" name="class" onchange="this.form.submit()">
+                        <option value="">اختر القسم</option>
+                        <?php
+                        while ($cl = $classResult->fetch_assoc()) {
+                            $selected = (isset($_GET['class']) && $_GET['class'] == $cl['class_id']) ? 'selected' : '';
+                            echo '<option value="' . $cl['class_id'] . '" ' . $selected . '>' . htmlspecialchars($cl['class_name']) . '</option>';
+                        }
+                        ?>
                     </select>
                 </form>
             </div>
@@ -92,54 +141,51 @@ $result = $stmt->get_result();
                         <th>الحضور</th>
                         <th>المعدل العام</th>
                         <th>الملاحضة </th>
-                        
-                        <th>إجراءات</th>
+                        <th style="width: 10%;">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="suspendedStudentsTableBody">
                 <?php
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $photoSrc = $row['student_photo'] !== '' ?
-                                        $row['student_photo'] :
-                                        '../uploads/avatar.png';
                             echo "<tr data-student-id='{$row['id']}'>
                                     <td>{$row['id']}</td>
                                     <td data-field='student_name'>{$row['student_name']}</td>
-                                    <td data-field='phone'>{$row['phone']}</td>
-                                    <td data-field='birth_date'>{$row['birth_date']}</td>
-                                    <td data-field='regstration_date_count'>" . date("Y-m-d", strtotime($row['regstration_date_count'])) . "</td>
-                                    <td data-field='birth_place'>{$row['birth_place']}</td>
-                                    <td data-field='gender'>{$row['gender']}</td>
-                                    <td data-field='rewaya'>{$row['rewaya']}</td>
+                                    <td data-field='num_count'>{$row['num_count']}</td>
+                                    <td data-field='num_hivd'>{$row['num_hivd']}</td>
+                                    <td data-field='tjwid'>{$row['tjwid']}</td>
+                                    <td data-field='houdour'>{$row['houdour']}</td>
+                                    <td data-field='moyen'>{$row['moyen']}</td>
+                                    <td data-field='NB'>{$row['NB']}</td>
+                                    <td style='display: none;'data-field='date'>{$row['date']}</td>
                                     <td>
                                         <div class='edit-btn-group'>";
-        
-                                    if($selectedStatus == 0) {
-                                        echo "<a class='h5 btn btn-sm btn-primary edit-btn' onclick='toggleEditMode(this)'><i class='bi bi-pencil-square'></i> تعديل</a>
+                                    
+                                echo "<a class='h5 btn btn-sm btn-primary edit-btn' onclick='toggleEditMode(this)'><i class='bi bi-pencil-square'></i> تعديل</a>
                                         <a class='btn btn-sm btn-success save-btn' style='display:none;' onclick='saveStudent(this)'>
                                                 <i class='bi bi-save'></i> حفظ
                                             </a>
                                             <a class='btn btn-sm btn-secondary cancel-btn' style='display:none;' onclick='cancelEdit(this)'>
                                                 <i class='bi bi-x'></i> إلغاء
                                             </a>
-                                        
                                         ";
-                                    }
 
-                                    $btnClass = ($selectedStatus == 0) ? 'danger' : 'primary';
-                                    $btnText = ($selectedStatus == 0) ? 'تعليق' : 'تنشيط';
-
-                                    echo "<a class='h5 btn btn-{$btnClass} btn-action'
-                                            onclick='confirmSuspend(event)'
-                                            data-student-id='{$row['id']}'
-                                            data-is-active='{$selectedStatus}'>
-                                            <i class='bi bi-ban-fill'></i> {$btnText}
-                                        </a>
-                                        </div>
+                                    // echo "<a class='h5 btn btn-success btn-action' onclick=\"sendWhatsAppMessage(
+                                    //             '{$row['whatsapp_phone']}',
+                                    //             '{$row['student_name']}',
+                                    //             '{$row['num_count']}',
+                                    //             '{$row['num_hivd']}',
+                                    //             '{$row['tjwid']}',
+                                    //             '{$row['houdour']}',
+                                    //             '{$row['moyen']}',
+                                    //             '{$row['NB']}',
+                                    //             '{$row['date']}'
+                                    //         )\">
+                                    //         <i class='bi bi-whatsapp'></i> إرسال
+                                    //     </a>
+                                        echo "</div>
                                         </td>
                                     </tr>";
-                                    // <td><img src='{$photoSrc}' alt='student_photo' width='50' height='50' style='border-radius: 50%'></td>
                         }
                     } else {
                         echo "<tr><td colspan='16'>لا يوجد طلاب</td></tr>";
@@ -168,7 +214,7 @@ $result = $stmt->get_result();
         row.classList.add('edit-mode');
         
         row.querySelector('.edit-btn').style.display = 'none';
-        row.querySelector('.btn-action').style.display = 'none';
+        // row.querySelector('.btn-action').style.display = 'none';
         row.querySelector('.save-btn').style.display = 'inline-block';
         row.querySelector('.cancel-btn').style.display = 'inline-block';
 
@@ -177,22 +223,7 @@ $result = $stmt->get_result();
             const value = td.innerText;
             
             let input;
-            if(field === 'gender') {
-                input = `<select class="form-control">
-                            <option value="ذكر" ${value === 'ذكر' ? 'selected' : ''}>ذكر</option>
-                            <option value="أنثى" ${value === 'أنثى' ? 'selected' : ''}>أنثى</option>
-                        </select>`;
-            } else if (field === 'days') {
-                const daysList = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-                const selectedDays = value ? value.split(',').map(day => day.trim()) : []; // Ensure value is not empty
-
-                input = `<select class="form-control" name="days[]" multiple>`;
-                daysList.forEach(day => {
-                    const selected = selectedDays.includes(day) ? 'selected' : '';
-                    input += `<option value="${day}" ${selected}>${day}</option>`;
-                });
-                input += `</select>`;
-            } else if(field === 'birth_date' || field === 'regstration_date_count') {
+            if(field === 'du' || field === 'au') {
                 input = `<input type="date" class="form-control" value="${value}">`;
             } else {
                 input = `<input type="text" class="form-control" value="${value}">`;
@@ -207,7 +238,7 @@ $result = $stmt->get_result();
         row.classList.remove('edit-mode');
         
         row.querySelector('.edit-btn').style.display = 'inline-block';
-        row.querySelector('.btn-action').style.display = 'inline-block';
+        // row.querySelector('.btn-action').style.display = 'inline-block';
         row.querySelector('.save-btn').style.display = 'none';
         row.querySelector('.cancel-btn').style.display = 'none';
         location.reload();
@@ -221,11 +252,8 @@ $result = $stmt->get_result();
         row.querySelectorAll('td[data-field]').forEach(td => {
             const field = td.dataset.field;
             const input = td.querySelector('input, select');
-            if (input.multiple) {
-                data[field] = Array.from(input.selectedOptions).map(option => option.value);
-            } else {
-                data[field] = input.value;
-            }
+            
+            data[field] = input.value;
         });
         console.log(data);
 
@@ -242,7 +270,7 @@ $result = $stmt->get_result();
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'update_student.php',
+                    url: 'add_or_up_exem.php',
                     method: 'POST',
                     dataType: 'json',
                     data: {
@@ -269,68 +297,36 @@ $result = $stmt->get_result();
             }
         });
     }
+
+
+    function sendWhatsAppMessage(phoneNumber, name, du, au, numAbAc, numAbNo) {
+    if (!phoneNumber) {
+        alert("لا يوجد رقم واتساب لهذا الطالب!");
+        return;
+    }
+
+    const message = `🛑 حصيلة الغياب من ${du} إلى ${au}
+
+        اسم الطالبة: ${name}
+
+        عدد الغياب المبرر: ${numAbAc}
+        عدد الغياب غير المبرر: ${numAbNo}
+
+        ❌ ملاحظة: الغياب ممنوع عمومًا.
+        ✅ كثرة الغياب المبرر تؤثر على نتيجة الامتحان.
+        ✅ 3 غيابات غير مبررة تؤدي إلى تعليق الدراسة فورًا.`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, '_blank');
+}
+
+
 </script>
 
 <script src="../js/sweetalert2.js"></script>
 
-<script>
-    function confirmSuspend(event) {
-        event.preventDefault();
-        const btn = event.currentTarget;  // Stocker le bouton avant Swal.fire
-        const studentId = btn.dataset.studentId;
-        const currentIsActive = <?= json_encode($selectedStatus) ?>;
-        const targetStatus = currentIsActive == 1 ? 0 : 1;
-
-        const actionMessages = {
-            actionTitle: targetStatus === 1 ? 'هل أنت متأكد من التعليق؟' : 'هل أنت متأكد من التنشيط؟',
-            actionText: targetStatus === 1 ? 'هل تريد فعلاً تعليق هذا الطالب؟' : 'هل تريد فعلاً تنشيط هذا الطالب؟',
-            confirmText: targetStatus === 1 ? 'نعم، قم بالتعليق' : 'نعم، قم بالتنشيط',
-            successTitle: targetStatus === 1 ? 'تم التعليق!' : 'تم التنشيط!',
-            successText: targetStatus === 1 ? 'تم تعليق الطالب بنجاح' : 'تم تنشيط الطالب بنجاح'
-        };
-
-        Swal.fire({
-            title: actionMessages.actionTitle,
-            text: actionMessages.actionText,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: actionMessages.confirmText,
-            cancelButtonText: 'إلغاء'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: 'up_student_active.php',
-                    method: 'POST',
-                    data: {
-                        student_id: studentId,
-                        is_active: targetStatus
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: actionMessages.successTitle,
-                            text: actionMessages.successText,
-                            icon: 'success',
-                            confirmButtonText: 'حسناً'
-                        });
-                        window.location.reload();
-                        
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            title: 'خطأ!',
-                            text: `حدث خطأ أثناء ${targetStatus === 0 ? 'التعليق' : 'التنشيط'}`,
-                            icon: 'error',
-                            confirmButtonText: 'حسناً'
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-</script>
 
 
 </body>

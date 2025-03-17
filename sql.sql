@@ -14,6 +14,23 @@ CREATE TABLE etudiants_certified (
 
 ALTER TABLE `students` ADD `elmoutoune` VARCHAR(255) NULL AFTER `is_active`;
 
+CREATE TABLE `exam` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `student_id` INT(11) NOT NULL,
+  `num_count` INT(11) NOT NULL,
+  `num_hivd` VARCHAR(200) NOT NULL,
+  `tjwid` VARCHAR(120) NOT NULL,
+  `houdour` VARCHAR(120) NOT NULL,
+  `moyen` VARCHAR(50) NOT NULL,
+  `NB` VARCHAR(150) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_exam_student` (`student_id`),
+  CONSTRAINT `fk_exam_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+ALTER TABLE `exam` CHANGE `date` `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+
 CREATE TABLE `ab_mahraa` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `student_id` INT(11) NOT NULL,

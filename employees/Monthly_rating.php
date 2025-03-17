@@ -162,7 +162,7 @@ if (isset($_GET['print_all']) && $_GET['print_all'] == 'true') {
     }
     $stmt->close();
 
-    json_encode($students);
+    echo json_encode($students);
     exit;
 }
 
@@ -422,12 +422,12 @@ $conn->close();
 
     <div class="button-group">
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="printPage()">
-            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i> 
+            طباعة <i class="bi bi-printer-fill" style="margin-right: 8px;"></i>
         </button>
-        <a href="#" class="btn btn-primary" onclick="printAllStudents(); return false;">طباعة جميع الطلاب لصفحة السابقة <i class="bi bi-printer-fill me-2" style="margin-right: 8px;"></i> </a>
+        <a href="#" class="btn btn-primary" onclick="printAllStudents(); return false;">طباعة جميع الطلاب<i class="bi bi-printer-fill me-2" style="margin-right: 8px;"></i> </a>
 
         <button type="button" class="btn btn-primary d-flex align-items-center" onclick="window.location.href='home.php'">
-            الصفحة الرئيسية <i class="fas fa-home mr-2"></i> 
+            الصفحة الرئيسية <i class="fas fa-home mr-2"></i>
         </button>
 
     </div>
@@ -501,36 +501,38 @@ $conn->close();
     <script>
         function printAllStudents() {
             fetch('?print_all=true')
-                .then(response => response.json())
-                .then(data => {
-                    if (Array.isArray(data) && data.length > 0) {
-                        // Clear existing table content
-                        const tableBody = document.querySelector('table tbody');
-                        tableBody.innerHTML = ''; // Remove existing rows
+    .then(response => response.text())
+    .then(text => {
+        if (!text) {
+            throw new Error("Empty response");
+        }
+        return JSON.parse(text);
+    })
+    .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+            const tableBody = document.querySelector('table tbody');
+            tableBody.innerHTML = '';
+            data.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="4">${student.student_name}</td>
+                    <td colspan="2" contenteditable="true"></td>
+                    <td colspan="16" contenteditable="true"></td>
+                    <td colspan="1" contenteditable="true" style="max-width: 38px"></td>
+                    <td colspan="1" contenteditable="true" style="max-width: 38px"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            window.print();
+        } else {
+            alert('لا يوجد طلاب لطباعة.');
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching student data:', error);
+        alert('حدث خطأ أثناء تحميل البيانات.');
+    });
 
-                        // Add rows for all students
-                        data.forEach(student => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td colspan="4">${student.student_name}</td>
-                                <td colspan="2" contenteditable="true"></td>
-                                <td colspan="16" contenteditable="true"></td>
-                                <td colspan="1" contenteditable="true" style="max-width: 38px"></td>
-                                <td colspan="1" contenteditable="true" style="max-width: 38px"></td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
-
-                        // Trigger print
-                        window.print();
-                    } else {
-                        alert('لا يوجد طلاب لطباعة.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching student data:', error);
-                    alert('حدث خطأ أثناء تحميل البيانات.');
-                });
         }
     </script>
 
