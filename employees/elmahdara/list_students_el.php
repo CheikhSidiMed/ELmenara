@@ -325,8 +325,9 @@ $result = $stmt->get_result();
                             text: actionMessages.successText,
                             icon: 'success',
                             confirmButtonText: 'حسناً'
+                        }).then(function() {
+                            window.location.reload();
                         });
-                        window.location.reload();
                         
                     },
                     error: function(xhr, status, error) {
