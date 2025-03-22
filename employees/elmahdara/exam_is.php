@@ -75,7 +75,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بيانات الطلاب</title>
+    <title>حصيلة الإمتحان</title>
     <link rel="shortcut icon" type="image/png" href="../../images/menar.png">
     <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/sweetalert2.css">
@@ -92,13 +92,15 @@
             <div class="how">
                 <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
             </div>
-            <a class="navbar-brand" href="#"> حصيلة الغياب - مقرأة المنارة والرباط</a>
+            <a class="navbar-brand" href="#"> حصيلة الإمتحان - مقرأة المنارة والرباط</a>
         </div>
     </nav>
 
     
     <div class="container-full " style="direction: rtl;">
-        <h2> حصيلة <span class="is_active">(الغياب)</span></h2>
+        <h2>حصيلة الإمتحان
+            <!-- <span class="is_active"> الفصلي </span> -->
+        </h2>
         <div class="search-filter-container text-center mb-3 row align-items-center">
             <div class="col-md-5 mb-2 mb-md-0">
                 <label for="">-</label>

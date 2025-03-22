@@ -298,6 +298,7 @@
                         <li><a href="Monthly_rating.php"><i class="fa fa-chart-line"></i> استمارة التقييم </a></li>
                         <li><a href="Teheji.php"><i class="fa fa-user-check"></i> تقييم أقسام التهجي</a></li> -->
                         <li><a href="elmahdara/ab_istimara.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
+                        <li><a href="elmahdara/exam_is.php"><i class="fa fa-calendar-times"></i> حصيلة الإمتحان</a></li>
                         <!-- <li><a href="absence_student.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                         <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li> -->
@@ -527,7 +528,7 @@
                     <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>  التسديد الأسري</a></li>
                     <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>  تسديد رسوم الأنشطة </a></li>
                     <li><a href="operation.php"><i class="fa fa-calculator"></i>  تسجيل عملية حسابية</a></li>
-                    <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>  عمليات المصاريف </a></li>
+                    <li><a href="expense_operation.php"><i class="fa fa-calculator"></i>  عمليات المصاريف </a></li>
                     <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية تبرع </a></li>
                     <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                 </ul>
@@ -641,7 +642,7 @@
                             <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
                             <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
                             <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>
-                            <li><a href="Expense operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
+                            <li><a href="expense_operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
                             <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>     تسجيل عملية تبرع </a></li>
                             <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                         </ul>

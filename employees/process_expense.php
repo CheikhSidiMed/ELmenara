@@ -25,6 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $paymentMethod = $_POST['payment_method'];
     $expense_account_name = $_POST['expense_account_name'];
     $all_des = "حساب : " . $expense_account_name . " -{ " . $transactionDescription . ' }-';
+    $date_time = $_POST['date_time'] ?
+    $_POST['date_time'] . ' '.date('H:i:s') : date('Y-m-d H:i:s');
 
     // Handle bank ID, which should be null if the payment is "نقدي"
     $bankId = ($paymentMethod == 'بنكي' && !empty($_POST['bank'])) ? $_POST['bank'] : null;
@@ -49,25 +51,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $conn->begin_transaction();
 
 
-
-
-
-
         $stmt = $conn->prepare("INSERT INTO receipts (receipt_date, total_amount, receipt_description, created_by)
-        VALUES (NOW(), ?, ?, ?)
+        VALUES (?, ?, ?, ?)
     ");
-    $stmt->bind_param("sss", $amount, $all_des, $user_id);
+    $stmt->bind_param("ssss", $date_time, $amount, $all_des, $user_id);
     $stmt->execute();
 
     $receipts_id = $conn->insert_id;
 
 
             $stmt = $conn->prepare("
-                INSERT INTO combined_transactions (type, description, paid_amount, payment_method, bank_id, user_id, fund_id)
-                VALUES ('minus', ?, ?, ?, ?, ?, ?)
+                INSERT INTO combined_transactions (date, type, description, paid_amount, payment_method, bank_id, user_id, fund_id)
+                VALUES (?, 'minus', ?, ?, ?, ?, ?, ?)
             ");
             
-            $stmt->bind_param("ssssss", $all_des, $amount, $payment_method, $bank_id, $user_id, $fund_id);
+            $stmt->bind_param("sssssss", $date_time, $all_des, $amount, $payment_method, $bank_id, $user_id, $fund_id);
             
             $stmt->execute();
 
@@ -93,10 +91,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($bankId !== null) {
             // Query for bank transactions (with bank_id)
-            $stmt = $conn->prepare("INSERT INTO Expense_transaction (expense_account_id, transaction_description, amount, payment_method, bank_id) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Expense_transaction (transaction_date, expense_account_id, transaction_description, amount, payment_method, bank_id) VALUES (?, ?, ?, ?, ?, ?)");
             if ($stmt) {
                 // Bind 5 parameters
-                $stmt->bind_param('isdsd', $expenseAccountId, $all_des, $amount, $paymentMethod, $bankId);
+                $stmt->bind_param('sisdsd', $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod, $bankId);
                 $stmt->execute();
                 $stmt->close();
             } else {
@@ -104,17 +102,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
             // Insert into the transactions table with bank_id
-            $stmt_reg_fee = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, bank_account_id, user_id) VALUES (?, ?, 'minus', ?, ?)");
-            $stmt_reg_fee->bind_param("sdii", $all_des, $amount, $bankId, $user_id);
+            $stmt_reg_fee = $conn->prepare("INSERT INTO transactions (transaction_date, transaction_description, amount, transaction_type, bank_account_id, user_id) VALUES (?, ?, ?, 'minus', ?, ?)");
+            $stmt_reg_fee->bind_param("ssdii", $date_time, $all_des, $amount, $bankId, $user_id);
             $stmt_reg_fee->execute();
             $stmt_reg_fee->close();
 
         } else {
             // Query for cash transactions (without bank_id)
-            $stmt = $conn->prepare("INSERT INTO Expense_transaction (expense_account_id, transaction_description, amount, payment_method) VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Expense_transaction (transaction_date, expense_account_id, transaction_description, amount, payment_method) VALUES (?, ?, ?, ?, ?)");
             if ($stmt) {
                 // Bind 4 parameters
-                $stmt->bind_param('isds', $expenseAccountId, $all_des, $amount, $paymentMethod);
+                $stmt->bind_param('sisds', $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod);
                 $stmt->execute();
                 $stmt->close();
             } else {
@@ -122,8 +120,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
             // Insert into the transactions table with fund_id set to '1'
-            $stmt_reg_fee = $conn->prepare("INSERT INTO transactions (transaction_description, amount, transaction_type, fund_id, user_id) VALUES (?, ?, 'minus', '1', ?)");
-            $stmt_reg_fee->bind_param("sdi", $all_des, $amount, $user_id);
+            $stmt_reg_fee = $conn->prepare("INSERT INTO transactions (transaction_date, transaction_description, amount, transaction_type, fund_id, user_id) VALUES (?, ?, ?, 'minus', '1', ?)");
+            $stmt_reg_fee->bind_param("ssdi", $date_time, $all_des, $amount, $user_id);
             $stmt_reg_fee->execute();
             $stmt_reg_fee->close();
         }

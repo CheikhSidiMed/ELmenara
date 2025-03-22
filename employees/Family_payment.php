@@ -204,7 +204,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             while ($student = $result_students->fetch_assoc()) {
                 $student_id = $student['id'];
 
-                $sql_check_payment = "SELECT SUM(remaining_amount) AS total_remaining FROM payments WHERE student_id = ? ";
+                $sql_check_payment = "SELECT
+                    s.balance,
+                    COALESCE(SUM(p.remaining_amount), 0) AS total_remaining,
+                    (s.balance + COALESCE(SUM(p.remaining_amount), 0)) AS total_due
+                FROM students s
+                LEFT JOIN payments p
+                    ON s.id = p.student_id
+                WHERE s.id = ?
+                GROUP BY s.id";
                 $stmt_check_payment = $conn->prepare($sql_check_payment);
                 $stmt_check_payment->bind_param("i", $student_id);
                 $stmt_check_payment->execute();
@@ -212,7 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if ($result) {
                     $row = $result->fetch_assoc();
-                    $total_due_amount += (float) ($row['total_remaining'] ?? 0.00);
+                    $total_due_amount += (float) ($row['total_due'] ?? 0.00);
                 }
             }
         }

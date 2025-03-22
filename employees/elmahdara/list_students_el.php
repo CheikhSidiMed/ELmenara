@@ -1,7 +1,8 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include '../db_connection.php';
 
 session_start();
@@ -18,7 +19,7 @@ $statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
 
 
 // Fetch student data from the database, including agent phone number
-$sql = "SELECT s.id, s.start, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
+$sql = "SELECT s.id, s.start, s.balance, s.suspension_reason, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name,
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
@@ -34,6 +35,82 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param('ii', $user_id, $selectedStatus);
 $stmt->execute();
 $result = $stmt->get_result();
+
+
+// Handle suspension of student
+// if (isset($_POST['suspend_student_id'])) {
+//     $student_id = $_POST['suspend_student_id'];
+//     $suspension_reason = $_POST['suspension_reason'];
+//     $targetStatus = $_POST['targetStatus'];
+
+//     // First, fetch the student's data from the students table
+//     $student_query = "SELECT
+//             s.id,
+//             s.remaining,
+//             COALESCE(SUM(p.remaining_amount), 0) AS total_paid,
+//             (
+//                 (
+//                 CASE
+//                     WHEN MONTH(CURDATE()) >= 10
+//                     THEN MONTH(CURDATE()) - 9
+//                     ELSE MONTH(CURDATE()) + 3
+//                 END
+//                 - (
+//                     CASE
+//                     WHEN MONTH(s.regstration_date_count) <= 9
+//                         THEN MONTH(s.regstration_date_count) + 3
+//                     ELSE MONTH(s.regstration_date_count) - 9
+//                     END
+//                 )
+//                 - COALESCE((SELECT COUNT(DISTINCT p2.month)
+//                             FROM payments p2
+//                             WHERE p2.student_id = s.id), 0)
+//             ) * s.remaining
+//             + COALESCE(SUM(p.remaining_amount), 0)
+//             ) AS total_due
+//         FROM students s
+//         LEFT JOIN payments p
+//             ON s.id = p.student_id
+//         WHERE s.id = ?
+//         GROUP BY s.id;";
+
+//     $stmt = $conn->prepare($student_query);
+//     $stmt->bind_param("i", $student_id);
+//     $stmt->execute();
+//     $student = $stmt->get_result()->fetch_assoc();
+//     $stmt->close();
+
+//     if ($student) {
+//         $current_date = date('Y-m-d H:i:s');
+//         $balance = $student['total_paid'];
+
+//         if ($targetStatus == 1) {
+//             $sql = "UPDATE students SET balance = ?, is_active = 1, date_desectivation = ? WHERE id = ?";
+//         } else {
+//             $sql = "UPDATE students SET is_active = 0, registration_date = ? WHERE id = ?";
+//         }
+
+//         $stmt = $conn->prepare($sql);
+
+//         if ($targetStatus == 1) {
+//             $stmt->bind_param("dsi", $balance, $current_date, $student_id);
+//         } else {
+//             $stmt->bind_param("si", $current_date, $student_id);
+//         }
+
+//         $stmt->bind_param("si", $current_date, $student_id);
+//         $stmt->execute();
+//         $stmt->close();
+
+//         echo json_encode(['status' => 'success', 'message' => 'تم تعليق الطالب بنجاح']);
+//     } else {
+//         echo json_encode(['status' => 'error', 'message' => 'لم يتم العثور على الطالب']);
+//     }
+//     exit();
+// }
+
+
+
 
 ?>
 
@@ -98,6 +175,12 @@ $result = $stmt->get_result();
                         <th>التوقيت المناسب </th>
                         <th>الرسوم</th>
                         <th>رقم الوكيل(ة)</th>
+                        <?php
+                            if ($selectedStatus == 1) {
+                                echo "<th>المبلغ المتبقي</th>";
+                                echo "<th>السبب</th>";
+                            }
+                        ?>
                         <th>إجراءات</th>
                     </tr>
                 </thead>
@@ -123,7 +206,13 @@ $result = $stmt->get_result();
                                     <td data-field='class_name'>{$row['class_name']}</td>
                                     <td data-field='tdate'>{$row['tdate']}</td>
                                     <td data-field='remaining'>{$row['remaining']}</td>
-                                    <td data-field='agent_phone'>{$row['agent_phone']}</td>
+                                    <td data-field='agent_phone'>{$row['agent_phone']}</td>";
+                                    if ($selectedStatus == 1) {
+                                        echo "<td data-field='agent_phone'>{$row['balance']}</td>";
+                                        echo "<td data-field='agent_phone'>{$row['suspension_reason']}</td>";
+                                    }
+                                    
+                                echo "
                                     <td>
                                         <div class='edit-btn-group'>";
         
@@ -149,8 +238,12 @@ $result = $stmt->get_result();
                                             <i class='bi bi-ban-fill'></i> {$btnText}
                                         </a>
                                         </div>
+
                                         </td>
-                                    </tr>";
+                                        </tr>";
+                                        // <button class='btn suspend-btn' onclick='suspendStudent({$row['id']})'>
+                                        //     <i style='font-size: 18px; margin: 0px; paddin: 0px' class='bi bi-person-fill-slash'></i> تعليق
+                                        // </button>
                                     // <td><img src='{$photoSrc}' alt='student_photo' width='50' height='50' style='border-radius: 50%'></td>
                         }
                     } else {
@@ -196,7 +289,7 @@ $result = $stmt->get_result();
                         </select>`;
             } else if (field === 'days') {
                 const daysList = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-                const selectedDays = value ? value.split(',').map(day => day.trim()) : []; // Ensure value is not empty
+                const selectedDays = value ? value.split(',').map(day => day.trim()) : [];
 
                 input = `<select class="form-control" name="days[]" multiple>`;
                 daysList.forEach(day => {
@@ -286,6 +379,7 @@ $result = $stmt->get_result();
 <script src="../js/sweetalert2.min.js"></script>
 
 <script>
+
     function confirmSuspend(event) {
         event.preventDefault();
         const btn = event.currentTarget;  // Stocker le bouton avant Swal.fire
@@ -312,33 +406,60 @@ $result = $stmt->get_result();
             cancelButtonText: 'إلغاء'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: 'up_student_active.php',
-                    method: 'POST',
-                    data: {
-                        student_id: studentId,
-                        is_active: targetStatus
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: actionMessages.successTitle,
-                            text: actionMessages.successText,
-                            icon: 'success',
-                            confirmButtonText: 'حسناً'
-                        }).then(function() {
-                            window.location.reload();
-                        });
-                        
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            title: 'خطأ!',
-                            text: `حدث خطأ أثناء ${targetStatus === 0 ? 'التعليق' : 'التنشيط'}`,
-                            icon: 'error',
-                            confirmButtonText: 'حسناً'
-                        });
-                    }
-                });
+                if(targetStatus == 1){
+                    suspendStudent(studentId, targetStatus, actionMessages.successTitle, actionMessages.successText);
+                }else{
+                    processSuspendStudent(studentId, '', targetStatus, actionMessages.successTitle, actionMessages.successText);
+                }
+            }
+        });
+    }
+
+
+        // Function to suspend student
+    function suspendStudent(student_id, targetStatus, msg1, msg2) {
+        Swal.fire({
+            title: 'سبب التعليق',
+            input: 'text',
+            inputPlaceholder: 'أدخل سبب تعليق التلميذ',
+            showCancelButton: true,
+            confirmButtonText: 'تعليق',
+            cancelButtonText: 'إلغاء',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'يجب عليك إدخال سبب التعليق!'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let suspension_reason = result.value;
+                processSuspendStudent(student_id, suspension_reason, targetStatus, msg1, msg2);
+            }
+        });
+    }
+
+    // AJAX to process suspension
+    function processSuspendStudent(student_id, suspension_reason, targetStatus, msg1, msg2) {
+        $.ajax({
+            url: 'up_student_active.php',
+            type: 'POST',
+            data: {
+                suspend_student_id: student_id,
+                targetStatus: targetStatus,
+                suspension_reason: suspension_reason
+            },
+            success: function(response) {
+                let result = JSON.parse(response);
+                if (result.status === 'success') {
+                    Swal.fire(msg1, msg2, 'success').then(() => {
+                        location.reload(); // Refresh page after success
+                    });
+                } else {
+                    Swal.fire('خطأ!', 'حدثت مشكلة .', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('خطأ!', 'فشل  .', 'error');
             }
         });
     }

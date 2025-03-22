@@ -102,10 +102,10 @@ $conn->close();
     <!-- Include Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
     <link href="css/bootstrap-icons.css" rel="stylesheet">
-    <link href="fonts/bootstrap-icons.css" rel="stylesheet">    
+    <link href="fonts/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="css/cairo.css">
 

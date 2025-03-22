@@ -31,6 +31,16 @@ CREATE TABLE `exam` (
 ALTER TABLE `exam` CHANGE `date` `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 
+
+	23	start	varchar(100)	utf8mb4_general_ci		Oui	NULL			Modifier Modifier	Supprimer Supprimer	
+	24	is_active	int(11)			Non	0			Modifier Modifier	Supprimer Supprimer	
+	25	elmoutoune	varchar(255)	utf8mb4_general_ci		Oui	NULL			Modifier Modifier	Supprimer Supprimer	
+	26	balance	decimal(10,0)			Oui	0			Modifier Modifier	Supprimer Supprimer	
+	27	date_desectivation	varchar(100)	utf8mb4_general_ci		Oui	NULL			Modifier Modifier	Supprimer Supprimer	
+	28	suspension_reason	varchar(150)	utf8mb4_general_ci		Oui	NULL			Modifier Modifier	Supprimer Supprimer	
+
+
+
 CREATE TABLE `ab_mahraa` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `student_id` INT(11) NOT NULL,

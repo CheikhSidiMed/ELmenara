@@ -17,7 +17,7 @@ if (isset($_GET['activity_id'])) {
     $query1 = "
         SELECT s.id, s.student_name, s.phone, a.whatsapp_phone
         FROM student_activities sa
-        JOIN students s ON sa.student_id = s.id
+        JOIN students s ON sa.student_id = s.id AND s.is_active = 0
         LEFT JOIN agents a ON s.agent_id = a.agent_id
         WHERE sa.activity_id = $activity_id
     ";

@@ -59,7 +59,7 @@ include 'db_connection.php';
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
-$last_year = ""; 
+$last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $last_year = $row['year_name'];
@@ -187,7 +187,15 @@ if ($student_data) {
     $student_id = $student_data['id']; // Ensure this only runs if student data is found
 
     // Prepare SQL query to sum remaining_amount for the given student_id
-    $query = "SELECT SUM(remaining_amount) AS total_remaining FROM payments WHERE student_id = ?";
+    $query = "SELECT
+            s.balance,
+            COALESCE(SUM(p.remaining_amount), 0) AS total_remaining,
+            (s.balance + COALESCE(SUM(p.remaining_amount), 0)) AS total_due
+        FROM students s
+        LEFT JOIN payments p
+            ON s.id = p.student_id
+        WHERE s.id = ?
+        GROUP BY s.id";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
@@ -195,7 +203,7 @@ if ($student_data) {
     $row = $result->fetch_assoc();
 
     // If no payments are found, default the value to 0.00
-    $total_remaining = $row['total_remaining'] ?? 0.00;
+    $total_remaining = $row['total_due'] ?? 0.00;
 
     // Close the statement
     $stmt->close();

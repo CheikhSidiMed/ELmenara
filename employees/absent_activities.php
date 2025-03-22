@@ -74,7 +74,7 @@ if (!empty($activity_id)) {
             FROM
                 student_activities AS sa
             LEFT JOIN
-                students AS s ON s.id = sa.student_id
+                students AS s ON s.id = sa.student_id AND s.is_active = 0
             LEFT JOIN
                 agents AS a ON s.agent_id = a.agent_id
             LEFT JOIN

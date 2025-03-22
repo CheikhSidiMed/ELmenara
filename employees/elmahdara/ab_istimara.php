@@ -84,6 +84,40 @@ $result = $stmt->get_result();
     <link href="css/style1.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+    <style>
+        @media print {
+            /* .navbar { display: none !important; }
+            .table { 
+                width: 100% !important;
+                table-layout: fixed;
+            }
+            th, td {
+                white-space: nowrap !important;
+                font-size: 12px !important;
+            }
+            .table-container {
+                overflow: visible !important;
+                width: 100% !important;
+            } */
+
+            .search-filter-container,
+                th:last-child,
+                td:last-child {
+                    display: none !important;
+                }
+                
+                /* Ajustements du tableau */
+                .table {
+                    width: 100% !important;
+                    table-layout: auto;
+                }
+                th, td {
+                    white-space: normal !important;
+                    font-size: 14px !important;
+                }
+            
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -92,6 +126,9 @@ $result = $stmt->get_result();
                 <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
             </div>
             <a class="navbar-brand" href="#"> حصيلة الغياب - مقرأة المنارة والرباط</a>
+            <button class="btn btn-danger ms-auto" onclick="generatePDF()">
+            <i class="bi bi-file-pdf"></i> حفظ كـ PDF
+        </button>
         </div>
     </nav>
 
@@ -131,6 +168,15 @@ $result = $stmt->get_result();
         <div class="table-container">
             <table class="table table-bordered">
                 <thead>
+                <colgroup>
+                    <col class="print-column">
+                    <col class="print-column">
+                    <col class="print-column">
+                    <col class="print-column">
+                    <col class="print-column">
+                    <col class="print-column">
+                    <col class="no-print"> <!-- Colonne إجراءات -->
+                </colgroup>
                     <tr>
                         <th>الرقم</th>
                         <th>الإسم الكامل</th>
@@ -313,12 +359,103 @@ $result = $stmt->get_result();
     window.open(whatsappUrl, '_blank');
 }
 
-
 </script>
 
 <script src="../js/sweetalert2.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+
+// function generatePDF() {
+//     const originalElement = document.querySelector('table');
+//     const clone = originalElement.cloneNode(true);
+
+//     // Cacher le titre avant la génération du PDF
+//     const titleElement = document.querySelector('h2');
+//     if (titleElement) {
+//         titleElement.style.display = 'none';
+//     }
+
+//     // Supprimer les éléments inutiles (dernier bouton d'action)
+//     clone.querySelectorAll('th:last-child, td:last-child').forEach(el => el.remove());
+
+//     // Afficher toutes les lignes masquées
+//     clone.querySelectorAll('#suspendedStudentsTableBody tr').forEach(row => {
+//         row.style.removeProperty('display');
+//     });
+
+//     // Inverser l'ordre des colonnes
+//     clone.querySelectorAll('tr').forEach(row => {
+//         let cells = Array.from(row.children);
+//         cells.reverse(); // Inverser l'ordre des cellules
+//         row.innerHTML = ''; // Vider la ligne
+//         cells.forEach(cell => row.appendChild(cell)); // Réinsérer les cellules dans le nouvel ordre
+//     });
+
+//     const opt = {
+//         margin: [10, 5, 10, 5],
+//         filename: `Absence_Complete_${new Date().toLocaleDateString()}.pdf`,
+//         image: { type: 'jpeg', quality: 0.98 },
+//         html2canvas: { scale: 2, scrollY: 0, useCORS: true },
+//         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+//     };
+
+//     html2pdf().set(opt).from(clone).save().then(() => {
+//         // Réafficher le titre après la génération du PDF
+//         if (titleElement) {
+//             titleElement.style.display = '';
+//         }
+//     });
+// }
+
+function generatePDF() {
+    const originalTable = document.querySelector('table');
+    const originalTitle = document.querySelector('h2');
+
+    // Créer un conteneur temporaire
+    const tempContainer = document.createElement('div');
+
+    // Cloner et ajouter le titre
+    if (originalTitle) {
+        const clonedTitle = originalTitle.cloneNode(true);
+        tempContainer.appendChild(clonedTitle);
+    }
+
+    // Cloner et ajouter le tableau
+    const clonedTable = originalTable.cloneNode(true);
+    tempContainer.appendChild(clonedTable);
+
+    // Supprimer la dernière colonne (boutons d'action) dans le clone
+    clonedTable.querySelectorAll('th:last-child, td:last-child').forEach(el => el.remove());
+
+    // Afficher toutes les lignes masquées
+    clonedTable.querySelectorAll('#suspendedStudentsTableBody tr').forEach(row => {
+        row.style.removeProperty('display');
+    });
+
+    // Appliquer un style pour éviter que les lignes soient coupées
+    const style = document.createElement('style');
+    style.textContent = `
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid black; }
+        tr { page-break-inside: avoid; } /* Empêche la coupure des lignes */
+        thead { display: table-header-group; } /* Répète l'entête sur chaque page */
+    `;
+    tempContainer.appendChild(style);
+
+    const opt = {
+        margin: [10, 5, 10, 5],
+        filename: `Absence_Complete_${new Date().toLocaleDateString()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, scrollY: 0, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Format portrait pour mieux gérer les pages
+    };
+
+    html2pdf().set(opt).from(tempContainer).save();
+}
 
 
+
+</script>
 
 </body>
 </html>
