@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param('is', $studentId, $semester);
         $stmt->execute();
         $result = $stmt->get_result();
-        $exists = $result->num_rows > 0;
+        $exists = $result->num_rows > 0; 
         $stmt->close();
 
         if ($exists) {
