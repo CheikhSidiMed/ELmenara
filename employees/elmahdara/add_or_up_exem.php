@@ -11,13 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $houdour = $_POST['houdour'];
     $moyen = $_POST['moyen'];
     $NB = $_POST['NB'];
-    $date = $_POST['date'];
+    $semester = $_POST['semester'];
 
     try {
         // Vérifier si l'entrée existe déjà
-        $checkSql = "SELECT id FROM exam WHERE student_id = ? AND date = ? ";
+        $checkSql = "SELECT id FROM exam WHERE student_id = ? AND semester = ? ";
         $stmt = $conn->prepare($checkSql);
-        $stmt->bind_param('is', $studentId, $date);
+        $stmt->bind_param('is', $studentId, $semester);
         $stmt->execute();
         $result = $stmt->get_result();
         $exists = $result->num_rows > 0;
@@ -25,14 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($exists) {
             // Mise à jour de l'existant
-            $updateSql = "UPDATE exam SET num_count = ?, num_hivd = ?, tjwid = ?, houdour = ?, moyen = ?, NB = ? WHERE student_id = ? AND date = ?";
+            $updateSql = "UPDATE exam SET num_count = ?, num_hivd = ?, tjwid = ?, houdour = ?, moyen = ?, NB = ? WHERE student_id = ? AND semester = ?";
             $stmt = $conn->prepare($updateSql);
-            $stmt->bind_param('iissssis', $num_count, $num_hivd, $tjwid, $houdour, $moyen, $NB, $studentId, $date);
+            $stmt->bind_param('iissssis', $num_count, $num_hivd, $tjwid, $houdour, $moyen, $NB, $studentId, $semester);
         } else {
             // Insertion d'une nouvelle ligne
-            $insertSql = "INSERT INTO exam (student_id, num_count, num_hivd, tjwid, houdour, moyen, NB) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $insertSql = "INSERT INTO exam (semester, student_id, num_count, num_hivd, tjwid, houdour, moyen, NB) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($insertSql);
-            $stmt->bind_param('iiissss', $studentId, $num_count, $num_hivd, $tjwid, $houdour, $moyen, $NB);
+            $stmt->bind_param('siiissss', $semester, $studentId, $num_count, $num_hivd, $tjwid, $houdour, $moyen, $NB);
         }
 
         if ($stmt->execute()) {

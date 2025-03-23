@@ -16,8 +16,8 @@
 
 
     $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
-    $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : '';
-    $toDate = isset($_GET['to_date']) ? $_GET['to_date'] : '';
+    // $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : '';
+    $semester = isset($_GET['semester']) ? $_GET['semester'] : '';
 
 
 
@@ -31,7 +31,7 @@
 
 
     // Fetch student data from the database, including agent phone number
-    $sql = "SELECT s.id, e.date, s.student_name, e.num_count, e.num_hivd, e.tjwid, e.houdour,
+    $sql = "SELECT s.id, e.date, s.student_name, e.semester, e.num_count, e.num_hivd, e.tjwid, e.houdour,
                e.moyen, e.NB, COALESCE(ag.whatsapp_phone, s.phone) AS whatsapp_phone
             FROM students s
             JOIN user_branch ub ON s.branch_id = ub.branch_id AND ub.user_id = ?
@@ -49,17 +49,17 @@
         $types .= "i";
     }
 
-    if (!empty($fromDate)) {
-        $sql .= " AND e.date >= ?";
-        $params[] = $fromDate;
+    if (!empty($semester)) {
+        $sql .= " AND e.semester = ?";
+        $params[] = $semester;
         $types .= "s";
     }
 
-    if (!empty($toDate)) {
-        $sql .= " AND e.date <= ?";
-        $params[] = $toDate;
-        $types .= "s";
-    }
+    // if (!empty($toDate)) {
+    //     $sql .= " AND e.date <= ?";
+    //     $params[] = $toDate;
+    //     $types .= "s";
+    // }
     $sql .= " GROUP BY s.id";
 
 
@@ -103,21 +103,20 @@
         </h2>
         <div class="search-filter-container text-center mb-3 row align-items-center">
             <div class="col-md-5 mb-2 mb-md-0">
-                <label for="">-</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
             </div>
-            <form method="GET" class="row" >
-            <div class="col-md-6 mb-2 mb-md-0">
-                <label for="fromDate">من</label>
-                    <input type="date" id="fromDate" name="from_date" class="form-control" value="<?= isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>" onchange="this.form.submit()">
-            </div>
-                <div class="col-md-6 mb-2 mb-md-0">
-                    <label for="toDate">الى</label>
-                    <input type="date" id="toDate" name="to_date" class="form-control" value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" onchange="this.form.submit()">
+            <form method="GET" class="col-md-3" >
+                <div class="col-md-12 mb-2 mb-md-0">
+                    <select class="form-select" name="semester" onchange="this.form.submit()">
+                        <option value="">اختر فصل</option>
+                        <option value="الفصل الأول" <?php if ($semester == "الفصل الأول") echo 'selected'; ?>>الفصل الأول</option>
+                        <option value="الفصل الثاني" <?php if ($semester == "الفصل الثاني") echo 'selected'; ?>>الفصل الثاني</option>
+                        <option value="الفصل الثالث" <?php if ($semester == "الفصل الثالث") echo 'selected'; ?>>الفصل الثالث</option>
+                        
+                    </select>
                 </div>
             </form>
-            <div class="col-md-2">
-                <label for="class">-</label>
+            <div class="col-md-3">
                 <form method="GET" class="d-flex">
                     <select class="form-select" name="class" onchange="this.form.submit()">
                         <option value="">اختر القسم</option>
@@ -142,7 +141,8 @@
                         <th>التجويد</th>
                         <th>الحضور</th>
                         <th>المعدل العام</th>
-                        <th>الملاحضة </th>
+                        <th style="min-width: 80px;"> الفصل</th>
+                        <th>الملاحظة </th>
                         <th style="width: 10%;">إجراءات</th>
                     </tr>
                 </thead>
@@ -158,6 +158,7 @@
                                     <td data-field='tjwid'>{$row['tjwid']}</td>
                                     <td data-field='houdour'>{$row['houdour']}</td>
                                     <td data-field='moyen'>{$row['moyen']}</td>
+                                    <td data-field='semester'>{$row['semester']}</td>
                                     <td data-field='NB'>{$row['NB']}</td>
                                     <td style='display: none;'data-field='date'>{$row['date']}</td>
                                     <td>
@@ -170,22 +171,7 @@
                                             <a class='btn btn-sm btn-secondary cancel-btn' style='display:none;' onclick='cancelEdit(this)'>
                                                 <i class='bi bi-x'></i> إلغاء
                                             </a>
-                                        ";
-
-                                    // echo "<a class='h5 btn btn-success btn-action' onclick=\"sendWhatsAppMessage(
-                                    //             '{$row['whatsapp_phone']}',
-                                    //             '{$row['student_name']}',
-                                    //             '{$row['num_count']}',
-                                    //             '{$row['num_hivd']}',
-                                    //             '{$row['tjwid']}',
-                                    //             '{$row['houdour']}',
-                                    //             '{$row['moyen']}',
-                                    //             '{$row['NB']}',
-                                    //             '{$row['date']}'
-                                    //         )\">
-                                    //         <i class='bi bi-whatsapp'></i> إرسال
-                                    //     </a>
-                                        echo "</div>
+                                            </div>
                                         </td>
                                     </tr>";
                         }
@@ -225,8 +211,12 @@
             const value = td.innerText;
             
             let input;
-            if(field === 'du' || field === 'au') {
-                input = `<input type="date" class="form-control" value="${value}">`;
+            if(field === 'semester') {
+                input = `<select class="form-control">
+                            <option value="الفصل الأول" ${value === 'الفصل الأول' ? 'selected' : ''}>الفصل الأول</option>
+                            <option value="الفصل الثاني" ${value === 'الفصل الثاني' ? 'selected' : ''}>الفصل الثاني</option>
+                            <option value="الفصل الثالث" ${value === 'الفصل الثالث' ? 'selected' : ''}>الفصل الثالث</option>
+                        </select>`;
             } else {
                 input = `<input type="text" class="form-control" value="${value}">`;
             }
@@ -257,8 +247,6 @@
             
             data[field] = input.value;
         });
-        console.log(data);
-
 
         Swal.fire({
             title: 'هل أنت متأكد؟',

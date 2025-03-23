@@ -348,7 +348,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <div class="form-group col-md-6">
                             <label for="date_din">تاريخ التسجيل</label>
-                            <input type="date" class="form-control" id="date_din" name="date_din" require>
+                            <input type="date" class="form-control" id="date_din" name="date_din" required>
                         </div>
                     </div>
 
