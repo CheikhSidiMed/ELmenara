@@ -178,9 +178,9 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
             <div class="dropdown">
                 <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
                 <div class="dropdown-content">
-                    <a href="#">حفظ القرآن</a>
+                    <a href="Certifi_60_hG.php">حفظ القرآن</a>
                     <a href="Certificat_45_HizbeGirl.html">حفـظ ثلاث أرباع القرآن</a>
-                    <a href="#">حفـظ نصف القرآن</a>
+                    <a href="Certifi_30_hG.php">حفـظ نصف القرآن</a>
                     <a href="Certificat_15_HizbeGirl.html">حفـظ ربع القرآن</a>
                 </div>
             </div>
