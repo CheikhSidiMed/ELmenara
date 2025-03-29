@@ -597,6 +597,63 @@
       .cls-140 {
         fill: url(#linear-gradient-18);
       }
+      body {
+          padding: 0;
+          margin: 0;
+      }
+      #content {
+          margin: 0 !important;
+          padding: 0 !important;
+      }
+
+      input {
+        width: 270px;
+        padding: 8px;
+        margin-bottom: 20px;
+        border: 2px solid #1BA078;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #333;
+        background-color: #f9f9f9;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      input::placeholder {
+          color: #888;
+      }
+
+      input[type="file"] {
+        cursor: pointer;
+        font-size: 20px;
+        padding: 5px;
+      }
+
+      button {
+          padding: 12px;
+          margin-bottom: 10px;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #fff;
+          background-color: #1BA078;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+          background-color: #165d8a;
+      }
+
+      button:active {
+          transform: scale(0.98);
+      }
+
+      .b-group {
+          text-align: center;
+          justify-content: center;
+          align-items: center;
+      }
     </style>
 </head>
 <body>
@@ -608,19 +665,21 @@
         <div class="dropdown">
             <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
             <div class="dropdown-content">
-                <a href="Certifi_60_hG.php">حفظ القرآن</a>
-                <a href="Certificat_45_HizbeGirl.html">حفـظ ثلاث أرباع القرآن</a>
-                <a href="Certifi_30_hG.php">حفـظ نصف القرآن</a>
-                <a href="Certificat_15_HizbeGirl.html">حفـظ ربع القرآن</a>
+                <a href="boys/certi_60_hbody.html">حفظ القرآن</a>
+                <a href="Certifi_60_hG.php">حفظت القرآن</a>
+                <a href="boys/certi_45_hbody.html">حفـظ ثلاث أرباع القرآن</a>
+                <a href="Certificat_45_HizbeGirl.html">حفظت ثلاث أرباع القرآن</a>
+                <a href="boys/Certifi_30_hG.php">حفـظ نصف القرآن</a>
+                <a href="Certifi_30_hG.php">حفظت نصف القرآن</a>
+                <a href="boys/certi_15_hboy.html">حفـظ ربع القرآن</a>
+                <a href="Certificat_15_HizbeGirl.html">حفظت ربع القرآن</a>
             </div>
         </div>
         <div class="dropdown">
             <a href="#">الإفادات &#9662;</a>
             <div class="dropdown-content">
-                <a href="#">طالب من طلاب المحظرة</a>
-                <a href="#"> طالب من خارج المحظرة</a>
-                <a href="#"> طالبة من طلاب المحظرة</a>
-                <a href="#"> طالب من خارج المحظرة</a>
+              <a href="../ivadat/etrang_boys.html"> طالب </a>
+              <a href="../ivadat/etrang_girls.html"> طالبة</a>
             </div>
         </div>
 

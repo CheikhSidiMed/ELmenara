@@ -816,6 +816,63 @@
       .cls-191 {
         fill: url(#linear-gradient-18);
       }
+      body {
+          padding: 0;
+          margin: 0;
+      }
+      #content {
+          margin: 0 !important;
+          padding: 0 !important;
+      }
+
+      input {
+        width: 270px;
+        padding: 8px;
+        margin-bottom: 20px;
+        border: 2px solid #1BA078;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #333;
+        background-color: #f9f9f9;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      input::placeholder {
+          color: #888;
+      }
+
+      input[type="file"] {
+        cursor: pointer;
+        font-size: 20px;
+        padding: 5px;
+      }
+
+      button {
+          padding: 12px;
+          margin-bottom: 10px;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #fff;
+          background-color: #1BA078;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+          background-color: #165d8a;
+      }
+
+      button:active {
+          transform: scale(0.98);
+      }
+
+      .b-group {
+          text-align: center;
+          justify-content: center;
+          align-items: center;
+      }
     </style>
 </head>
 <body>
@@ -828,19 +885,21 @@
         <div class="dropdown">
             <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
             <div class="dropdown-content">
-                <a href="Certifi_60_hG.php">حفظ القرآن</a>
-                <a href="Certificat_45_HizbeGirl.html">حفـظ ثلاث أرباع القرآن</a>
-                <a href="Certifi_30_hG.php">حفـظ نصف القرآن</a>
-                <a href="Certificat_15_HizbeGirl.html">حفـظ ربع القرآن</a>
+                <a href="boys/certi_60_hbody.html">حفظ القرآن</a>
+                <a href="Certifi_60_hG.php">حفظت القرآن</a>
+                <a href="boys/certi_45_hbody.html">حفـظ ثلاث أرباع القرآن</a>
+                <a href="Certificat_45_HizbeGirl.html">حفظت ثلاث أرباع القرآن</a>
+                <a href="boys/Certifi_30_hG.php">حفـظ نصف القرآن</a>
+                <a href="Certifi_30_hG.php">حفظت نصف القرآن</a>
+                <a href="boys/certi_15_hboy.html">حفـظ ربع القرآن</a>
+                <a href="Certificat_15_HizbeGirl.html">حفظت ربع القرآن</a>
             </div>
         </div>
         <div class="dropdown">
             <a href="#">الإفادات &#9662;</a>
             <div class="dropdown-content">
-                <a href="#">طالب من طلاب المحظرة</a>
-                <a href="#"> طالب من خارج المحظرة</a>
-                <a href="#"> طالبة من طلاب المحظرة</a>
-                <a href="#"> طالب من خارج المحظرة</a>
+              <a href="../ivadat/etrang_boys.html"> طالب </a>
+              <a href="../ivadat/etrang_girls.html"> طالبة</a>
             </div>
         </div>
 
@@ -2478,8 +2537,12 @@
       <text class="cls-13" transform="translate(181.53 20.54) scale(.64 1)"><tspan x="0" y="0">45</tspan></text>
       <text class="cls-10" transform="translate(195.03 21.11) scale(.64 1)"><tspan x="0" y="0">60</tspan></text>
       <ellipse class="cls-19" cx="112.4" cy="69.42" rx="31.17" ry="31.13"/>
-      <ellipse class="cls-128" cx="113.39" cy="69.36" rx="26.99" ry="26.96"/>
-      <path class="cls-73" d="M91.25,83.76c1.77-4.5,2.57-6.4,2.74-6.62,0,0,0,0,0,0,.03-.04.23-.3.5-.66.12-.15.25-.33.4-.53.84-1.12,1.6-2.19,2.81-3.89.14-.19.47-.66.81-1.32,0,0,.27-.4.39-.83.32-1.21.27-3.86.68-5.92,0-.03.24-.86.71-2.54.59-2.08.64-2.25.71-2.69.22-1.31.08-1.64.36-2.69.22-.83.53-1.47.76-1.88.96-1.29,1.27-2.35,1.37-3.1.06-.41.07-.86.36-1.42.33-.63.69-.76,1.12-1.42.39-.6.39-.94.61-1.47.77-1.91,2.83-2.75,2.95-2.79,1.21-.47,2.32-.37,2.95-.25.67.03,1.42.13,2.24.36.59.17.91.32,2.03.76,1.46.58,1.74.64,2.14.81,1.75.75,2.8,2.18,3.76,3.5,1.15,1.58,1.71,2.94,2.29,4.37.65,1.59,1.55,3.82,1.78,6.75.23,2.95-.5,3.16-.05,5.69.36,2.05.8,1.73,1.63,4.82.68,2.56.58,3.53,1.53,5.18.17.29.33.55.5.78.54.75,1.06,1.26,1.28,1.47.05.05.09.09.1.09.45.41,1.36,2.19,3.11,6.59-1.56,2.06-7.38,9.18-17.23,10.84-5.46.92-9.85-.25-11.05-.57-2.29-.62-6.65-2.15-10.47-6.09-1.82-1.88-3.02-3.79-3.81-5.33Z"/>
+      <ellipse id="photoMask" class="cls-128" cx="113.39" cy="69.36" rx="26.99" ry="26.96"/>
+
+      <!-- <path class="cls-73" d="M91.25,83.76c1.77-4.5,2.57-6.4,2.74-6.62,0,0,0,0,0,0,.03-.04.23-.3.5-.66.12-.15.25-.33.4-.53.84-1.12,1.6-2.19,2.81-3.89.14-.19.47-.66.81-1.32,0,0,.27-.4.39-.83.32-1.21.27-3.86.68-5.92,0-.03.24-.86.71-2.54.59-2.08.64-2.25.71-2.69.22-1.31.08-1.64.36-2.69.22-.83.53-1.47.76-1.88.96-1.29,1.27-2.35,1.37-3.1.06-.41.07-.86.36-1.42.33-.63.69-.76,1.12-1.42.39-.6.39-.94.61-1.47.77-1.91,2.83-2.75,2.95-2.79,1.21-.47,2.32-.37,2.95-.25.67.03,1.42.13,2.24.36.59.17.91.32,2.03.76,1.46.58,1.74.64,2.14.81,1.75.75,2.8,2.18,3.76,3.5,1.15,1.58,1.71,2.94,2.29,4.37.65,1.59,1.55,3.82,1.78,6.75.23,2.95-.5,3.16-.05,5.69.36,2.05.8,1.73,1.63,4.82.68,2.56.58,3.53,1.53,5.18.17.29.33.55.5.78.54.75,1.06,1.26,1.28,1.47.05.05.09.09.1.09.45.41,1.36,2.19,3.11,6.59-1.56,2.06-7.38,9.18-17.23,10.84-5.46.92-9.85-.25-11.05-.57-2.29-.62-6.65-2.15-10.47-6.09-1.82-1.88-3.02-3.79-3.81-5.33Z"/> -->
+      <text class="cls-38" transform="translate(315.25 302.75) scale(.85 1)">
+                <tspan x="15" y="18" id="date-text" style="font-size: 11px;"></tspan>
+              </text>
       <g>
         <path class="cls-117" d="M50.72,74.32v-3.91s1.21-.14,1.21-.14v3.61c0,.55.21.8.66.8.05,0,.08.03.08.08v1.12s-.02.09-.07.09c-1.26,0-1.88-.55-1.88-1.66Z"/>
         <path class="cls-127" d="M52.51,75.89l.02-1.12s.03-.08.08-.08c.44,0,.65-.24.65-.8v-1.73s1.21-.15,1.21-.15v2.32c0,1.08-.62,1.64-1.88,1.64-.05,0-.08-.04-.08-.09ZM52.72,77.19l.81-.8.81.8-.8.8-.82-.8Z"/>
@@ -2496,7 +2559,7 @@
           dominant-baseline="middle"><tspan x="0" y="0" id="name-text"> : للطالبة المتميزة</tspan></text>
     </g>
   </g>
-  <image id="photo" x="82" y="42" width="65" height="60" style="background-color: red !important;" clip-path="url(#photoMask)"/>
+  <image id="photo" x="93" y="49" width="38" height="40" style="background-color: red !important;" clip-path="url(#photoMask)"/>
 </svg>
   </div>
 

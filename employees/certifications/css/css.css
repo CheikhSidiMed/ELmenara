@@ -135,7 +135,7 @@ tr:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #008CBA;
+    background: #017B6A;
     padding: 15px;
 }
 .navbar a {
@@ -165,7 +165,7 @@ tr:hover {
 }
 .dropdown-content a {
     display: block;
-    color: #008CBA;
+    color: #017B6A;
     padding: 10px;
     text-align: right;
 }
@@ -193,7 +193,7 @@ tr:hover {
         display: none;
         flex-direction: column;
         width: 100%;
-        background: #008CBA;
+        background: #017B6A;
     }
     .nav-links a {
         padding: 15px;
