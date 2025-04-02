@@ -39,7 +39,7 @@ h1 {
     transform: scale(1.05);
 }
 .total { background-color: #17a2b8; }
-.licence { background-color: #007bff; }
+.licence { background-color: #017B6A; }
 .master { background-color: #28a745; }
 .doctorat { background-color: #281745; }
 .doctorat1 { background-color: #dc3545; }
@@ -58,7 +58,7 @@ th, td {
     border-bottom: 1px solid #ddd;
 }
 th {
-    background-color: #007bff;
+    background-color: #017B6A;
     color: white;
 }
 tr:hover {
@@ -71,7 +71,7 @@ tr:hover {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: #0d6efd;
+    background-color: #017B6A;
     color: white;
     font-size: 44px;
     display: flex;
@@ -83,7 +83,7 @@ tr:hover {
 }
 
 .floating-button:hover {
-    background-color: #0b5ed7;
+    background-color: #017B6A;
     transform: scale(1.1);
 }
 
@@ -98,7 +98,7 @@ tr:hover {
 .search-box input {
     width: 100%;
     padding: 12px 40px 12px 12px; /* Padding for the icon */
-    border: 2px solid #007bff;
+    border: 2px solid #017B6A;
     border-radius: 8px;
     font-size: 16px;
     color: #333;
@@ -109,7 +109,7 @@ tr:hover {
 }
 
 .search-box input:focus {
-    border-color: #007bff;
+    border-color: #017B6A;
 }
 
 .search-box::after {
@@ -120,7 +120,7 @@ tr:hover {
     top: 50%;
     right: 15px;
     transform: translateY(-50%);
-    color: #007bff;
+    color: #017B6A;
     pointer-events: none;
 
 }
@@ -168,7 +168,12 @@ tr:hover {
     color: #017B6A;
     padding: 10px;
     text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
+
 .dropdown-content a:hover {
     background: #ddd;
 }
@@ -227,3 +232,4 @@ tr:hover {
     overflow-x: auto;
     width: 100%;
 }
+

@@ -645,36 +645,16 @@
       </style>
 </head>
 <body>
-  <nav class="navbar">
-    <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
-    <div class="nav-links">
-        <a href="student_certf.php">أرشيف الحفاظ 📚 </a>
-        <a href="#" onclick="window.location.href='../home.php'">الرئيسية</a>
-        <div class="dropdown">
-            <a href="#">تهانئ المستويات القرآنية  &#9662;</a>
-            <div class="dropdown-content">
-              <a href="boys/certi_60_hbody.html">حفظ القرآن</a>
-              <a href="Certifi_60_hG.php">حفظت القرآن</a>
-              <a href="boys/certi_45_hbody.html">حفـظ ثلاث أرباع القرآن</a>
-              <a href="Certificat_45_HizbeGirl.html">حفظت ثلاث أرباع القرآن</a>
-              <a href="Certifi_30_hG.php">حفـظ نصف القرآن</a>
-              <a href="Certifi_30_hG.php">حفظت نصف القرآن</a>
-              <a href="boys/certi_15_hboy.html">حفـظ ربع القرآن</a>
-              <a href="Certificat_15_HizbeGirl.html">حفظت ربع القرآن</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <a href="#">الإفادات &#9662;</a>
-            <div class="dropdown-content">
-              <a href="../ivadat/etrang_boys.html"> طالب </a>
-              <a href="../ivadat/etrang_girls.html"> طالبة</a>
-            </div>
-        </div>
+  <div id="navbar-container"></div>
 
-        <a href="#">تعزية </a>
-        <a href="#">معلومات</a>
-    </div>
-  </nav>
+  <script>
+      fetch("navbar.html")
+          .then(response => response.text())
+          .then(data => {
+              document.getElementById("navbar-container").innerHTML = data;
+          })
+          .catch(error => console.error("Erreur lors du chargement du menu :", error));
+  </script>
 
 <div id="content">
   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 548.86 394.86">

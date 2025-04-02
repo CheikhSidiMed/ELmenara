@@ -155,7 +155,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
-$niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '#28a745', 'حفص' => '#007bff'];
+$niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '#28a745', 'حفص' => '#017B6A'];
 
 ?>
 
@@ -261,7 +261,7 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                                     <div style="
                                         width: 75px; height: 75px;
                                         display: flex; align-items: center; justify-content: center;
-                                        background-color: #007bff; color: white;
+                                        background-color: #017B6A; color: white;
                                         font-size: 25px; font-weight: bold;
                                         border-radius: 50%; border: 3px solid blue;
                                     ">
