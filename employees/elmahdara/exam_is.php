@@ -1,74 +1,78 @@
 <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    include '../db_connection.php';
+include '../db_connection.php';
 
-    session_start();
+session_start();
 
-    if (!isset($_SESSION['userid'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
-        header("Location: ../home.php");
-        exit;
-    }
-    $user_id = $_SESSION['userid'];
+if (!isset($_SESSION['userid'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Error: User is not logged in.']);
+    header("Location: ../home.php");
+    exit;
+}
 
+$user_id = $_SESSION['userid'];
 
-    $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
-    // $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : '';
-    $semester = isset($_GET['semester']) ? $_GET['semester'] : '';
+$selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
+$semester = isset($_GET['semester']) ? $_GET['semester'] : '';
 
+// Load available classes for display
+$query = "SELECT class_id, class_name FROM classes WHERE branch_id = 22";
+$classResult = $conn->query($query);
 
+if ($classResult === false) {
+    die("Error fetching levels: " . $conn->error);
+}
 
-
-    $query = "SELECT class_id, class_name FROM classes WHERE branch_id = 22";
-    $classResult = $conn->query($query);
-
-    if ($classResult === false) {
-        die("Error fetching levels: " . $conn->error);
-    }
-
-
-    // Fetch student data from the database, including agent phone number
-    $sql = "SELECT s.id, e.date, s.student_name, e.semester, e.num_count, e.num_hivd, e.tjwid, e.houdour,
+// Build the student query
+$sql = "SELECT s.id, e.date, s.student_name, e.semester, e.num_count, e.num_hivd, e.tjwid, e.houdour,
                e.moyen, e.NB, COALESCE(ag.whatsapp_phone, s.phone) AS whatsapp_phone
-            FROM students s
-            JOIN user_branch ub ON s.branch_id = ub.branch_id AND ub.user_id = ?
-            LEFT JOIN exam e ON e.student_id = s.id
-            LEFT JOIN agents ag ON ag.agent_id = s.agent_id
-            WHERE s.branch_id = 22 AND s.is_active = 0 ";
+        FROM students s
+        JOIN user_branch ub ON s.branch_id = ub.branch_id AND ub.user_id = ?
+        LEFT JOIN exam e ON e.student_id = s.id
+        LEFT JOIN agents ag ON ag.agent_id = s.agent_id
+        WHERE s.branch_id = 22 AND s.is_active = 0";
 
-    // Ajouter les conditions de filtrage
-    $params = [$user_id];
-    $types = "i";
+$params = [$user_id];
+$types = "i";
 
-    if (!empty($selectedClass)) {
-        $sql .= " AND s.class_id = ?";
-        $params[] = $selectedClass;
-        $types .= "i";
-    }
+if (!empty($selectedClass)) {
+    $sql .= " AND s.class_id = ?";
+    $params[] = $selectedClass;
+    $types .= "i";
+}
 
-    if (!empty($semester)) {
-        $sql .= " AND e.semester = ?";
-        $params[] = $semester;
-        $types .= "s";
-    }
+if (!empty($semester)) {
+    $sql .= " AND e.semester = ?";
+    $params[] = $semester;
+    $types .= "s";
+}
 
-    // if (!empty($toDate)) {
-    //     $sql .= " AND e.date <= ?";
-    //     $params[] = $toDate;
-    //     $types .= "s";
-    // }
-    $sql .= " GROUP BY s.id";
+$sql .= " GROUP BY s.id";
+
+$stmt = $conn->prepare($sql);
+
+if ($stmt === false) {
+    die("Error preparing statement: " . $conn->error);
+}
+
+// Handle dynamic parameters (compatibility with Windows/PHP versions)
+$bind_names[] = $types;
+foreach ($params as $key => $value) {
+    $bind_names[] = &$params[$key];  // must pass by reference
+}
+
+call_user_func_array([$stmt, 'bind_param'], $bind_names);
+
+// Execute and fetch results
+$stmt->execute();
+$result = $stmt->get_result();
 
 
-    // Exécuter la requête préparée
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ar">

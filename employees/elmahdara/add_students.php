@@ -160,6 +160,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label for="birthPlace">مكان الميلاد</label>
                             <input type="text" class="form-control" id="birthPlace" name="birthPlace" placeholder="أدخل مكان الميلاد" >
                         </div>
+                        <div class="form-group col-md-4">
+                            <label for="current_city">مكان الإقامة</label>
+                            <input type="text" class="form-control" id="current_city" name="current_city" placeholder="أدخل مكان الميلاد" >
+                        </div>
                         <div class="form-group col-md-4" id="studentPhoneContainer" style="display: none;">
                             <label for="studentphone">رقم هاتف تلميذ</label>
                             <input type="text" class="form-control" id="studentphone" name="studentphone" placeholder="أدخل رقم الهاتف">

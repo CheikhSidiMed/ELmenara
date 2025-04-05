@@ -11,6 +11,7 @@ CREATE TABLE etudiants_certified (
     type_ijaza VARCHAR(50) NOT NULL,
     type ENUM('نافع', 'حفص', 'أخر') NOT NULL
 );
+ALTER TABLE `students` ADD `current_city` VARCHAR(100) NULL AFTER `suspension_reason`;
 
 ALTER TABLE `students` ADD `elmoutoune` VARCHAR(255) NULL AFTER `is_active`;
 

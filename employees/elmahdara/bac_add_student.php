@@ -35,6 +35,7 @@ try {
         $tdate = $_POST['tdate'];
         $class = $_POST['class'];
         $date_din = $_POST['date_din'];
+        $current_city = $_POST['current_city'];
         // Check if an image file was uploaded
         $photoContent = null;
         $photoUrl = '';
@@ -77,13 +78,13 @@ try {
             $remaining = $_POST['remaining'];
         }
         
-        $sql = "INSERT INTO students (elmoutoune, start, class_id, regstration_date_count, student_name, rewaya, days, gender, birth_date, birth_place, branch_id, tdate, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO students (current_city, elmoutoune, start, class_id, regstration_date_count, student_name, rewaya, days, gender, birth_date, birth_place, branch_id, tdate, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if ($stmt === false) {
             die(json_encode(array('success' => false, 'message' => 'Error preparing the statement: ' . $conn->error)));
         }
-        $stmt->bind_param('ssssssssssisisiiisi',
-            $elmoutoune, $start, $class, $date_din, $student_name, $rewaya, $days, $gender, $birth_date, $birth_place,
+        $stmt->bind_param('sssssssssssisisiiisi',
+            $elmoutoune, $current_city, $start, $class, $date_din, $student_name, $rewaya, $days, $gender, $birth_date, $birth_place,
             $branch_id, $tdate, $agent_id, $payment_nature, $fees, $discount, $remaining, $photoUrl, $student_phone
         );
 
@@ -92,7 +93,8 @@ try {
                     "📝 استمارة التسجيل:\n\n" .
                     "اسم الطالب(ة): $student_name\n" .
                     "تاريخ الميلاد: $birth_date\n" .
-                    "مكان الإقامة: $birth_place\n" .
+                    "مكان الميلاد: $birth_place\n" .
+                    "مكان الإقامة: $current_city\n" .
                     "الرواية: $rewaya\n" .
                     "البداية: $start\n" .
                     "الأيام المناسبة: $days\n" .
