@@ -179,7 +179,7 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
             document.getElementById("navbar-container").innerHTML = data;
         })
         .catch(error => console.error("Erreur lors du chargement du menu :", error));
-</script>    
+</script>
 
 
     <div class="container">

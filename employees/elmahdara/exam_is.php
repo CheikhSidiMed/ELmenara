@@ -116,6 +116,7 @@ $result = $stmt->get_result();
                         <option value="الفصل الأول" <?php if ($semester == "الفصل الأول") echo 'selected'; ?>>الفصل الأول</option>
                         <option value="الفصل الثاني" <?php if ($semester == "الفصل الثاني") echo 'selected'; ?>>الفصل الثاني</option>
                         <option value="الفصل الثالث" <?php if ($semester == "الفصل الثالث") echo 'selected'; ?>>الفصل الثالث</option>
+                        <option value="الفصل الرابع" <?php if ($semester == "الفصل الرابع") echo 'selected'; ?>>الفصل الرابع</option>
                         
                     </select>
                 </div>
@@ -220,6 +221,7 @@ $result = $stmt->get_result();
                             <option value="الفصل الأول" ${value === 'الفصل الأول' ? 'selected' : ''}>الفصل الأول</option>
                             <option value="الفصل الثاني" ${value === 'الفصل الثاني' ? 'selected' : ''}>الفصل الثاني</option>
                             <option value="الفصل الثالث" ${value === 'الفصل الثالث' ? 'selected' : ''}>الفصل الثالث</option>
+                            <option value="الفصل الرابع" ${value === 'الفصل الرابع' ? 'selected' : ''}>الفصل الرابع</option>
                         </select>`;
             } else {
                 input = `<input type="text" class="form-control" value="${value}">`;
