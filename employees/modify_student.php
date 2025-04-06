@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Prepare the SQL query
 $sql = "
-    UPDATE students SET 
+    UPDATE students SET
         student_name = ?,
         part_count = '$part_count',
         registration_date = '$registration_date',

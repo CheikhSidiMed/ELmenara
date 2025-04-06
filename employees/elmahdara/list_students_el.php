@@ -19,7 +19,7 @@ $statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
 
 
 // Fetch student data from the database, including agent phone number
-$sql = "SELECT s.id, s.start, s.balance, s.suspension_reason, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
+$sql = "SELECT s.id, s.start, s.balance, s.suspension_reason, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place, s.current_city,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name,
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
@@ -35,81 +35,6 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param('ii', $user_id, $selectedStatus);
 $stmt->execute();
 $result = $stmt->get_result();
-
-
-// Handle suspension of student
-// if (isset($_POST['suspend_student_id'])) {
-//     $student_id = $_POST['suspend_student_id'];
-//     $suspension_reason = $_POST['suspension_reason'];
-//     $targetStatus = $_POST['targetStatus'];
-
-//     // First, fetch the student's data from the students table
-//     $student_query = "SELECT
-//             s.id,
-//             s.remaining,
-//             COALESCE(SUM(p.remaining_amount), 0) AS total_paid,
-//             (
-//                 (
-//                 CASE
-//                     WHEN MONTH(CURDATE()) >= 10
-//                     THEN MONTH(CURDATE()) - 9
-//                     ELSE MONTH(CURDATE()) + 3
-//                 END
-//                 - (
-//                     CASE
-//                     WHEN MONTH(s.regstration_date_count) <= 9
-//                         THEN MONTH(s.regstration_date_count) + 3
-//                     ELSE MONTH(s.regstration_date_count) - 9
-//                     END
-//                 )
-//                 - COALESCE((SELECT COUNT(DISTINCT p2.month)
-//                             FROM payments p2
-//                             WHERE p2.student_id = s.id), 0)
-//             ) * s.remaining
-//             + COALESCE(SUM(p.remaining_amount), 0)
-//             ) AS total_due
-//         FROM students s
-//         LEFT JOIN payments p
-//             ON s.id = p.student_id
-//         WHERE s.id = ?
-//         GROUP BY s.id;";
-
-//     $stmt = $conn->prepare($student_query);
-//     $stmt->bind_param("i", $student_id);
-//     $stmt->execute();
-//     $student = $stmt->get_result()->fetch_assoc();
-//     $stmt->close();
-
-//     if ($student) {
-//         $current_date = date('Y-m-d H:i:s');
-//         $balance = $student['total_paid'];
-
-//         if ($targetStatus == 1) {
-//             $sql = "UPDATE students SET balance = ?, is_active = 1, date_desectivation = ? WHERE id = ?";
-//         } else {
-//             $sql = "UPDATE students SET is_active = 0, registration_date = ? WHERE id = ?";
-//         }
-
-//         $stmt = $conn->prepare($sql);
-
-//         if ($targetStatus == 1) {
-//             $stmt->bind_param("dsi", $balance, $current_date, $student_id);
-//         } else {
-//             $stmt->bind_param("si", $current_date, $student_id);
-//         }
-
-//         $stmt->bind_param("si", $current_date, $student_id);
-//         $stmt->execute();
-//         $stmt->close();
-
-//         echo json_encode(['status' => 'success', 'message' => 'تم تعليق الطالب بنجاح']);
-//     } else {
-//         echo json_encode(['status' => 'error', 'message' => 'لم يتم العثور على الطالب']);
-//     }
-//     exit();
-// }
-
-
 
 
 ?>
@@ -166,6 +91,7 @@ $result = $stmt->get_result();
                         <th>تاريخ الميلاد</th>
                         <th>تاريخ الإلتحاق</th>
                         <th>مكان الميلاد</th>
+                        <th>مكان الإقامة</th>
                         <th>الجنس</th>
                         <th>الرواية </th>
                         <th>البداية </th>
@@ -198,6 +124,7 @@ $result = $stmt->get_result();
                                     <td data-field='birth_date'>{$row['birth_date']}</td>
                                     <td data-field='regstration_date_count'>" . date("Y-m-d", strtotime($row['regstration_date_count'])) . "</td>
                                     <td data-field='birth_place'>{$row['birth_place']}</td>
+                                    <td data-field='current_city'>{$row['current_city']}</td>
                                     <td data-field='gender'>{$row['gender']}</td>
                                     <td data-field='rewaya'>{$row['rewaya']}</td>
                                     <td data-field='start'>{$row['start']}</td>
