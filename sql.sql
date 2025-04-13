@@ -1,35 +1,33 @@
-CREATE TABLE etudiants_certified (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    NNI VARCHAR(50) NOT NULL,
-    phone VARCHAR(50) NOT NULL,
-    date VARCHAR(50) NOT NULL,
-    birth_date VARCHAR(50) NOT NULL,
-    birth_city VARCHAR(50) NOT NULL,
-    photo VARCHAR(250) NULL,
-    year VARCHAR(50) NOT NULL,
-    type_ijaza VARCHAR(50) NOT NULL,
-    type ENUM('نافع', 'حفص', 'أخر') NOT NULL
-);
-ALTER TABLE `students` ADD `current_city` VARCHAR(100) NULL AFTER `suspension_reason`;
+CREATE TABLE `offer_accounts` (
+  `id` int(11) NOT NULL,
+  `account_number` varchar(50) NOT NULL,
+  `account_name` varchar(100) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `account_balance` decimal(10,2) DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `offer_accounts`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `offer_accounts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10006;
 
-ALTER TABLE `students` ADD `elmoutoune` VARCHAR(255) NULL AFTER `is_active`;
 
-CREATE TABLE `exam` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `student_id` INT(11) NOT NULL,
-  `num_count` INT(11) NOT NULL,
-  `num_hivd` VARCHAR(200) NOT NULL,
-  `tjwid` VARCHAR(120) NOT NULL,
-  `houdour` VARCHAR(120) NOT NULL,
-  `moyen` VARCHAR(50) NOT NULL,
-  `NB` VARCHAR(150) NOT NULL,
-  `date` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_exam_student` (`student_id`),
-  CONSTRAINT `fk_exam_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE `offer_transactions` (
+  `id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `transaction_description` varchar(255) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` enum('نقدي','بنكي') NOT NULL,
+  `bank_id` int(11) DEFAULT NULL,
+  `transaction_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-ALTER TABLE `exam` CHANGE `date` `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `offer_transactions`
+  ADD PRIMARY KEY (`id`);
+  ALTER TABLE `offer_transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+
+
 
 
 

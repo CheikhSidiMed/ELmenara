@@ -52,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account_id']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة التبرعات</title>
+    <title> إدارة حسابات مداخيل </title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <script src="js/sweetalert2.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

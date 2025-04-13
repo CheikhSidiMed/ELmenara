@@ -1524,10 +1524,13 @@
         </g>
         
         
-        <text class="cls-33" transform="translate(284.57 272.05)"><tspan x="0" y="0" xml:space="preserve">الحمد لله رب العالمين، والصلاة والسلام على رسول الله.  </tspan><tspan x="229.58" y="14.4" xml:space="preserve">أما بعد:  </tspan><tspan text-anchor="middle" 
-            dominant-baseline="middle" x="191.41" y="43.2" id="name-text" >فإن الطالب</tspan><tspan x="-3.71" y="72" xml:space="preserve" id="name-v" > المولود في  :                                       | تاريخ الميلاد  : </tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan><tspan x="226.42" y="115.2" text-anchor="middle" 
-            dominant-baseline="middle" id="name-m">من طلاب</tspan><tspan x="81.77" y="129.6" xml:space="preserve">نسأل الله أن يوفقه ويزيده علمًا وفهما.  </tspan><tspan x="254.79" y="172.8">وقد</tspan><tspan x="39.9" y="187.2">وما شهدنا إلا بــــــــــــما علـــــــــــــــــــــــــــــــــــــــــــــــــمنا.</tspan></text>
-        <text class="cls-35" transform="translate(98.64 566.11)"><tspan x="0" y="0">الإدارة </tspan></text>
+        <text class="cls-33" transform="translate(284.57 272.05)"><tspan x="0" y="0" xml:space="preserve">.الحمد لله رب العالمين، والصلاة والسلام على رسول الله </tspan><tspan x="219.58" y="14.4" xml:space="preserve">: أما بعد </tspan><tspan text-anchor="middle" 
+            dominant-baseline="middle" x="161.41" y="43.2" id="name-text" > :فإن الطالب</tspan><tspan x="-3.71" y="72" xml:space="preserve" id="name-v" > المولود في  :                                       | تاريخ الميلاد</tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan><tspan x="126.42" y="110.2" text-anchor="middle" 
+            dominant-baseline="middle" id="name-m">من طلاب</tspan><tspan x="75.77" y="134.6" xml:space="preserve">.نسأل الله أن يوفقه ويزيده علمًا وفهما </tspan><tspan x="34.79" y="152.8">.وقد سلمناه هذه الإفادة للإدلاء بها عند الحاجة</tspan><tspan x=".9" y="173.2">.وما شهدنا إلا بــــــــــــما علـــــــــــــــــــــــــــــــــــــــــــــــــمنا</tspan></text>
+        <text class="cls-35" transform="translate(98.64 566.11)">
+          <tspan x="0" y="0">الإدارة </tspan>
+          <tspan  id="name-f" x="0" y="20" style="font-size: .9rem;"> </tspan>
+        </text>
         <text x="81.77" y="290.6" transform="translate(322.66 302.75) scale(.71 1)">
             <tspan x="223" y="305" id="date-text" style="font-size: 11px;"></tspan>
         </text>
@@ -1543,6 +1546,7 @@
     <input type="date" id="nameDInput">
     <input type="text" id="nameMInput" placeholder=" من طلاب" dir="rtl">
     <input type="date" id="dateInput">
+    <input type="text" id="nameFInput" placeholder="الإدارة" dir="rtl">
     <button onclick="updateSVG()">تحديــــــــث</button>
     <button id="saveButton">PNGحفظ كــــــــ</button>
     <button onclick="saveAsPDF()">PDFحفظ كـــــــــ</button>
@@ -1561,6 +1565,7 @@
         const name_v = document.getElementById("nameVInput").value;
         const name_d = document.getElementById("nameDInput").value;
         const name_m = document.getElementById("nameMInput").value;
+        const name_f = document.getElementById("nameFInput").value;
 
         if (name) {
             document.getElementById("name-text").textContent = " فإن الطالب: " + name;
@@ -1568,11 +1573,14 @@
         if (name_m) {
             document.getElementById("name-m").textContent = "  من طلاب  " + name_m;
         }
+        if (name_f) {
+            document.getElementById("name-f").textContent =  name_f;
+        }
         if (date) {
             document.getElementById("date-text").textContent = date;
         }
         if (name_v && name_d ) {
-            document.getElementById("name-v").textContent = " المولود في  :      " + name_v +  "           | تاريخ الميلاد  : " + name_d ;
+            document.getElementById("name-v").textContent = " المولود في:      " + name_v +  "           | تاريخ الميلاد  : " + name_d ;
         }
 
     }
