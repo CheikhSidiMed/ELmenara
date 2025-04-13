@@ -1522,10 +1522,13 @@
           </g>
           <rect class="cls-53" x="60" y="560.01" width="136" height="33"/>
         </g>
-        <text class="cls-33" transform="translate(284.57 272.05)"><tspan x="0" y="0" xml:space="preserve">الحمد لله رب العالمين، والصلاة والسلام على رسول الله.  </tspan><tspan x="229.58" y="14.4" xml:space="preserve">أما بعد:  </tspan><tspan x="205.23" y="43.2" xml:space="preserve" text-anchor="middle" 
-            dominant-baseline="middle" id="name-text">فإن الطالبة :  </tspan><tspan x="-9.72" y="72" xml:space="preserve" id="name-v"> المولودة في  :                                       | تاريخ الميلاد  : </tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan><tspan x="-239.8" y="115.2" xml:space="preserve">من طالبات العلم المتميزات، وتحفظ من كتاب الله تعالى   :              وتميزت بحسن الخلق والسلوك القويم. </tspan><tspan x="73.75" y="129.6" xml:space="preserve">نسأل الله أن يوفقها ويزيدها علمًا وفهما.  </tspan><tspan text-anchor="middle" 
-            dominant-baseline="middle" id="name-m" x="254.79" y="172.8" >وقد</tspan><tspan x="63.94" y="187.2">وما شهدنا إلا بما علـــــــــــــــــــــــــــــــــــــــــــــــــمنا.</tspan></text>
-        <text class="cls-35" transform="translate(98.64 566.11)"><tspan x="0" y="0">الإدارة </tspan></text>
+        <text class="cls-33" transform="translate(284.57 272.05)"><tspan x="0" y="0" xml:space="preserve">.الحمد لله رب العالمين، والصلاة والسلام على رسول الله  </tspan><tspan x="210.58" y="14.4" xml:space="preserve">:أما بعد  </tspan><tspan x="105.23" y="43.2" xml:space="preserve" text-anchor="middle" 
+            dominant-baseline="middle" id="name-text">:فإن الطالبة </tspan><tspan x="-30.72" y="72" xml:space="preserve" id="name-v"> المولودة في  :                                       | تاريخ الميلاد</tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan><tspan x="-190.8" y="105.2" xml:space="preserve">من طالبات العلم المتميزات، وتحفظ من كتاب الله تعالى:    وتميزت بحسن الخلق والسلوك القويم </tspan><tspan x="65.75" y="126.6" xml:space="preserve">.نسأل الله أن يوفقها ويزيدها علمًا وفهما  </tspan><tspan text-anchor="middle" 
+            dominant-baseline="middle" x="142.79" y="145.8" >.وقد سلمناها هذه الإفادة للإدلاء بها عند الحاجة</tspan><tspan x="23.94" y="170.2">.وما شهدنا إلا بما علـــــــــــــــــــــــــــــــــــــــــــــــــمنا</tspan></text>
+        <text class="cls-35" transform="translate(98.64 566.11)">
+          <tspan x="0" y="0">الإدارة </tspan>
+          <tspan  id="name-f" x="0" y="20" style="font-size: .9rem;"> </tspan>
+        </text>
         <text x="81.77" y="290.6" transform="translate(322.66 302.75) scale(.71 1)">
             <tspan x="223" y="305" id="date-text" style="font-size: 11px;"></tspan>
         </text>
@@ -1539,8 +1542,9 @@
     <input type="text" id="nameInput" placeholder="أدخل الاسم" dir="rtl">
     <input type="text" id="nameVInput" placeholder=" المولود في" dir="rtl">
     <input type="date" id="nameDInput">
-    <input type="text" id="nameMInput" placeholder=" وقد" dir="rtl">
+    <!-- <input type="text" id="nameMInput" placeholder=" وقد" dir="rtl"> -->
     <input type="date" id="dateInput">
+    <input type="text" id="nameFInput" placeholder=" الإدارة" dir="rtl">
     <button onclick="updateSVG()">تحديــــــــث</button>
     <button id="saveButton">PNGحفظ كــــــــ</button>
     <button onclick="saveAsPDF()">PDFحفظ كـــــــــ</button>
@@ -1558,13 +1562,13 @@
         const date = document.getElementById("dateInput").value;
         const name_v = document.getElementById("nameVInput").value;
         const name_d = document.getElementById("nameDInput").value;
-        const name_m = document.getElementById("nameMInput").value;
+        const name_f = document.getElementById("nameFInput").value;
 
         if (name) {
             document.getElementById("name-text").textContent = " فإن الطالبة: " + name;
         }
-        if (name_m) {
-            document.getElementById("name-m").textContent = " وقد " + name_m;
+        if (name_f) {
+            document.getElementById("name-f").textContent = name_f;
         }
         if (date) {
             document.getElementById("date-text").textContent = date;
