@@ -421,6 +421,8 @@
                         <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                         <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
+                        <li><a href="certifications/student_certf.php">📚  أرشيف الحفاظ</a></li>
+
 
                     </ul>
                 </li>
@@ -495,6 +497,8 @@
                                 <li><a href="student_activities.php"><i class="fa fa-list"></i> لائحة الطلاب المسجلين </a></li>
                                 <li><a href="absent_activities.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                                 <li><a href="student_activities_absence.php"><i class="fa fa-calendar-times"></i> إدارة غياب الطلاب</a></li>
+                                <li><a href="certifications/student_certf.php">📚  أرشيف الحفاظ</a></li>
+
                             </ul>
                         </li>
                     </ul>
@@ -515,6 +519,7 @@
                         <li><a href="absent.php"><i class="fa fa-calendar-times"></i> استمارة الغياب</a></li>
                         <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                         <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
+                        <li><a href="certifications/student_certf.php">📚  أرشيف الحفاظ</a></li>
 
                     </ul>
                 </li>
@@ -707,10 +712,10 @@
                         <li class="dropdown">
                             <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-file-invoice-dollar"></i>   التقارير المالية </a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i>      اليومية </a></li>
-                                <li><a href="debt_report.php"><i class="fa fa-user-times"></i>      الطلاب المدينون </a></li>
-                                <li><a href="exempted student report.php"><i class="fa fa-user-check"></i>        الطلاب المعفيون </a></li>
-                                <li><a href="Report of the month.php"><i class="fa fa-chart-line"></i>        التقرير المالي الشهري </a></li>
+                                <li><a href="Daily.php"><i class="fa fa-calendar-day"></i> اليومية </a></li>
+                                <li><a href="debt_report.php"><i class="fa fa-user-times"></i> الطلاب المدينون </a></li>
+                                <li><a href="exempted student report.php"><i class="fa fa-user-check"></i> الطلاب المعفيون </a></li>
+                                <li><a href="Report of the month.php"><i class="fa fa-chart-line"></i> التقرير المالي الشهري </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -758,7 +763,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="branchModalLabel">   إضافة فرع جديد </h5>
+                    <h5 class="modal-title" id="branchModalLabel">إضافة فرع جديد </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -791,7 +796,7 @@
                 <div class="form-group">
                     <label for="branchSelect">اختر الفرع</label>
                     <select class="form-control" id="branchSelect" name="branch_id" required>
-                        <?php include 'db_connection.php'; 
+                        <?php include 'db_connection.php';
                             $branches = [];
                             $result = $conn->query("SELECT branch_id, branch_name FROM branches");
                             while ($row = $result->fetch_assoc()) {
