@@ -207,8 +207,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label for="tdate"> التوقيت</label>
                             <select class="form-control" id="tdate" name="tdate" required>
                                 <option value="">اختر التوقيت</option>
-                                <option value="ذكر">الرابعة مساء</option>
-                                <option value="أنثى">التاسعة مساء</option>
+                                <option value="الرابعة مساء">الرابعة مساء</option>
+                                <option value="التاسعة مساء">التاسعة مساء</option>
                             </select>
                         </div>
                         <div class="form-group col-md-4">
