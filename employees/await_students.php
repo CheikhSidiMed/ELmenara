@@ -18,7 +18,8 @@ if (isset($_GET['valider_etudiant'])) {
     
     // Update student etat to 0
     $stmt = $conn->prepare("UPDATE students SET etat = 0 WHERE id = ?");
-    $stmt->execute([$studentId]);
+    $stmt->bind_param('i', $studentId);
+    $stmt->execute();
 
     header("Location: ".$_SERVER['PHP_SELF']."?success=1");
     exit;

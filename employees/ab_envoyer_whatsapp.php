@@ -30,7 +30,15 @@ foreach ($_SESSION['processed_students'] as $id => $timestamp) {
 // Vérifier si des étudiants absents sont soumis
 if (!empty($_POST['absent_students'])) {
     $session_time = htmlspecialchars($_POST['session_time'] ?? '', ENT_QUOTES, 'UTF-8');
-    $date_time = htmlspecialchars($_POST['date_time'], ENT_QUOTES, 'UTF-8') . ':00';
+    $date_time_raw = $_POST['date_time'] ?? '';
+    $date_time_obj = DateTime::createFromFormat('Y-m-d\TH:i', $date_time_raw);
+
+    if ($date_time_obj) {
+        $date_time = $date_time_obj->format('Y-m-d H:i:s');
+    } else {
+        $date_time = date('Y-m-d H:i:s');
+    }
+
 
     foreach ($_POST['absent_students'] as $student_id) {
         $student_id = intval($student_id);
@@ -77,7 +85,7 @@ if (!empty($_POST['absent_students'])) {
                 $message .= "غاب/ت اليوم : $session_time.\n";
                 $message .= "عساه خيرا.\n\n\n";
                 $message .= " التاريخ : $date_time.\n";
-                $message .= "القابة - محظرة المنارة والرباط.\n\n";
+                $message .= "الرقابة - محظرة المنارة والرباط.\n\n";
 
                 $encodedMessage = urlencode($message);
                 $whatsappUrl = "https://wa.me/222$phone?text=$encodedMessage";
