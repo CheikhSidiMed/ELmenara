@@ -108,7 +108,7 @@ $user_id = $_SESSION['userid'];
 
             <div class="mb-3">
                 <label for="date_time" class="form-label">توقيت :</label>
-                <input type="date" id="date_time" name="date_time" class="form-control" />
+                <input type="datetime-local" id="date_time" name="date_time" class="form-control" required/>
             </div>
 
             <div class="mb-3">

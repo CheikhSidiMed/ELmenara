@@ -178,6 +178,7 @@
                         <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
                         <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
                         <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                        <li><a href="await_students.php"><i class="fa fa-hourglass-half"></i>  قائمة الإنتظار الطلاب </a></li>
                         <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
                         <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
                         <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
@@ -480,6 +481,7 @@
                                 <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
                                 <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
                                 <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                <li><a href="await_students.php"><i class="fa fa-hourglass-half"></i>  قائمة الإنتظار الطلاب </a></li>
                                 <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
                                 <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
                                 <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>

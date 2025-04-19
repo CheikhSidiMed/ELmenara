@@ -55,11 +55,11 @@ if (!empty($id)) {
         r.receipt_date,
         u.username AS created_by,
         c.payment_method,
-        s.phone,
         br.branch_name,
         s.student_name AS student_name,
         IFNULL(b.bank_name, 'نقدي') AS bank_name,
         IFNULL(cl.class_name, 'N/A') AS student_class,
+        IFNULL(a.phone, s.phone) AS phone,
         SUM(c.remaining_amount) AS remaining_amount,
         s.remaining AS student_remaining,
         GROUP_CONCAT(c.month ORDER BY c.month SEPARATOR ', ') AS months_paid,
@@ -75,6 +75,8 @@ if (!empty($id)) {
             users u ON u.id = r.created_by
         LEFT JOIN
             students s ON c.student_id = s.id
+        LEFT JOIN
+            agents a ON a.agent_id = s.agent_id
         LEFT JOIN
             classes cl ON s.class_id = cl.class_id
         LEFT JOIN
@@ -139,6 +141,9 @@ $conn->close();
             background-color: #f5f5f5;
             direction: rtl;
             text-align: right;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
         }
 
         .receipt {
@@ -147,7 +152,9 @@ $conn->close();
             padding: 20px;
             border-radius: 5px;
             margin: auto;
-            width: 100%; /* Full width on screen */
+            width: 100%;
+            max-width: 800px; /* Maximum width for larger screens */
+            box-sizing: border-box;
         }
 
         .receipt-header img {
@@ -155,12 +162,16 @@ $conn->close();
             height: auto;
             border-bottom: 2px solid #007b5e;
             margin-bottom: 0px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .info-line {
             margin-bottom: 10px;
             font-weight: bold;
             color: #5a5a5a;
+            word-break: break-word; /* Prevents text overflow */
         }
 
         .info-line span {
@@ -170,14 +181,17 @@ $conn->close();
 
         .info-container {
             display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on small screens */
             justify-content: space-between;
-            margin-bottom: 20px;
-            margin-top: 20px;
+            margin-bottom: 10px;
+            margin-top: 10px;
             align-items: center;
+            gap: 10px; /* Adds space between items when they wrap */
         }
 
         .info-container div {
             flex: 1;
+            min-width: 120px;
             text-align: center;
         }
 
@@ -192,9 +206,11 @@ $conn->close();
 
         .summary-container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
+            font-size: 14px;
             padding: 5px;
             border: 1px solid #000;
             border-radius: 5px;
@@ -202,9 +218,12 @@ $conn->close();
 
         .summary-container div {
             flex: 1;
+            min-width: 100px; /* Minimum width before wrapping */
             text-align: center;
             font-weight: bold;
             color: #5a5a5a;
+            padding: 2px;
+            box-sizing: border-box;
         }
 
         .summary-container .text-primary {
@@ -216,15 +235,57 @@ $conn->close();
             margin-top: 20px;
             font-weight: bold;
             color: #5a5a5a;
+            word-break: break-word;
         }
-        table{
+
+        table {
             border: 1px solid #000 !important;
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-            }
+        th, td, .table-bordered {
+            border: 1px solid black !important;
+            padding: 8px;
+            word-break: break-word; /* Prevents text overflow in cells */
+        }
 
-            th, td, .table-bordered {
-                border: 1px solid black !important;
+        @media (max-width: 600px) {
+            .receipt {
+                padding: 15px;
             }
+            
+            .info-container div, 
+            .summary-container div {
+                flex: 100%; /* Stack items vertically on small screens */
+                margin-right: 0 !important;
+                margin-bottom: 1px;
+            }
+            
+            .info-container div:last-child,
+            .summary-container div:last-child {
+                margin-bottom: 0;
+            }
+            
+            th, td {
+                padding: 4px 0px !important;
+                margin: 0px !important;
+                font-size: 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            
+            .receipt {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+            }
+        }
 
 
         @media print {
@@ -321,7 +382,9 @@ $conn->close();
             </div>
             <div class="info-container">
                 <div><strong> الفرع: </strong><?php echo $branch_name; ?></div>
+                <div><strong>رقم الهاتف: </strong><?php echo $agent_phone; ?></div>
                 <div><strong>رقم التعريف: </strong><?php echo $id; ?></div>
+
             </div>
             <table class="table text-center">
                 <thead>
@@ -334,7 +397,7 @@ $conn->close();
                 </thead>
                 <tbody>
                     <?php foreach ($receipt_data as $data): ?>
-                    <tr>    
+                    <tr>
                         <td><?php echo $data['student_name']; ?></td>
                         <td><?php echo $data['student_class']; ?></td>
                         <td><?php echo $data['months_paid'] ?? $data['transaction_descriptions'] ;  ?></td>
@@ -349,7 +412,7 @@ $conn->close();
                 <div><span>مجموع الرسوم</span>: <?php echo $student_remaining_sum - $remaining_amount; ?></div>
 
                 <div>
-                    <span>المبلغ الإجمالي المدفوع</span> : <?php echo $total_paid_sum; ?>
+                    <span>المبلغ المدفوع</span> : <?php echo $total_paid_sum; ?>
                 </div>
                 <div><span>المبلغ المتبقي</span>: <?php echo $remaining_amount; ?></div>
 

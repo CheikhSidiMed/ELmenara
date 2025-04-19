@@ -30,8 +30,7 @@ foreach ($_SESSION['processed_students'] as $id => $timestamp) {
 // Vérifier si des étudiants absents sont soumis
 if (!empty($_POST['absent_students'])) {
     $session_time = htmlspecialchars($_POST['session_time'] ?? '', ENT_QUOTES, 'UTF-8');
-    $date_time = htmlspecialchars($_POST['date_time'], ENT_QUOTES, 'UTF-8') ?
-                 htmlspecialchars($_POST['date_time'], ENT_QUOTES, 'UTF-8') . ' '.date('H:i:s') : date('Y-m-d H:i:s');
+    $date_time = htmlspecialchars($_POST['date_time'], ENT_QUOTES, 'UTF-8') . ':00';
 
     foreach ($_POST['absent_students'] as $student_id) {
         $student_id = intval($student_id);
@@ -48,7 +47,12 @@ if (!empty($_POST['absent_students'])) {
 
         // Récupérer les informations de l'étudiant
         $query = $conn->prepare("
-            SELECT s.student_name, s.phone, a.whatsapp_phone
+            SELECT
+            s.student_name,
+            CASE
+                WHEN s.phone = '0' OR s.phone IS NULL OR s.phone = '' THEN a.whatsapp_phone
+                ELSE s.phone
+            END AS contact_phone
             FROM students s
             LEFT JOIN agents a ON s.agent_id = a.agent_id
             WHERE s.id = ?
@@ -63,9 +67,7 @@ if (!empty($_POST['absent_students'])) {
             $student_name = htmlspecialchars($student['student_name'], ENT_QUOTES, 'UTF-8');
 
             // Sélection du numéro de téléphone
-            $phone = !empty($student['phone']) && $student['phone'] != '0'
-                ? $student['phone']
-                : $student['whatsapp_phone'];
+            $phone = $student['contact_phone'];
 
             if (!empty($phone)) {
                // Créer le message WhatsApp
@@ -73,7 +75,9 @@ if (!empty($_POST['absent_students'])) {
                 $message .= "تحية طيبة وبعد،\n\n";
                 $message .= "الطالب(ة): $student_name\n";
                 $message .= "غاب/ت اليوم : $session_time.\n";
-                $message .= "عساه خيرا.\n\n";
+                $message .= "عساه خيرا.\n\n\n";
+                $message .= " التاريخ : $date_time.\n";
+                $message .= "القابة - محظرة المنارة والرباط.\n\n";
 
                 $encodedMessage = urlencode($message);
                 $whatsappUrl = "https://wa.me/222$phone?text=$encodedMessage";

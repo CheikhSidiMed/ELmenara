@@ -25,8 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $paymentMethod = $_POST['payment_method'];
     $expense_account_name = $_POST['expense_account_name'];
     $all_des = "حساب : " . $expense_account_name . " -{ " . $transactionDescription . ' }-';
-    $date_time = $_POST['date_time'] ?
-    $_POST['date_time'] . ' '.date('H:i:s') : date('Y-m-d H:i:s');
+    $date_time = $_POST['date_time'].':00';
 
     // Handle bank ID, which should be null if the payment is "نقدي"
     $bankId = ($paymentMethod == 'بنكي' && !empty($_POST['bank'])) ? $_POST['bank'] : null;

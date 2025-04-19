@@ -322,7 +322,7 @@ $conn->close();
                                 <option value="نقدي">نقدي</option>
                                 <option value="بنكي">بنكي</option>
                             </select>
-                            <input type="datetime-local" id="date_time" name="date_time" class="form-control mb-3 me-2" />
+                            <input type="datetime-local" id="date_time" name="date_time" class="form-control mb-3 me-2" required/>
                             </div>
                         <div id="selected-bank-name" style="margin-top: 15px; font-weight: bold; color: #1a73e8; text-align: center; font-size: 1.2rem;"></div>
                         <input type="hidden" id="selected-bank-id" name="bank">

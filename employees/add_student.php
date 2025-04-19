@@ -263,6 +263,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input class="form-check-input" type="checkbox" id="noAgentCheckbox" name="noAgentCheckbox" onclick="toggleAgentPhone()">
                             <label class="form-check-label" for="noAgentCheckbox">بدون وكيل(ة)</label>
                         </div>
+                        <div class="form-check" style="margin-left: 28px;">
+                            <label for="etat">نوع التسجيل</label>
+                            <select class="form-control" id="etat" name="etat" dir="rtl" required>
+                                <option value="">--- اختر نوع التسجيل ---</option>
+                                <option value="0">تسجيل</option>
+                                <option value="1">تسجيل في قائمة الإنتظار</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group col-md-12">

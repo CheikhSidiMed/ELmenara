@@ -67,6 +67,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
+$rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -140,19 +141,23 @@ $result = $stmt->get_result();
                 <label for="">-</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
             </div>
-            <form method="GET" class="row" >
-            <div class="col-md-6 mb-2 mb-md-0">
-                <label for="fromDate">من</label>
-                    <input type="date" id="fromDate" name="from_date" class="form-control" value="<?= isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>" onchange="this.form.submit()">
-            </div>
-                <div class="col-md-6 mb-2 mb-md-0">
-                    <label for="toDate">الى</label>
-                    <input type="date" id="toDate" name="to_date" class="form-control" value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" onchange="this.form.submit()">
+            <form method="GET" class="row align-items-end">
+                <div class="col-md-4 mb-2 mb-md-0">
+                    <label for="fromDate">من</label>
+                    <input type="date" id="fromDate" name="from_date" class="form-control" 
+                        value="<?= isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>" 
+                        onchange="this.form.submit()">
                 </div>
-            </form>
-            <div class="col-md-2">
-                <label for="class">-</label>
-                <form method="GET" class="d-flex">
+
+                <div class="col-md-4 mb-2 mb-md-0">
+                    <label for="toDate">الى</label>
+                    <input type="date" id="toDate" name="to_date" class="form-control" 
+                        value="<?= isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>" 
+                        onchange="this.form.submit()">
+                </div>
+
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <label for="class">القسم</label>
                     <select class="form-select" name="class" onchange="this.form.submit()">
                         <option value="">اختر القسم</option>
                         <?php
@@ -162,8 +167,18 @@ $result = $stmt->get_result();
                         }
                         ?>
                     </select>
-                </form>
-            </div>
+                </div>
+
+                <div class="col-md-1">
+                    <a href="<?= strtok($_SERVER["REQUEST_URI"], '?'); ?>" class="btn btn-outline-secondary d-flex justify-content-center align-items-center" 
+                        style="width: 48px; height: 48px;"
+                        title="إعادة تعيين">
+                        <i class="bi bi-arrow-clockwise fs-3" style="font-size: 24px;"></i>
+                    </a>
+                </div>
+            </form>
+
+
         </div>
         <div class="table-container">
             <table class="table table-bordered">
@@ -175,7 +190,7 @@ $result = $stmt->get_result();
                     <col class="print-column">
                     <col class="print-column">
                     <col class="print-column">
-                    <col class="no-print"> <!-- Colonne إجراءات -->
+                    <col class="no-print">
                 </colgroup>
                     <tr>
                         <th>الرقم</th>
@@ -190,7 +205,7 @@ $result = $stmt->get_result();
                 <tbody id="suspendedStudentsTableBody">
                 <?php
                     if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
+                        foreach ($rows as $row) {
                             echo "<tr data-student-id='{$row['id']}'>
                                     <td>{$row['id']}</td>
                                     <td data-field='student_name'>{$row['student_name']}</td>
@@ -244,6 +259,10 @@ $result = $stmt->get_result();
         });
     });
 </script>
+<script>
+  const rows = <?= json_encode($rows, JSON_UNESCAPED_UNICODE); ?>;
+</script>
+
 
 <script>
     function toggleEditMode(button) {
@@ -337,125 +356,218 @@ $result = $stmt->get_result();
 
 
     function sendWhatsAppMessage(phoneNumber, name, du, au, numAbAc, numAbNo) {
-    if (!phoneNumber) {
-        alert("لا يوجد رقم واتساب لهذا الطالب!");
-        return;
+        if (!phoneNumber) {
+            alert("لا يوجد رقم واتساب لهذا الطالب!");
+            return;
+        }
+
+        const message = `🛑 حصيلة الغياب من ${du} إلى ${au}
+
+            اسم الطالبة: ${name}
+
+            عدد الغياب المبرر: ${numAbAc}
+            عدد الغياب غير المبرر: ${numAbNo}
+
+            ❌ ملاحظة: الغياب ممنوع عمومًا.
+            ✅ كثرة الغياب المبرر تؤثر على نتيجة الامتحان.
+            ✅ 3 غيابات غير مبررة تؤدي إلى تعليق الدراسة فورًا.`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+        window.open(whatsappUrl, '_blank');
     }
-
-    const message = `🛑 حصيلة الغياب من ${du} إلى ${au}
-
-        اسم الطالبة: ${name}
-
-        عدد الغياب المبرر: ${numAbAc}
-        عدد الغياب غير المبرر: ${numAbNo}
-
-        ❌ ملاحظة: الغياب ممنوع عمومًا.
-        ✅ كثرة الغياب المبرر تؤثر على نتيجة الامتحان.
-        ✅ 3 غيابات غير مبررة تؤدي إلى تعليق الدراسة فورًا.`;
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-    window.open(whatsappUrl, '_blank');
-}
 
 </script>
 
 <script src="../js/sweetalert2.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-
-// function generatePDF() {
-//     const originalElement = document.querySelector('table');
-//     const clone = originalElement.cloneNode(true);
-
-//     // Cacher le titre avant la génération du PDF
-//     const titleElement = document.querySelector('h2');
-//     if (titleElement) {
-//         titleElement.style.display = 'none';
-//     }
-
-//     // Supprimer les éléments inutiles (dernier bouton d'action)
-//     clone.querySelectorAll('th:last-child, td:last-child').forEach(el => el.remove());
-
-//     // Afficher toutes les lignes masquées
-//     clone.querySelectorAll('#suspendedStudentsTableBody tr').forEach(row => {
-//         row.style.removeProperty('display');
-//     });
-
-//     // Inverser l'ordre des colonnes
-//     clone.querySelectorAll('tr').forEach(row => {
-//         let cells = Array.from(row.children);
-//         cells.reverse(); // Inverser l'ordre des cellules
-//         row.innerHTML = ''; // Vider la ligne
-//         cells.forEach(cell => row.appendChild(cell)); // Réinsérer les cellules dans le nouvel ordre
-//     });
-
-//     const opt = {
-//         margin: [10, 5, 10, 5],
-//         filename: `Absence_Complete_${new Date().toLocaleDateString()}.pdf`,
-//         image: { type: 'jpeg', quality: 0.98 },
-//         html2canvas: { scale: 2, scrollY: 0, useCORS: true },
-//         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-//     };
-
-//     html2pdf().set(opt).from(clone).save().then(() => {
-//         // Réafficher le titre après la génération du PDF
-//         if (titleElement) {
-//             titleElement.style.display = '';
-//         }
-//     });
-// }
-
 function generatePDF() {
-    const originalTable = document.querySelector('table');
-    const originalTitle = document.querySelector('h2');
+  const arabicHeaders = ['الرقم', 'الإسم الكامل', 'من', 'الى', 'الغياب المبرر', 'الغياب الغير مبرر'];
+  const tableData = rows;
 
-    // Créer un conteneur temporaire
-    const tempContainer = document.createElement('div');
+  // Create container with RTL support
+  const container = document.createElement('div');
+  container.style.direction = 'rtl';
+  container.style.fontFamily = "'Tajawal', Arial, sans-serif";
+  container.style.padding = '20px';
+  container.style.textAlign = 'right';
+  container.style.maxWidth = '800px';
+  container.style.margin = '0 auto';
 
-    // Cloner et ajouter le titre
-    if (originalTitle) {
-        const clonedTitle = originalTitle.cloneNode(true);
-        tempContainer.appendChild(clonedTitle);
+  // Add CSS styles with page-break protection
+  const style = document.createElement('style');
+  style.textContent = `
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    .report-title {
+      color: #007b5e;
+      margin: 15px 0;
+      font-size: 24px;
+      font-weight: 700;
     }
+    .report-date {
+      color: #555;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+    th {
+      background-color: #007b5e;
+      color: white;
+      padding: 10px;
+      font-weight: 500;
+    }
+    td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    // .footer {
+    //   margin-top: 30px;
+    //   text-align: center;
+    //   font-size: 12px;
+    //   color: #666;
+    //   page-break-before: always;
+    // }
+    // .footer-img {
+    //   width: 100%;
+    //   max-width: 600px;
+    //   margin: 20px auto 0;
+    //   display: block;
+    // }
+  `;
+  container.appendChild(style);
 
-    // Cloner et ajouter le tableau
-    const clonedTable = originalTable.cloneNode(true);
-    tempContainer.appendChild(clonedTable);
+  // Header image
+//   const headerImg = document.createElement('img');
+//   headerImg.src = 'imgs/header.png';
+//   headerImg.style.width = '100%';
+//   headerImg.style.maxWidth = '600px';
+//   headerImg.style.margin = '0 auto 15px';
+//   headerImg.style.display = 'block';
+//   container.appendChild(headerImg);
 
-    // Supprimer la dernière colonne (boutons d'action) dans le clone
-    clonedTable.querySelectorAll('th:last-child, td:last-child').forEach(el => el.remove());
+  // Report title
+  const title = document.createElement('h1');
+  title.className = 'report-title';
+  title.textContent = 'تقرير الغياب';
+  container.appendChild(title);
 
-    // Afficher toutes les lignes masquées
-    clonedTable.querySelectorAll('#suspendedStudentsTableBody tr').forEach(row => {
-        row.style.removeProperty('display');
+  // Report date
+  const date = document.createElement('div');
+  date.className = 'report-date';
+  date.textContent = ' تاريخ التقرير: ' + new Date().toLocaleDateString('ar-EG');
+  container.appendChild(date);
+
+  // Table with row protection
+  const table = document.createElement('table');
+
+  // Table head
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  arabicHeaders.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  // Table body with row protection
+  const tbody = document.createElement('tbody');
+  tableData.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.style.pageBreakInside = 'avoid';
+    
+    const cells = [
+      row.id,
+      row.student_name,
+      row.du,
+      row.au,
+      row.num_ab_ac,
+      row.num_ab_no
+    ];
+    cells.forEach(cell => {
+      const td = document.createElement('td');
+      td.textContent = cell;
+      if (['id', 'num_ab_ac', 'num_ab_no'].includes(cell)) {
+        td.style.textAlign = 'center';
+      }
+      tr.appendChild(td);
     });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  container.appendChild(table);
 
-    // Appliquer un style pour éviter que les lignes soient coupées
-    const style = document.createElement('style');
-    style.textContent = `
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid black; }
-        tr { page-break-inside: avoid; } /* Empêche la coupure des lignes */
-        thead { display: table-header-group; } /* Répète l'entête sur chaque page */
-    `;
-    tempContainer.appendChild(style);
+  // Footer section (forced to new page)
+  const footer = document.createElement('div');
+  footer.className = 'footer';
+  
+  const footerImg = document.createElement('img');
+  footerImg.src = 'imgs/footer.png';
+  footerImg.className = 'footer-img';
+  footer.appendChild(footerImg);
+  
+  const footerText = document.createElement('p');
+  footerText.textContent = 'شكراً لاستخدامكم نظام إدارة الغياب';
+  footer.appendChild(footerText);
+  
+  container.appendChild(footer);
 
-    const opt = {
-        margin: [10, 5, 10, 5],
-        filename: `Absence_Complete_${new Date().toLocaleDateString()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, scrollY: 0, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Format portrait pour mieux gérer les pages
-    };
+  // PDF generation options with page break control
+  const opt = {
+    margin: [15, 15, 15, 15],
+    filename: `تقرير_الغياب_${new Date().toLocaleDateString('ar-EG')}.pdf`,
+    image: {
+      type: 'jpeg',
+      quality: 1
+    },
+    html2canvas: {
+      scale: 3,
+      letterRendering: true,
+      useCORS: true,
+      scrollY: 0,
+      logging: true
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait',
+      hotfixes: ["px_scaling"]
+    },
+    pagebreak: {
+      mode: ['avoid-all', 'css', 'legacy'],
+      before: '.footer',
+      avoid: 'tr'
+    }
+  };
 
-    html2pdf().set(opt).from(tempContainer).save();
+  // Generate PDF
+  html2pdf()
+    .set(opt)
+    .from(container)
+    .save()
+    .then(() => {
+      console.log('PDF généré avec succès');
+    })
+    .catch(err => {
+      console.error('Erreur lors de la génération du PDF:', err);
+    });
 }
-
-
-
 </script>
+
 
 </body>
 </html>
