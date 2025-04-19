@@ -116,7 +116,7 @@
     <link href="css/bootstrap-5.3.1.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <style>
+    <!-- <style>
         body {
             font-family: 'Tajawal', sans-serif;
             direction: rtl;
@@ -235,6 +235,232 @@
         @media print {
             .no-print { display: none; }
         }
+    </style> -->
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f5f5;
+            direction: rtl;
+            text-align: right;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .receipt {
+            background-color: white;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            margin: auto;
+            width: 100%;
+            max-width: 800px; /* Maximum width for larger screens */
+            box-sizing: border-box;
+        }
+
+        .receipt-header img {
+            width: 100%;
+            height: auto;
+            border-bottom: 2px solid #007b5e;
+            margin-bottom: 0px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .info-line {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #5a5a5a;
+            word-break: break-word; /* Prevents text overflow */
+        }
+
+        .info-line span {
+            color: #007b5e;
+            font-weight: bold;
+        }
+
+        .info-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on small screens */
+            justify-content: space-between;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            align-items: center;
+            gap: 10px; /* Adds space between items when they wrap */
+        }
+
+        .info-container div {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .info-container div:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        .info-container .highlight {
+            color: #007b5e;
+            font-weight: bold;
+        }
+
+        .summary-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 14px;
+            padding: 5px;
+            border: 1px solid #000;
+            border-radius: 5px;
+        }
+
+        .summary-container div {
+            flex: 1;
+            min-width: 100px; /* Minimum width before wrapping */
+            text-align: center;
+            font-weight: bold;
+            color: #5a5a5a;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .summary-container .text-primary {
+            color: #17a2b8 !important;
+        }
+
+        .footer-note {
+            text-align: right;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #5a5a5a;
+            word-break: break-word;
+        }
+
+        table {
+            border: 1px solid #000 !important;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td, .table-bordered {
+            border: 1px solid black !important;
+            padding: 8px;
+            word-break: break-word; /* Prevents text overflow in cells */
+        }
+
+        @media (max-width: 600px) {
+            .receipt {
+                padding: 15px;
+            }
+            
+            .info-container div, 
+            .summary-container div {
+                flex: 100%; /* Stack items vertically on small screens */
+                margin-right: 0 !important;
+                margin-bottom: 1px;
+            }
+            
+            .info-container div:last-child,
+            .summary-container div:last-child {
+                margin-bottom: 0;
+            }
+            
+            th, td {
+                padding: 4px 0px !important;
+                margin: 0px !important;
+                font-size: 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            
+            .receipt {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+            }
+        }
+
+
+        @media print {
+            @page {
+                size: A5;
+                margin: 0;
+            }
+
+            body {
+                margin: 0;
+                padding: 0px;
+                font-size: 10pt;
+                color: #000; /* Force text to black */
+            }
+            .container {
+                margin-top: -40px !important;
+                margin-right: -39px !important;
+
+                transform: scale(.69);
+                transform-origin: right !important; /* Origine de l'échelle au centre */
+                display: flex !important; /* Active le flexbox */
+                justify-content: center !important; /* Centre horizontalement */
+                align-items: center !important;
+            }
+            .info-container {
+                padding-top: 4px !important;
+                margin: 0px !important;
+            }
+            .container {
+                max-width: 1200px !important;
+                margin: 0 auto;
+                padding: 0 2px;
+                text-align: center;
+            }
+
+            .receipt {
+                max-width: 80% !important;
+                margin: 0 auto;
+                margin-top: 20px;
+                padding: 0px;
+                border: none;
+                color: #000;
+                /* page-break-inside: avoid; */
+            }
+
+            table,  {
+                width: 100% !important;
+                border-collapse: collapse;
+                border: 1px solid #000 !important;
+
+            }
+
+            th, td, .table-bordered {
+                padding: 0px !important;
+                margin: 0px !important;
+                border: 1px solid black !important;
+                text-align: center;
+                color: #000;
+                font-size: 9pt !important;
+            }
+
+            /* Styling for emphasis */
+            .highlight {
+                font-weight: bold;
+                font-size: 9.5pt;
+                color: #000;
+            }
+
+            /* Hide unnecessary print elements */
+            .no-print, .print-button {
+                display: none;
+            }
+        }
+
     </style>
 </head>
 <body>

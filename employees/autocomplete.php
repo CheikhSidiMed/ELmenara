@@ -15,10 +15,10 @@ if (isset($_GET['term'])) {
     $term = '%' . $_GET['term'] . '%'; // Search for names or phone numbers containing the typed term
 
     // SQL query to search student_name, student phone, and agent phone
-    $sql = "SELECT s.id, s.student_name, s.phone AS student_phone, a.phone AS agent_phone 
+    $sql = "SELECT s.id, s.student_name, s.phone AS student_phone, a.phone AS agent_phone
             FROM students s
             LEFT JOIN agents a ON s.agent_id = a.agent_id
-            WHERE s.student_name LIKE ? OR s.phone LIKE ? OR a.phone LIKE ? ORDER BY s.id";
+            WHERE s.etat=0 AND s.is_active=0 AND s.student_name LIKE ? OR s.phone LIKE ? OR a.phone LIKE ? ORDER BY s.id";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('sss', $term, $term, $term);
     $stmt->execute();

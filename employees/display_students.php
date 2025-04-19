@@ -24,6 +24,7 @@ $sql = "SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.bir
     LEFT JOIN levels l ON s.level_id = l.id
     LEFT JOIN classes c ON s.class_id = c.class_id
     LEFT JOIN agents a ON s.agent_id = a.agent_id
+    WHERE s.etat = 0
 ";
 
 $stmt = $conn->prepare($sql);
@@ -33,205 +34,353 @@ $result = $stmt->get_result();
 
 ?>
 
+
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بيانات الطلاب</title>
     <link rel="shortcut icon" type="image/png" href="../images/menar.png">
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/sweetalert2.css">
-    <script src="js/sweetalert2.min.js"></script>
-    <link href="css/bootstrap-icons.css" rel="stylesheet">
-    <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+    <!-- Bootstrap RTL -->
+    <link href="css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            margin: 5px;
+        :root {
+            --primary: #017B6A;
+            --primary-light: #019984;
+            --secondary: #BD9237;
+            --accent: #AB8568;
+            --light: #F8F9FA;
+            --dark: #212529;
+            --gray: #E9ECEF;
         }
         
-        h2 {
-            font-family: 'Amiri', serif;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-            color: #4e73df;
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
         }
-        .search-box input {
-            border: 2px solid #4e73df;
-            padding: 10px;
-            border-radius: 5px;
-            width: 100%;
-        }
-        .container {
-            margin-top: 10px;
-        }
+        
         .navbar {
-            margin-bottom: 20px;
-            background-color: #4e73df;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
         }
-        .navbar a {
-            color: white;
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white !important;
         }
-        .table-container {
-            position: relative;
-            overflow-y: auto;
-            max-height: 600px;
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
         }
-        .table {
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            width: 100%;
-            border-collapse: collapse;
+        
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
         }
-        .table th, .table td {
-            vertical-align: middle;
+        
+        .page-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin: 2rem 0;
             text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px; /* Add padding for better spacing */
+            font-size: 2.5rem;
+            position: relative;
         }
+        
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary);
+            margin: 0.5rem auto;
+            border-radius: 2px;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-box input {
+            border: 2px solid var(--primary);
+            padding: 12px 20px;
+            border-radius: 50px;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-box input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        
+        .search-box::before {
+            content: '\f002';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
+        }
+        
         .table th {
-            background-color: #4e73df;
-            color: #ffffff;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+            text-align: center;
             position: sticky;
             top: 0;
             z-index: 10;
         }
-        .table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Add alternating row colors */
+        
+        .table td {
+            padding: 12px 15px;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--gray);
         }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
         .table tbody tr:hover {
-            background-color: #f1f1f1;
+            background-color: rgba(1, 123, 106, 0.05);
         }
-        .btn-primary {
-            background-color: #4e73df;
-            border-color: #4e73df;
+        
+        .table tbody tr:nth-child(even) {
+            background-color: rgba(1, 123, 106, 0.02);
         }
-        .btn-primary:hover {
-            background-color: #2e59d9;
-            border-color: #2653d4;
+        
+        .student-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gray);
+            transition: all 0.3s ease;
         }
-        .btn-back {
-            margin-bottom: 20px;
+        
+        .student-photo:hover {
+            transform: scale(1.1);
+            border-color: var(--secondary);
         }
-        .home-btn .btn {
-            font-size: 1.2rem;
-            padding: 10px 24px;
-            background-color: #1a73e8;
-            color: white;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        a {
-            font-size: 1.6rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 5px 20px !important;
-        }
-        .navbar-brand{
-            font-size: 1.8rem;
-            cursor: default;
+        
+        .btn-edit {
+            background-color: var(--secondary);
             border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .home-btn .btn:hover {
-            background-color: #155bb5;
+        
+        .btn-edit:hover {
+            background-color: #a87d2a;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(189, 146, 55, 0.3);
         }
-        .header-row .home-btn .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-        }
-
-        .home-btn .btn i {
+        
+        .btn-edit i {
             margin-left: 8px;
+        }
+        
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .table th, .table td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .student-photo {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <div class="">
-                <a class="nav-link" href="home.php"><i class="bi bi-house-up-fill"></i> الصفحة الرئيسية</a>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>منصة البيانات الطلابية
+            </a>
+            <div class="d-flex">
+                <a class="nav-link" href="home.php">
+                    <i class="fas fa-home me-1"></i> الصفحة الرئيسية
+                </a>
             </div>
-            <a class="navbar-brand" href="#">منصة البيانات الطلابية</a>
         </div>
     </nav>
-    
-    <div class="container-full " style="direction: rtl;">
-        <h2>بيانات الطلاب</h2>
-        <div class="search-box mb-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <h1 class="page-title">بيانات الطلاب</h1>
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن طريق اسم الطالب...">
         </div>
+        
+        <!-- Table Container -->
         <div class="table-container">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>رقم الطالب(ة)</th>
-                        <th>الاسم</th>
-                        <th>عدد الأحزاب</th>
-                        <th>الجنس</th>
-                        <th>تاريخ الميلاد</th>
-                        <th>مكان الميلاد</th>
-                        <th>تاريخ التسجيل</th>
-                        <th>تاريخ التسدد </th>
-                        <th>الفرع</th>
-                        <th>القسم</th>
-                        <th>المستوى</th>
-                        <th>الصورة</th>
-                        <th>رقم هاتف الوكيل(ة)</th>
-                        <th>إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="suspendedStudentsTableBody">
-                <?php
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $photoSrc = $row['student_photo'] !== '' ?
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>رقم الطالب</th>
+                            <th>الاسم</th>
+                            <th>عدد الأحزاب</th>
+                            <th>الجنس</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>مكان الميلاد</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>تاريخ التسدد</th>
+                            <th>الفرع</th>
+                            <th>القسم</th>
+                            <th>المستوى</th>
+                            <th>الصورة</th>
+                            <th>هاتف الوكيل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="suspendedStudentsTableBody">
+                        <?php if ($result->num_rows > 0): ?>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <?php
+                                    $photoSrc = $row['student_photo'] !== '' ?
                                         $row['student_photo'] :
                                         'uploads/avatar.png';
-                            echo "<tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['student_name']}</td>
-                                    <td>{$row['part_count']}</td>
-                                    <td>{$row['gender']}</td>
-                                    <td>{$row['birth_date']}</td>
-                                    <td>{$row['birth_place']}</td>
-                                    <td>{$row['regstration_date_count']}</td>
-                                    <td>{$row['registration_date']}</td>
-                                    <td>{$row['branch_name']}</td>
-                                    <td>{$row['class_name']}</td>
-                                    <td>{$row['level_name']}</td>
-                                    <td><img src='{$photoSrc}' alt='student_photo' width='50' height='50' style='border-radius: 50%'></td>
-                                    <td>{$row['agent_phone']}</td>
-                                    <td><a href='modify_student.php?id={$row['id']}' class='btn btn-primary'><i class='bi bi-pencil-square'></i> تعديل</a></td>
-                                  </tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='16'>لا يوجد طلاب</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+                                ?>
+                                <tr>
+                                    <td><?= $row['id'] ?></td>
+                                    <td><?= $row['student_name'] ?></td>
+                                    <td><?= $row['part_count'] ?></td>
+                                    <td><?= $row['gender'] ?></td>
+                                    <td><?= $row['birth_date'] ?></td>
+                                    <td><?= $row['birth_place'] ?></td>
+                                    <td><?= $row['regstration_date_count'] ?></td>
+                                    <td><?= $row['registration_date'] ?></td>
+                                    <td><?= $row['branch_name'] ?></td>
+                                    <td><?= $row['class_name'] ?></td>
+                                    <td><?= $row['level_name'] ?></td>
+                                    <td>
+                                        <img src="<?= $photoSrc ?>" alt="صورة الطالب" class="student-photo">
+                                    </td>
+                                    <td><?= $row['agent_phone'] ?></td>
+                                    <td>
+                                        <a href="modify_student.php?id=<?= $row['id'] ?>" class="btn-edit">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </a>
+                                        <!-- <a href="?disable_student=<?= $row['id'] ?>" class="btn btn-danger btn-disable">
+                                            <i class="fas fa-user-slash"></i> تعطيل
+                                        </a>
+
+                                        <a href="modify_student.php?id=<?= $row['id'] ?>" class="btn-edit">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </a> -->
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="14">
+                                    <div class="empty-state">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <p>لا يوجد طلاب مسجلين</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-<script src="js/jquery-3.5.1.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#searchInput').on('input', function() {
-            const value = $(this).val().toLowerCase();
-            $('#suspendedStudentsTableBody tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(value));
+    <!-- JavaScript -->
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Search functionality
+            $('#searchInput').on('input', function() {
+                const value = $(this).val().toLowerCase();
+                $('#suspendedStudentsTableBody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().includes(value));
+                });
+            });
+            
+            // Add animation to table rows
+            $('#suspendedStudentsTableBody tr').each(function(i) {
+                $(this).delay(i * 50).animate({ opacity: 1 }, 200);
             });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
 

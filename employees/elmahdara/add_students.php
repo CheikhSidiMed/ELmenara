@@ -91,13 +91,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../css/all.min.css" />
     <link rel="stylesheet" href="../css/bootstrap-4-5-2.min.css" />
     <link rel="stylesheet" href="css/css.css" />
+    <style>
+        .header-img {
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        .header-img img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <!-- Direct Form Display -->
     <div class="form-container">
+        <div class="header-img">
+            <img src="imgs/header.png" alt="Header Image">
+        </div>
         <div class="form-header d-flex justify-content-between align-items-center">
             <h1 id="studentRegistrationLabe">تسجيل التلاميذ</h1>
-            <button class="btn btn-success home" onclick="window.location.href='../home.php'">  الصفحة الرئيسية</button>
+            <button class="btn btn-success home" onclick="window.location.href='../home.php'"> الصفحة الرئيسية</button>
         </div>
 
         <div class="form-body">

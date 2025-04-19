@@ -23,6 +23,7 @@ try {
         $agent_id = $_POST['agentId'] ?? NULL;
         $student_name = $_POST['studentName'];
         $part_count = $_POST['partCount'];
+        $etat = $_POST['etat'];
         $gender = $_POST['gender'];
         $birth_date = empty($_POST['birthDate']) ? NULL : $_POST['birthDate'];
         $birth_place = $_POST['birthPlace']  ?? NULL;
@@ -73,13 +74,13 @@ try {
             $remaining = $_POST['remaining'];
         }
 
-        $sql = "INSERT INTO students (registration_date, student_name, level_id, part_count, gender, birth_date, birth_place, branch_id, class_id, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO students (etat, registration_date, student_name, level_id, part_count, gender, birth_date, birth_place, branch_id, class_id, agent_id, payment_nature, fees, discount, remaining, student_photo, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if ($stmt === false) {
             die(json_encode(array('success' => false, 'message' => 'Error preparing the statement: ' . $conn->error)));
         }
-        $stmt->bind_param('ssissssiiisiiisi',
-            $date_din, $student_name, $level_id, $part_count, $gender, $birth_date, $birth_place,
+        $stmt->bind_param('sssissssiiisiiisi',
+            $etat, $date_din, $student_name, $level_id, $part_count, $gender, $birth_date, $birth_place,
             $branch_id, $class_id, $agent_id, $payment_nature, $fees, $discount, $remaining, $photoUrl, $student_phone
         );
 

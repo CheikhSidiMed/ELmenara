@@ -15,16 +15,16 @@ $term = $_GET['term'] ?? ''; // Get the search term from the URL, default to an 
 
 // Prepare SQL to search by name, phone, or phone_2
 $sql = "
-    SELECT 
-        agent_name, 
-        phone 
-    FROM 
-        agents 
-    WHERE 
-        agent_name LIKE ? 
-        OR phone LIKE ? 
-        OR phone_2 LIKE ? 
-    ORDER BY phone ASC 
+    SELECT
+        agent_name,
+        phone
+    FROM
+        agents
+    WHERE
+        agent_name LIKE ?
+        OR phone LIKE ?
+        OR phone_2 LIKE ?
+    ORDER BY phone ASC
     LIMIT 10
 ";
 $stmt = $conn->prepare($sql);

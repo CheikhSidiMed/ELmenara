@@ -1468,6 +1468,7 @@
             </g>
           </g>
         </g>
+        <image id="photo1" x="132" y="-5" width="321"  />
         <image id="photo" x="32" y="45" width="121" height="150" style="background-color: red !important;" />
 
       </svg>
@@ -1481,6 +1482,7 @@
     <input type="text" id="nameIv" placeholder=" وذلك بمناسبة" dir="rtl">
     <input type="date" id="nameDInput">
     <input type="file" id="photoInput" accept="image/*">
+    <input type="file" id="photoInput1" accept="image/*">
 
     <button onclick="updateSVG()">تحديــــــــث</button>
     <button id="saveButton">PNGحفظ كــــــــ</button>
@@ -1499,6 +1501,7 @@
         const date = document.getElementById("nameDInput").value;
         const name_v = document.getElementById("nameIv").value;
         const photoInput = document.getElementById("photoInput").files[0];
+        const photoInput1 = document.getElementById("photoInput1").files[0];
 
         if (name) {
             document.getElementById("name-m").textContent = name;
@@ -1515,6 +1518,13 @@
                 document.getElementById("photo").setAttribute("href", e.target.result);
             };
             reader.readAsDataURL(photoInput);
+        }
+        if (photoInput1) {
+            const reader1 = new FileReader();
+            reader1.onload = function(e) {
+                document.getElementById("photo1").setAttribute("href", e.target.result);
+            };
+            reader1.readAsDataURL(photoInput1);
         }
     }
 

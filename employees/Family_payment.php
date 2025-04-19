@@ -194,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     if ($agent_idd) {
-        $sql_students = "SELECT id, remaining FROM students WHERE agent_id = ? AND remaining != 0.00";
+        $sql_students = "SELECT id, remaining FROM students WHERE etat=0 AND is_active=0 AND agent_id = ? AND remaining != 0.00";
         $stmt_students = $conn->prepare($sql_students);
         $stmt_students->bind_param("i", $agent_idd);
         $stmt_students->execute();
