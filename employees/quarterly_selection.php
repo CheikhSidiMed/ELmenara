@@ -135,7 +135,7 @@ if (!empty($selectedClass)) {
             ON s.id = ab.student_id
             AND MONTH(ab.created_at) IN (?, ?, ?)
         WHERE
-            class_id = ?
+            s.etat=0 AND s.is_active=0 AND s.class_id = ?
         GROUP BY
             s.id, absence_month ";
 

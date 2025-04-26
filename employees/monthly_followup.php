@@ -69,8 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 JOIN user_branch AS ub ON ub.class_id = c.class_id AND ub.user_id = '$user_id'
                 WHERE c.branch_id = ?";
         }else{
-            $sqlClasses = "SELECT class_id, class_name
-                FROM classes WHERE branch_id = ?";
+            $sqlClasses = "SELECT class_id, class_name FROM classes WHERE branch_id = ?";
         }
         $stmt = $conn->prepare($sqlClasses);
         $stmt->bind_param('i', $branch_id);
@@ -110,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         FROM students AS s
         LEFT JOIN
             absences AS ab ON s.id = ab.student_id AND (ab.created_at IS NULL OR MONTH(ab.created_at) = ? )
-        WHERE class_id = ?
+        WHERE etat=0 AND is_active=0 AND class_id = ?
         GROUP BY
                 s.id";
     $stmt = $conn->prepare($sql);

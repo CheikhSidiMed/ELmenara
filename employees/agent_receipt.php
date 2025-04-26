@@ -168,8 +168,9 @@ $conn->close();
     <link rel="stylesheet" href="css/amiri.css">
     <link rel="stylesheet" href="css/tajawal.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/receipt.css">
 
-    <style>
+    <!-- <style>
         body {
             font-family: 'Tajawal', sans-serif;
             background-color: #f5f5f5;
@@ -338,7 +339,7 @@ $conn->close();
             }
         }
 
-    </style>
+    </style> -->
 </head>
 <body>
 <div class="container my-5">

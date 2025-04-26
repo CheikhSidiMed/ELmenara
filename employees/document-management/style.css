@@ -1,0 +1,12 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .table td, .table th {
+    vertical-align: middle;
+  }
+  
+  .btn {
+    font-size: 0.9rem;
+  }
+  

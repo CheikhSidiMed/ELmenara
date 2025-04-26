@@ -10,7 +10,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
-$students = $conn->query("SELECT id, student_name, class_id, branch_id, level_id, phone FROM students");
+$students = $conn->query("SELECT id, student_name, class_id, branch_id, level_id, phone FROM students WHERE etat=0 AND is_active=0");
 $classes = $conn->query("SELECT class_id, class_name FROM classes");
 $branches = $conn->query("SELECT branch_id, branch_name FROM branches");
 $levels = $conn->query("SELECT id, level_name, price FROM levels");
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_level_id = $_POST['level_id'];
 
     // Check if the student exists
-    $check_student_query = $conn->query("SELECT * FROM students WHERE id = '$student_id'");
+    $check_student_query = $conn->query("SELECT * FROM students WHERE etat=0 AND is_active=0 AND id = '$student_id'");
     
     if ($check_student_query->num_rows > 0) {
         // Fetch the new level price
@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_remaining = $new_fees - $discount;
 
         // Update the student's details
-        $update_query = "UPDATE students 
-                         SET class_id = '$new_class_id', 
-                             branch_id = '$new_branch_id', 
-                             level_id = '$new_level_id', 
-                             fees = '$new_fees', 
+        $update_query = "UPDATE students
+                         SET class_id = '$new_class_id',
+                             branch_id = '$new_branch_id',
+                             level_id = '$new_level_id',
+                             fees = '$new_fees',
                              remaining = '$new_remaining'
                          WHERE id = '$student_id'";
         if ($conn->query($update_query) === TRUE) {
@@ -82,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="js/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="css/jquery-1.13.2-ui.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/sweetalert2.css"> 
-    <link rel="stylesheet" href="css/cairo.css"> 
-    <script src="js/sweetalert2.min.js"></script>   
+    <link rel="stylesheet" href="css/sweetalert2.css">
+    <link rel="stylesheet" href="css/cairo.css">
+    <script src="js/sweetalert2.min.js"></script>
  
     <style>
         body {
