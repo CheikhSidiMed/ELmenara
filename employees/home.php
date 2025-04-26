@@ -173,15 +173,15 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                    <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> الطلاب</a>
                     <ul class="collapse list-unstyled">
-                        <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                        <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                        <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                        <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل الطلاب</a></li>
+                        <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل الطلاب </a></li>
+                        <li><a href="display_students.php"><i class="fa fa-edit"></i>بيانات الطلاب </a></li>
                         <li><a href="await_students.php"><i class="fa fa-hourglass-half"></i>  قائمة الإنتظار الطلاب </a></li>
-                        <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                        <!-- <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
                         <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
-                        <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
+                        <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li> -->
                     </ul>
                 </li>
                 <li>
@@ -220,6 +220,7 @@
                     <li><a href="quarterly_selection.php"><i class="fa fa-file-alt"></i>  الحصيلة الفصلية</a></li>
                     <li><a href="result.php"><i class="fa fa-calendar-week"></i> نتائج التقييم </a></li>
                     <li><a href="certifications/student_certf.php">📚  أرشيف الحفاظ</a></li>
+                    <li><a href="document-management/ind_dm.php"><i>📁</i>نظام إدارة الوثائق</a></li>
 
                 </ul>
             </li>
@@ -262,12 +263,12 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> الطلاب</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="elmahdara/add_students.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
+                                <li><a href="elmahdara/add_students.php" ><i class="fa fa-user-plus"></i> تسجيل الطلاب</a></li>
+                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل الطلاب </a></li>
                                 <li><a href="elmahdara/list_students_el.php"><i class="fa fa-edit"></i>  سجل الطلاب</a></li>
-                                <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                <!-- <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li> -->
                                 <!-- <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li> -->
                             </ul>
                         </li>
@@ -311,7 +312,7 @@
                     <ul class="collapse">
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
+                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم الطلاب </a></li>
                                 <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
                                 <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
                             </ul>
@@ -381,14 +382,14 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> الطلاب</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                                <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
-                                <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل الطلاب</a></li>
+                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل الطلاب </a></li>
+                                <li><a href="display_students.php"><i class="fa fa-edit"></i>بيانات الطلاب </a></li>
+                                <!-- <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
                                 <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
-                                <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
+                                <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li> -->
                             </ul>
                         </li>
                         <li>
@@ -433,7 +434,7 @@
                     <ul class="collapse">
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i> تسديد رسوم التلاميذ </a></li>
+                                <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i> تسديد رسوم الطلاب </a></li>
                                 <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i> التسديد الأسري</a></li>
                             </ul>
                         </li>
@@ -476,15 +477,15 @@
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> التلاميذ</a>
+                            <a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-user"></i> الطلاب</a>
                             <ul class="collapse list-unstyled">
-                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل التلاميذ</a></li>
-                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل التلاميذ </a></li>
-                                <li><a href="display_students.php"><i class="fa fa-edit"></i> تحديث التسجيل</a></li>
+                                <li><a href="add_student.php" ><i class="fa fa-user-plus"></i> تسجيل الطلاب</a></li>
+                                <li><a href="update_cls_level.php" ><i class="fa fa-retweet"></i>  تحويل الطلاب </a></li>
+                                <li><a href="display_students.php"><i class="fa fa-edit"></i>بيانات الطلاب </a></li>
                                 <li><a href="await_students.php"><i class="fa fa-hourglass-half"></i>  قائمة الإنتظار الطلاب </a></li>
-                                <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
+                                <!-- <li><a href="display_studentss.php"><i class="fa fa-user-times"></i> فصل تلميذ</a></li>
                                 <li><a href="display_studentsss.php"><i class="fa fa-pause-circle"></i> تعليق تلميذ</a></li>
-                                <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li>
+                                <li><a href="restore_student.php"><i class="fa fa-user-check"></i> استعادة تلميذ</a></li> -->
                             </ul>
                         </li>
                         <li>
@@ -531,7 +532,7 @@
                 <ul class="collapse">
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                 <ul class="collapse list-unstyled">
-                    <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>  تسديد رسوم التلاميذ </a></li>
+                    <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>  تسديد رسوم الطلاب </a></li>
                     <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>  التسديد الأسري</a></li>
                     <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>  تسديد رسوم الأنشطة </a></li>
                     <li><a href="operation.php"><i class="fa fa-calculator"></i>  تسجيل عملية حسابية</a></li>
@@ -647,7 +648,7 @@
                     <ul class="collapse">
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fa fa-keyboard"></i> عمليات الإدخال</a>
                         <ul class="collapse list-unstyled">
-                            <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم التلاميذ </a></li>
+                            <li><a href="student_payment.php"><i class="fa fa-money-bill-wave"></i>   تسديد رسوم الطلاب </a></li>
                             <li><a href="Family_payment.php"><i class="fa fa-hand-holding-usd"></i>   التسديد الأسري</a></li>
                             <li><a href="activitie_payment.php"><i class="fa fa-credit-card"></i>   تسديد رسوم الأنشطة </a></li>
                             <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>

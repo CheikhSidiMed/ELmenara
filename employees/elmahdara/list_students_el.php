@@ -18,7 +18,6 @@ $selectedStatus = isset($_GET['status']) ? intval($_GET['status']) : 0;
 $statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
 
 
-// Fetch student data from the database, including agent phone number
 $sql = "SELECT s.id, s.start, s.balance, s.suspension_reason, s.elmoutoune, s.phone, s.rewaya, s.days, s.tdate, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place, s.current_city,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name,
            s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
@@ -28,7 +27,7 @@ $sql = "SELECT s.id, s.start, s.balance, s.suspension_reason, s.elmoutoune, s.ph
     LEFT JOIN levels l ON s.level_id = l.id
     LEFT JOIN classes c ON s.class_id = c.class_id
     LEFT JOIN agents a ON s.agent_id = a.agent_id
-    WHERE s.branch_id = '22' AND s.is_active = ?
+    WHERE s.branch_id = '22' AND s.etat = 0 AND s.is_active = ?
 ";
 
 $stmt = $conn->prepare($sql);
@@ -309,7 +308,7 @@ $result = $stmt->get_result();
 
     function confirmSuspend(event) {
         event.preventDefault();
-        const btn = event.currentTarget;  // Stocker le bouton avant Swal.fire
+        const btn = event.currentTarget;
         const studentId = btn.dataset.studentId;
         const currentIsActive = <?= json_encode($selectedStatus) ?>;
         const targetStatus = currentIsActive == 1 ? 0 : 1;

@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Fetch students in the selected class
-    $sql = "SELECT id, student_name FROM students WHERE class_id = ?";
+    $sql = "SELECT id, student_name FROM students WHERE etat=0 AND is_active=0 AND class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $class_id);
     $stmt->execute();

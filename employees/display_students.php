@@ -1,8 +1,9 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-include 'db_connection.php';
+    
+    include 'db_connection.php';
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
 session_start();
 
@@ -13,22 +14,43 @@ if (!isset($_SESSION['userid'])) {
 }
 $user_id = $_SESSION['userid'];
 
+if (isset($_POST['delete_student_id'])) {
+    $student_id = $_POST['delete_student_id'];
+
+    $sql = "UPDATE students SET is_active = 2 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['status' => 'success', 'message' => 'تم حذف الطالب بنجاح']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'فشل في حذف الطالب أو الطالب غير موجود']);
+    }
+
+    $stmt->close();
+    exit();
+}
+
+
+$selectedStatus = isset($_GET['status']) ? intval($_GET['status']) : 0;
+$statusText = $selectedStatus ? 'المعلقين' : 'النشطين';
 
 // Fetch student data from the database, including agent phone number
 $sql = "SELECT s.id, s.student_name, s.part_count, s.gender, s.birth_date, s.birth_place,
            s.registration_date, s.regstration_date_count, b.branch_name AS branch_name, l.level_name AS level_name, c.class_name AS class_name, 
-           s.student_photo, a.phone AS agent_phone, s.payment_nature, s.fees, s.discount, s.remaining
+           s.student_photo, a.phone AS agent_phone, s.suspension_reason, s.balance, s.payment_nature, s.fees, s.discount, s.remaining
     FROM students s
     LEFT JOIN branches b ON s.branch_id = b.branch_id
     JOIN user_branch ub ON b.branch_id = ub.branch_id AND ub.user_id = ?
     LEFT JOIN levels l ON s.level_id = l.id
     LEFT JOIN classes c ON s.class_id = c.class_id
     LEFT JOIN agents a ON s.agent_id = a.agent_id
-    WHERE s.etat = 0
+    WHERE s.branch_id != '22' AND s.etat = 0  AND s.is_active = ?
 ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $user_id);
+$stmt->bind_param('ii', $user_id, $selectedStatus);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -42,17 +64,17 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بيانات الطلاب</title>
     <link rel="shortcut icon" type="image/png" href="../images/menar.png">
-    <!-- Bootstrap RTL -->
     <link href="css/bootstrap.rtl.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <link rel="stylesheet" href="css/sweetalert2.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #017B6A;
             --primary-light: #019984;
             --secondary: #BD9237;
+            --secondary2: #c62828;
+            --secondary1: #ffc107;
             --accent: #AB8568;
             --light: #F8F9FA;
             --dark: #212529;
@@ -204,27 +226,62 @@ $result = $stmt->get_result();
             border-color: var(--secondary);
         }
         
-        .btn-edit {
-            background-color: var(--secondary);
+        .btn-edit, .btn-disb, .btn-del, .btn-act {
             border: none;
             color: white;
-            padding: 8px 16px;
-            border-radius: 50px;
+            padding: 6px 12px;
+            border-radius: 10px;
             font-weight: 500;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
         }
+        .btn-edit{
+            background-color: var(--secondary);
+        }
+        .btn-disb {
+            background-color: var(--secondary1);
+        }
+        .btn-del {
+            background-color: var(--secondary2);
+        }
+        .btn-act {
+            background-color: var(--primary);
+        }
         
         .btn-edit:hover {
             background-color: #a87d2a;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(189, 146, 55, 0.3);
+            box-shadow: 0 4px 8px #30021c;
+        }
+        .btn-disb:hover {
+            background-color: #e0a800;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px #30021c;
+        }
+        .btn-act:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px #30021c;
+        }
+        
+        .btn-del:hover {
+            background-color: #c82333;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px #30021c;
         }
         
         .btn-edit i {
+            margin-left: 8px;
+        }
+        .btn-disb i {
+            margin-left: 8px;
+        }
+        .btn-del i {
             margin-left: 8px;
         }
         
@@ -234,12 +291,48 @@ $result = $stmt->get_result();
             color: var(--accent);
             font-size: 1.2rem;
         }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
         
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 1rem;
             color: var(--gray);
         }
+
+        .status-filter {
+            position: relative;
+            margin-bottom: 2rem;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-filter select {
+            border: 2px solid var(--primary);
+            padding: 12px 20px;
+            border-radius: 50px;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 20px center;
+            background-color: #fff;
+            background-size: 16px;
+        }
+
+        .status-filter select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
         
         @media (max-width: 768px) {
             .navbar-brand {
@@ -285,7 +378,14 @@ $result = $stmt->get_result();
         <div class="search-box">
             <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن طريق اسم الطالب...">
         </div>
-        
+        <div class="status-filter">
+            <form method="GET" id="statusFilter" class="d-flex" dir="ltr">
+                <select class="form-select" name="status" onchange="this.form.submit()">
+                    <option value="0" <?= ($selectedStatus === 0) ? 'selected' : '' ?>>الطلاب النشطين</option>
+                    <option value="1" <?= ($selectedStatus === 1) ? 'selected' : '' ?>>الطلاب المعلقين</option>
+                </select>
+            </form>
+        </div>
         <!-- Table Container -->
         <div class="table-container">
             <div class="table-responsive">
@@ -305,11 +405,20 @@ $result = $stmt->get_result();
                             <th>المستوى</th>
                             <th>الصورة</th>
                             <th>هاتف الوكيل</th>
+                            <?php
+                                if ($selectedStatus == 1) {
+                                    echo "<th>المبلغ المتبقي</th>";
+                                    echo "<th>السبب</th>";
+                                }
+                            ?>
                             <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="suspendedStudentsTableBody">
-                        <?php if ($result->num_rows > 0): ?>
+                        <?php if ($result->num_rows > 0):
+                                $btnClass = ($selectedStatus == 0) ? 'btn-disb' : 'btn-act';
+                                $btnText = ($selectedStatus == 0) ? 'تعليق' : 'تنشيط';
+                            ?>
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <?php
                                     $photoSrc = $row['student_photo'] !== '' ?
@@ -332,17 +441,29 @@ $result = $stmt->get_result();
                                         <img src="<?= $photoSrc ?>" alt="صورة الطالب" class="student-photo">
                                     </td>
                                     <td><?= $row['agent_phone'] ?></td>
+                                    <?php
+                                        if ($selectedStatus == 1) {
+                                            echo "<td data-field='agent_phone'>{$row['balance']}</td>";
+                                            echo "<td data-field='agent_phone'>{$row['suspension_reason']}</td>";
+                                        }
+                                    ?>
                                     <td>
-                                        <a href="modify_student.php?id=<?= $row['id'] ?>" class="btn-edit">
-                                            <i class="fas fa-edit"></i> تعديل
-                                        </a>
-                                        <!-- <a href="?disable_student=<?= $row['id'] ?>" class="btn btn-danger btn-disable">
-                                            <i class="fas fa-user-slash"></i> تعطيل
-                                        </a>
+                                        <div class="action-buttons">
+                                            <a href="modify_student.php?id=<?= $row['id'] ?>" class="btn-edit">
+                                                <i class="fas fa-edit"></i> تعديل
+                                            </a>
+                                            <a href="javascript:void(0);"
+                                                class="<?= $btnClass ?>"
+                                                onclick="confirmSuspend(event)"
+                                                data-student-id="<?= $row['id']; ?>"
+                                                data-is-active="<?= $selectedStatus ?>">
+                                                <i class="fas fa-user-slash"></i> <?= $btnText ?>
+                                            </a>
 
-                                        <a href="modify_student.php?id=<?= $row['id'] ?>" class="btn-edit">
-                                            <i class="fas fa-edit"></i> تعديل
-                                        </a> -->
+                                            <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['id']; ?>)" class="btn-del">
+                                                <i class="fas fa-trash"></i>فصل
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -365,6 +486,8 @@ $result = $stmt->get_result();
     <!-- JavaScript -->
     <script src="js/jquery-3.5.1.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/sweetalert2.min.js"></script>
+
     <script>
         $(document).ready(function() {
             // Search functionality
@@ -381,6 +504,151 @@ $result = $stmt->get_result();
             });
         });
     </script>
+
+    <script>
+
+        function confirmDelete(student_id) {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن تتمكن من التراجع عن هذا!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، احذفه!',
+                cancelButtonText: 'لا، إلغاء!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteStudent(student_id);
+                }
+            });
+        }
+
+        function deleteStudent(student_id) {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن تتمكن من التراجع عن هذا الإجراء!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، حذف',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'display_students.php',
+                        type: 'POST',
+                        data: { delete_student_id: student_id },
+                        success: function(response) {
+                            let result = JSON.parse(response);
+                            if (result.status === 'success') {
+                                Swal.fire({
+                                    title: 'تم الحذف!',
+                                    text: 'تم حذف الطالب بنجاح.',
+                                    icon: 'success',
+                                    confirmButtonText: 'حسنًا'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('خطأ!', result.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('خطأ!', 'فشل في الاتصال بالخادم.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+
+    
+    function confirmSuspend(event) {
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const studentId = btn.dataset.studentId;
+        const currentIsActive = <?= json_encode($selectedStatus) ?>;
+        const targetStatus = currentIsActive == 1 ? 0 : 1;
+
+        const actionMessages = {
+            actionTitle: targetStatus === 1 ? 'هل أنت متأكد من التعليق؟' : 'هل أنت متأكد من التنشيط؟',
+            actionText: targetStatus === 1 ? 'هل تريد فعلاً تعليق هذا الطالب؟' : 'هل تريد فعلاً تنشيط هذا الطالب؟',
+            confirmText: targetStatus === 1 ? 'نعم، قم بالتعليق' : 'نعم، قم بالتنشيط',
+            successTitle: targetStatus === 1 ? 'تم التعليق!' : 'تم التنشيط!',
+            successText: targetStatus === 1 ? 'تم تعليق الطالب بنجاح' : 'تم تنشيط الطالب بنجاح'
+        };
+
+        Swal.fire({
+            title: actionMessages.actionTitle,
+            text: actionMessages.actionText,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: actionMessages.confirmText,
+            cancelButtonText: 'إلغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if(targetStatus == 1){
+                    suspendStudent(studentId, targetStatus, actionMessages.successTitle, actionMessages.successText);
+                }else{
+                    processSuspendStudent(studentId, '', targetStatus, actionMessages.successTitle, actionMessages.successText);
+                }
+            }
+        });
+    }
+
+            // Function to suspend student
+    function suspendStudent(student_id, targetStatus, msg1, msg2) {
+        Swal.fire({
+            title: 'سبب التعليق',
+            input: 'text',
+            inputPlaceholder: 'أدخل سبب تعليق التلميذ',
+            showCancelButton: true,
+            confirmButtonText: 'تعليق',
+            cancelButtonText: 'إلغاء',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'يجب عليك إدخال سبب التعليق!'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let suspension_reason = result.value;
+                processSuspendStudent(student_id, suspension_reason, targetStatus, msg1, msg2);
+            }
+        });
+    }
+
+    // AJAX to process suspension
+    function processSuspendStudent(student_id, suspension_reason, targetStatus, msg1, msg2) {
+        $.ajax({
+            url: 'up_del_student.php',
+            type: 'POST',
+            data: {
+                suspend_student_id: student_id,
+                targetStatus: targetStatus,
+                suspension_reason: suspension_reason
+            },
+            success: function(response) {
+                let result = JSON.parse(response);
+                if (result.status === 'success') {
+                    Swal.fire(msg1, msg2, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('خطأ!', 'حدثت مشكلة .', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('خطأ!', 'فشل  .', 'error');
+            }
+        });
+    }
+
+    </script>
+
 </body>
 </html>
 

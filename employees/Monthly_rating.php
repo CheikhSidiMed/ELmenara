@@ -122,7 +122,7 @@ $offset = ($page - 1) * $limit;
 $students = [];
 
 if (!empty($selectedClass)) {
-    $sql = "SELECT id, student_name FROM students WHERE class_id = ? LIMIT ?, ?";
+    $sql = "SELECT id, student_name FROM students WHERE etat=0 AND is_active=0 AND class_id = ? LIMIT ?, ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('iii', $selectedClass, $offset, $limit);
     $stmt->execute();

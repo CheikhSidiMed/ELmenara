@@ -265,7 +265,6 @@ $conn->close();
         });
     });
 
-    // Confirm delete action
     function confirmDelete(student_id) {
         Swal.fire({
             title: 'هل أنت متأكد؟',
@@ -282,32 +281,31 @@ $conn->close();
         });
     }
 
-   // Delete student via AJAX
-function deleteStudent(student_id) {
-    $.ajax({
-        url: 'display_studentss.php',
-        type: 'POST',
-        data: { delete_student_id: student_id },
-        success: function(response) {
-            let result = JSON.parse(response);
-            if (result.status === 'success') {
-                Swal.fire({
-                    title: 'تم الحذف!',
-                    text: 'تم حذف الطالب بنجاح.',
-                    icon: 'success',
-                    confirmButtonText: 'حسنا'
-                }).then(() => {
-                    location.reload(); // Refresh the page after showing the success message
-                });
-            } else {
-                Swal.fire('خطأ!', 'حدثت مشكلة أثناء حذف الطالب.', 'error');
+    function deleteStudent(student_id) {
+        $.ajax({
+            url: 'display_studentss.php',
+            type: 'POST',
+            data: { delete_student_id: student_id },
+            success: function(response) {
+                let result = JSON.parse(response);
+                if (result.status === 'success') {
+                    Swal.fire({
+                        title: 'تم الحذف!',
+                        text: 'تم حذف الطالب بنجاح.',
+                        icon: 'success',
+                        confirmButtonText: 'حسنا'
+                    }).then(() => {
+                        location.reload(); // Refresh the page after showing the success message
+                    });
+                } else {
+                    Swal.fire('خطأ!', 'حدثت مشكلة أثناء حذف الطالب.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('خطأ!', 'فشل في حذف الطالب.', 'error');
             }
-        },
-        error: function() {
-            Swal.fire('خطأ!', 'فشل في حذف الطالب.', 'error');
-        }
-    });
-}
+        });
+    }
 
 </script>
 

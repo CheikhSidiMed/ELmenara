@@ -73,22 +73,22 @@ $allAcademicMonths = array_merge($starAcademicMonths, $endaAcademicMonths);
 
 if ($filterType === 'all') {
     $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month,
-               p.remaining_amount, a.whatsapp_phone, l.price
+               p.remaining_amount, a.whatsapp_phone, s.remaining as price
                 FROM students s
                 LEFT JOIN payments p ON s.id = p.student_id
                 LEFT JOIN agents a ON s.agent_id = a.agent_id
                 JOIN levels l ON s.level_id = l.id
-                WHERE s.remaining != 0.00
+                WHERE s.etat=0 AND s.is_active=0 AND s.remaining != 0.00
                 ";
 } else {
     $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month, a.whatsapp_phone,
-                p.remaining_amount, l.price
+                p.remaining_amount, s.remaining as price
                 FROM students s
                 LEFT JOIN payments p ON s.id = p.student_id
                 LEFT JOIN agents a ON s.agent_id = a.agent_id
                 JOIN classes c ON s.class_id = c.class_id
                 JOIN levels l ON s.level_id = l.id
-                WHERE c.class_name = ? AND s.remaining != 0.00 ";
+                WHERE s.etat=0 AND s.is_active=0 AND c.class_name = ? AND s.remaining != 0.00 ";
 }
 
 $stmt_new = $conn->prepare($sql_new);

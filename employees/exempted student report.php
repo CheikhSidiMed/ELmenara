@@ -38,16 +38,16 @@ $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
 // SQL query depending on the filter type
 if ($filterType === 'all') {
     // Fetch all students where payment_nature is 'معفى'
-    $sql_new = "SELECT s.student_name, s.regstration_date_count, c.class_name 
-                FROM students s 
-                JOIN classes c ON s.class_id = c.class_id
-                WHERE s.payment_nature = 'معفى'";
-} else {
-    // Fetch students in the selected class where payment_nature is 'معفى'
-    $sql_new = "SELECT s.student_name, s.regstration_date_count 
+    $sql_new = "SELECT s.student_name, s.regstration_date_count, c.class_name
                 FROM students s
                 JOIN classes c ON s.class_id = c.class_id
-                WHERE s.payment_nature = 'معفى' AND c.class_name = ?";
+                WHERE s.etat=0 AND s.is_active=0 AND s.payment_nature = 'معفى'";
+} else {
+    // Fetch students in the selected class where payment_nature is 'معفى'
+    $sql_new = "SELECT s.student_name, s.regstration_date_count
+                FROM students s
+                JOIN classes c ON s.class_id = c.class_id
+                WHERE s.etat=0 AND s.is_active=0 AND s.payment_nature = 'معفى' AND c.class_name = ?";
 }
 
 // Prepare the SQL statement

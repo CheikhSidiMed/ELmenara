@@ -139,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 absences AS ab ON s.id = ab.student_id
                 AND (ab.created_at IS NULL OR MONTH(ab.created_at) = ? + 1)
             WHERE
-                s.class_id = ?
+                s.etat=0 AND s.is_active=0 AND s.class_id = ?
             ORDER BY
                 s.id, ab.created_at, ab.session_time;
             ";

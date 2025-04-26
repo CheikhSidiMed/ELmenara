@@ -1,33 +1,9 @@
-CREATE TABLE `offer_accounts` (
-  `id` int(11) NOT NULL,
-  `account_number` varchar(50) NOT NULL,
-  `account_name` varchar(100) NOT NULL,
-  `category` varchar(50) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `account_balance` decimal(10,2) DEFAULT 0.00
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-ALTER TABLE `offer_accounts`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `offer_accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10006;
-
-
-CREATE TABLE `offer_transactions` (
-  `id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `transaction_description` varchar(255) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `payment_method` enum('نقدي','بنكي') NOT NULL,
-  `bank_id` int(11) DEFAULT NULL,
-  `transaction_date` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-ALTER TABLE `offer_transactions`
-  ADD PRIMARY KEY (`id`);
-  ALTER TABLE `offer_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
-
-
-
+CREATE TABLE documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 
 

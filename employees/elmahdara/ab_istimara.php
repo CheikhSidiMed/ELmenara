@@ -121,6 +121,7 @@ $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
     </style>
 </head>
 <body>
+    <img src="imgs/header.png" height="170" width="100%" alt="" srcset="">
     <nav class="navbar navbar-expand-lg">
         <div class="container pb-2">
             <div class="how">
@@ -247,6 +248,7 @@ $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
             </table>
         </div>
     </div>
+    <img src="imgs/footer.png" height="170" width="100%" alt="" srcset="">
 
 <script src="../js/jquery-3.5.1.min.js"></script>
 <script>
@@ -450,13 +452,13 @@ function generatePDF() {
   container.appendChild(style);
 
   // Header image
-//   const headerImg = document.createElement('img');
-//   headerImg.src = 'imgs/header.png';
-//   headerImg.style.width = '100%';
-//   headerImg.style.maxWidth = '600px';
-//   headerImg.style.margin = '0 auto 15px';
-//   headerImg.style.display = 'block';
-//   container.appendChild(headerImg);
+  const headerImg = document.createElement('img');
+  headerImg.src = 'imgs/header.png';
+  headerImg.style.width = '100%';
+  headerImg.style.maxWidth = '900px';
+  headerImg.style.margin = '0 auto 15px';
+  headerImg.style.display = 'block';
+  container.appendChild(headerImg);
 
   // Report title
   const title = document.createElement('h1');
@@ -515,9 +517,12 @@ function generatePDF() {
   const footer = document.createElement('div');
   footer.className = 'footer';
   
-  const footerImg = document.createElement('img');
+  const footerImg = document.createElement('imgB');
   footerImg.src = 'imgs/footer.png';
-  footerImg.className = 'footer-img';
+  footerImg.style.width = '100%';
+  headerImg.style.maxWidth = '900px';
+//   footerImg.style.margin = '0 auto 15px';
+  footerImg.style.display = 'block';
   footer.appendChild(footerImg);
   
   const footerText = document.createElement('p');

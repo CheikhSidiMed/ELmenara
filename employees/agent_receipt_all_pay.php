@@ -143,7 +143,7 @@ if (!empty($agent_id)) {
     foreach ($receipt_data as $data) {
         $key = $data['student_name'] . '_' . $data['student_class'];
         
-        if (!empty(trim($data['months_paid'], ', '))) {
+        if (!empty(trim((string) ($data['months_paid'] ?? '')))) {
             if (!isset($grouped_data[$key])) {
                 $grouped_data[$key] = [
                     'student_name' => $data['student_name'],
@@ -189,9 +189,11 @@ $conn->close();
     <link rel="stylesheet" href="css/bootstrap-4-5-2.min.css">
     <link rel="stylesheet" href="css/amiri.css">
     <link rel="stylesheet" href="css/tajawal.css">
+    <link rel="stylesheet" href="css/receipt.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
+    <!-- <style>
         body {
             font-family: 'Tajawal', sans-serif;
             background-color: #f5f5f5;
@@ -357,7 +359,7 @@ $conn->close();
             }
         }
 
-    </style>
+    </style> -->
 </head>
 <body>
 <div class="container my-5">
