@@ -2,7 +2,7 @@
 :: Définition des variables
 setlocal
 set TIMESTAMP=%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%
-set BACKUP_DIR=C:\xampp\mysql\backup
+set BACKUP_DIR=C:\backup
 set MYSQLDUMP_PATH=C:\xampp\mysql\bin\mysqldump.exe
 set DB_NAME=employeeleavedb
 set DB_USER=root

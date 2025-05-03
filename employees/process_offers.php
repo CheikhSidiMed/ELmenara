@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
     
             // Increase employee debt
-            $sql = "UPDATE offer_accounts SET account_balance = account_balance + ? WHERE id = ?";
+            $sql = "UPDATE offer_accounts SET account_balance = account_balance - ? WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('di', $amount, $expenseAccountId);
             $stmt->execute();
@@ -134,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
     
             // Decrease employee debt or increase credit
-            $sql = "UPDATE offer_accounts SET account_balance = account_balance - ? WHERE id = ?";
+            $sql = "UPDATE offer_accounts SET account_balance = account_balance + ? WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('di', $amount, $expenseAccountId);
             $stmt->execute();
