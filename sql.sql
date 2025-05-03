@@ -1,9 +1,4 @@
-CREATE TABLE documents (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    filename VARCHAR(255) NOT NULL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+ALTER TABLE `offer_transactions` ADD `type` VARCHAR(20) NOT NULL AFTER `transaction_date`;
 
 
 

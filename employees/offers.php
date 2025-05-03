@@ -229,7 +229,7 @@ $conn->close();
     <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>    تسجيل عملية مقدمي الخدمات </h1>
         <div class="d-flex align-items-center">
             <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                <i class="bi bi-house-door-fill" style="margin-right: 5px;"></i> 
+                <i class="bi bi-house-door-fill" style="margin-right: 5px;"></i>
                 الرئيسية
             </a>
             <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>
@@ -336,15 +336,7 @@ $conn->close();
             <div class="text-center mt-4">
                 <button class="confirm-button" type="submit">تأكيد العملية</button>
             </div>
-
-    </div>
-
-    <!-- Payment Method Section -->
-
-
-        <!-- Display the selected bank name and value -->
-        <div id="selected-bank-name" style="margin-top: 15px; font-weight: bold; color: #1a73e8; text-align: center; font-size: 1.2rem;"></div>
-        <input type="hidden" id="selected-bank-id" name="bank">
+        </div>
     </div>
 
 

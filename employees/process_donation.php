@@ -74,8 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
 
-    
-
         if ($bankId !== null) {
             $stmt_expense_bank = $conn->prepare("INSERT INTO donate_transactions (donate_account_id, transaction_description, amount, payment_method, bank_id) VALUES (?, ?, ?, ?, ?)");
             $stmt_expense_bank->bind_param('isdsd', $expenseAccountId, $all_des, $amount, $paymentMethod, $bankId);

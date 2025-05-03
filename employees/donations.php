@@ -187,7 +187,7 @@ $conn->close();
     <h1 class="header-title"><i class="icon-left bi bi-file-earmark-text"></i>   تسجيل عملية حسابية للتبرعات </h1>
         <div class="d-flex align-items-center">
             <a href="home.php" class="btn btn-primary d-flex align-items-center" style="margin-left: 15px;">
-                <i class="bi bi-house-door-fill" style="margin-right: 5px;"></i> 
+                <i class="bi bi-house-door-fill" style="margin-right: 5px;"></i>
                 الرئيسية
             </a>
             <label class="form-select-title" for="financial-year" style="margin-left: 15px;">السنة المالية</label>

@@ -538,7 +538,7 @@
                     <li><a href="operation.php"><i class="fa fa-calculator"></i>  تسجيل عملية حسابية</a></li>
                     <li><a href="expense_operation.php"><i class="fa fa-calculator"></i>  عمليات المصاريف </a></li>
                     <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية تبرع </a></li>
-                    <li><a href="offers.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية مقدمي الخدمات </a></li>
+                    <li><a href="offers.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية للغير  </a></li>
                     <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                 </ul>
                 <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
@@ -578,6 +578,7 @@
                     <li><a href="employess.php"><i class="fa fa-user-tie"></i> حسابات الموظفين </a></li>
                     <li><a href="donations_ccounts.php"><i class="fa fa-receipt"></i>  حسابات المداخيل </a></li>
                     <li><a href="expense_accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
+                    <li><a href="expense_offers.php"><i class="fa fa-receipt"></i> حسابات الغير </a></li>
                     <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
                     <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
                     <li><a href="discounts_list.php"><i class="fa fa-tags"></i> لائحة التخفيضات </a></li>
@@ -654,7 +655,7 @@
                             <li><a href="operation.php"><i class="fa fa-calculator"></i>   تسجيل عملية حسابية</a></li>
                             <li><a href="expense_operation.php"><i class="fa fa-calculator"></i>     عمليات المصاريف </a></li>
                             <li><a href="donations.php"><i class="fa fa-hand-holding-heart"></i>     تسجيل عملية تبرع </a></li>
-                            <li><a href="offers.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية مقدمي الخدمات </a></li>
+                            <li><a href="offers.php"><i class="fa fa-hand-holding-heart"></i>   تسجيل عملية للغير  </a></li>
                             <li><a href="garant_g/donations_garant.php"><i class="fa fa-hand-holding-heart"></i> تسديد الكفالات </a></li>
                         </ul>
                         <li class="dropdown"><a href="#" data-toggle="collapse" aria-expanded="true"><i class="fas fa-folder-open"></i>   إدارة الحسابات</a>
@@ -698,6 +699,7 @@
                                 <li><a href="employess.php"><i class="fa fa-user-tie"></i> حسابات الموظفين </a></li>
                                 <li><a href="donations_ccounts.php"><i class="fa fa-receipt"></i>  حسابات المداخيل </a></li>
                                 <li><a href="expense_accounts.php"><i class="fa fa-receipt"></i> حسابات المصاريف </a></li>
+                                <li><a href="expense_offers.php"><i class="fa fa-receipt"></i> حسابات الغير </a></li>
                                 <li><a href="receipts.php"><i class="fa fa-file-invoice"></i>  قائمة الأوصال</a></li>
                                 <li><a href="Activities.php"><i class="fa fa-futbol"></i> حسابات الأنشطة </a></li>
                                 <li><a href="discounts_list.php"><i class="fa fa-tags"></i> لائحة التخفيضات </a></li>
