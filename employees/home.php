@@ -55,11 +55,14 @@
     <script src="../assets/js/vendor/modernizr-2.8.3.min.js"></script>
     <link rel="stylesheet" href="js/jquery-base-ui.css">
     <link rel="stylesheet" href="css/tajawal.css">
+    <link rel="stylesheet" href="css/expoArab.css">
 
 
     <style>
         html, body {
-            font-family: 'Tajawal', serif;
+            /* font-family: 'Tajawal', serif; */
+            font-family: 'Expo Arabica Book', sans-serif !important;
+
             font-size: 1.2rem;
             height: 100%;
             margin: 0;

@@ -19,6 +19,7 @@ if ($toDate) {
 }
 
 $total_debit = 0;
+$account_balance = 0;
 $total_credit = 0;
 $balance = 0;
 $accountName = '';
@@ -36,9 +37,10 @@ if ($accountNumber) {
     $stmt->close();
 
     // Fetch transactions with date filter (if provided)
-    $query = "SELECT transaction_date, type, transaction_description, amount, payment_method
-          FROM offer_transactions
-          WHERE account_id = ?
+    $query = "SELECT ot.transaction_date, ot.type, ot.transaction_description, ot.amount, ot.payment_method, o.account_balance
+          FROM offer_transactions ot
+          JOIN offer_accounts o ON ot.account_id = o.id
+          WHERE ot.account_id = ?
           ORDER BY transaction_date DESC";
 
     if ($fromDate && $toDate) {
@@ -59,6 +61,8 @@ if ($accountNumber) {
     // Process transactions
     while ($row = $result->fetch_assoc()) {
         $transactions[] = $row;
+        $account_balance = $row['account_balance'];
+
         if ($row['type'] === 'plus') {
             $total_debit += $row['amount'];
         } elseif ($row['type'] === 'minus') {
@@ -331,8 +335,8 @@ $conn->close();
                     <tr>
                         <td><?= htmlspecialchars($transaction['transaction_date']) ?></td>
                         <td><?= htmlspecialchars($transaction['transaction_description']) ?></td>
-                        <td><?= $transaction['type'] === 'minus' ? number_format($runningBalance, 2) : '' ?></td>
-                        <td><?= $transaction['type'] === 'plus' ? number_format($runningBalance, 2) : '' ?></td>
+                        <td><?= $transaction['type'] === 'minus' ? number_format($transaction['amount'], 2) : '' ?></td>
+                        <td><?= $transaction['type'] === 'plus' ? number_format($transaction['amount'], 2) : '' ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -349,7 +353,7 @@ $conn->close();
             <div class="summary-value"> مجموع العمليات </div>
             <div class="summary-value">مدين: <?php echo number_format($total_credit, 2); ?></div>
             <div class="summary-value">دائن: <?php echo number_format($total_debit, 2); ?></div>
-            <div class="summary-value">الرصيد: <?php echo number_format($total_credit - $total_debit, 2); ?></div>
+            <div class="summary-value">الرصيد: <?php echo number_format($account_balance, 2); ?></div>
     <!-- </div> -->
         </div>
         

@@ -9,8 +9,17 @@
 	font-style: normal;
 }
 
+@font-face {
+    font-family: 'Expo Arabica Book';
+    src: url('../fonts/ExpoArabic-Book.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 [class^="ti-"], [class*=" ti-"] {
-	font-family: 'themify';
+	/* font-family: 'themify'; */
+	font-family: 'Expo Arabica Book', sans-serif;
+
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
