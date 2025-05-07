@@ -155,7 +155,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
-$niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '#28a745', 'حفص' => '#017B6A'];
+$niveauColors = ['نافع' => '#281745', 'نافع' => '#28a745', 'حفص' => '#017B6A'];
 
 ?>
 
@@ -166,6 +166,7 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
     <title> 📚  أرشيف الحفاظِ</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/sweetalert2.css">
+    <link rel="stylesheet" href="../css/expoArab.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/css.css">
 </head>
@@ -185,26 +186,30 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
     <div class="container">
 
         <div class="stats">
-            <div class="box total">
-                <h2><?php echo $totalEtudiants_h; ?></h2>
-                <p>إجمالي الحفاظ</p>
-            </div>
-            <div class="box licence">
-                <h2><?php echo isset($etudiantsParNiveau['حفص']) ? $etudiantsParNiveau['حفص'] : 0; ?></h2>
-                <p>حفص</p>
-            </div>
-            <div class="box master">
-                <h2><?php echo isset($etudiantsParNiveau['نافع']) ? $etudiantsParNiveau['نافع'] : 0; ?></h2>
-                <p>نافع</p>
-            </div>
-            <div class="box doctorat1">
-                <h2><?php echo isset($etudiantsParNiveau['ورش']) ? $etudiantsParNiveau['ورش'] : 0; ?></h2>
-                <p>ورش</p>
-            </div>
-            <div class="box total">
-                <h2><?php echo $totalEtudiants_m; ?></h2>
-                <p>إجمالي المجازين</p>
-            </div>
+            <a href="?filter=حافظ" style="text-decoration: none;">
+                <div class="box total">
+                    <h2><?php echo $totalEtudiants_h; ?></h2>
+                    <p>إجمالي الحفاظ</p>
+                </div>
+            </a>
+            <a href="?" style="text-decoration: none;">
+                <div class="box licence">
+                    <h2><?php echo isset($etudiantsParNiveau['حفص']) ? $etudiantsParNiveau['حفص'] : 0; ?></h2>
+                    <p>حفص</p>
+                </div>
+            </a>
+            <a href="?" style="text-decoration: none;">
+                <div class="box master">
+                    <h2><?php echo isset($etudiantsParNiveau['نافع']) ? $etudiantsParNiveau['نافع'] : 0; ?></h2>
+                    <p>نافع</p>
+                </div>
+            </a>
+            <a href="?filter=مجازي" style="text-decoration: none;">
+                <div class="box total">
+                    <h2><?php echo $totalEtudiants_m; ?></h2>
+                    <p>إجمالي المجازين</p>
+                </div>
+            </a>
         </div>
 
         <hr>
@@ -230,8 +235,18 @@ $niveauColors = ['نافع' => '#dc3545', 'ورش' => '#281745', 'نافع' => '
                 </thead>
                 <tbody id="sTableBody">
                     <?php
-                    $students = $conn->query("SELECT * FROM etudiants_certified");
-                    while ($student = $students->fetch_assoc()):
+                    $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+
+                        if ($filter === 'حافظ' || $filter === 'مجازي') {
+                            $stmt = $conn->prepare("SELECT * FROM etudiants_certified WHERE type_ijaza = ?");
+                            $stmt->bind_param("s", $filter);
+                            $stmt->execute();
+                            $students = $stmt->get_result();
+                        } else {
+                            $students = $conn->query("SELECT * FROM etudiants_certified");
+                        }
+
+                        while ($student = $students->fetch_assoc()):
                     ?>
                         <tr>
                             <td style="text-align: center;">

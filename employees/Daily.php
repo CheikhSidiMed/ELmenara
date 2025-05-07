@@ -71,6 +71,8 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
         r.receipt_description AS transaction_description,
         sum(ct.paid_amount) AS amount,
         ct.type AS transaction_type,
+        ct.payment_method,
+        ct.fund_id,
         r.receipt_date AS transaction_date,
         ct.bank_id AS bank_account_id,
         b.bank_name
@@ -82,7 +84,7 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     WHERE
         ct.user_id = ?
         AND r.receipt_date BETWEEN ? AND ?
-        GROUP BY r.receipt_id
+        GROUP BY r.receipt_id, ct.type
     ORDER BY
         r.receipt_date DESC";
 
@@ -94,6 +96,8 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
         r.receipt_description AS transaction_description,
         sum(ct.paid_amount) AS amount,
         ct.type AS transaction_type,
+        ct.payment_method,
+        ct.fund_id,
         r.receipt_date AS transaction_date,
         ct.bank_id AS bank_account_id,
         b.bank_name
@@ -104,7 +108,7 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
     WHERE
         r.receipt_date BETWEEN ? AND ?
-        GROUP BY r.receipt_id
+        GROUP BY r.receipt_id, ct.type
     ORDER BY
         r.receipt_date DESC;";
 
@@ -117,6 +121,8 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
         r.receipt_description AS transaction_description,
         sum(ct.paid_amount) AS amount,
         ct.type AS transaction_type,
+        ct.payment_method,
+        ct.fund_id,
         r.receipt_date AS transaction_date,
         ct.bank_id AS bank_account_id,
         b.bank_name
@@ -128,7 +134,7 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     WHERE ct.user_id = ?
         AND
             r.receipt_date BETWEEN ? AND ?
-        GROUP BY r.receipt_id
+        GROUP BY r.receipt_id, ct.type
     ORDER BY
         r.receipt_date DESC;";
 
@@ -150,16 +156,22 @@ $total_subtraction_amount = 0;
 
 // Calculate totals
 foreach ($transactions as $transaction) {
-    if ($transaction['bank_account_id'] && $transaction['transaction_type'] == 'plus') {
-        $total_addition_bank += $transaction['amount'];
-    } elseif ($transaction['transaction_type'] == 'plus' && !$transaction['bank_account_id']) {
-        $total_addition_amount += $transaction['amount'];
-    } elseif ($transaction['transaction_type'] == 'minus' && $transaction['bank_account_id']) {
-        $total_subtraction_bank += abs($transaction['amount']);
-    } elseif ($transaction['transaction_type'] == 'minus' && !$transaction['bank_account_id']) {
-        $total_subtraction_amount += abs($transaction['amount']);
+    $amount = (float) $transaction['amount'];
+    $method = $transaction['payment_method'];
+    $type = $transaction['transaction_type'];
+    $fundId = isset($transaction['fund_id']) ? (int) $transaction['fund_id'] : 0;
+
+    if ($type === 'plus' && $method === 'بنكي') {
+        $total_addition_bank += $amount;
+    } elseif ($type === 'plus' && $method === 'نقدي' && $fundId === 1) {
+        $total_addition_amount += $amount;
+    } elseif ($type === 'minus' && $method === 'بنكي') {
+        $total_subtraction_bank += abs($amount);
+    } elseif ($type === 'minus' && $method === 'نقدي' && $fundId === 1) {
+        $total_subtraction_amount += abs($amount);
     }
 }
+
 
 ?>
 
@@ -414,59 +426,59 @@ foreach ($transactions as $transaction) {
             border-collapse: collapse;
         }
         .main-container {
-    padding: 15px;
-}
+            padding: 15px;
+        }
 
-.header-title {
-    font-size: 2.3rem;
-}
+        .header-title {
+            font-size: 2.3rem;
+        }
 
-.form-row {
-    display: flex;
-    flex-wrap: wrap; /* Permet aux éléments de passer en colonne sur petits écrans */
-    gap: 10px;
-    justify-content: center;
-}
+        .form-row {
+            display: flex;
+            flex-wrap: wrap; /* Permet aux éléments de passer en colonne sur petits écrans */
+            gap: 10px;
+            justify-content: center;
+        }
 
-.form-group {
-    flex: 1; /* Permet d'étirer chaque champ */
-    min-width: 200px; /* Assure une bonne largeur minimale */
-}
+        .form-group {
+            flex: 1; /* Permet d'étirer chaque champ */
+            min-width: 200px; /* Assure une bonne largeur minimale */
+        }
 
-button {
-    background-color: #28a745;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    cursor: pointer;
-}
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+        }
 
-button i {
-    margin-left: 5px;
-}
+        button i {
+            margin-left: 5px;
+        }
 
-/* Rendre l'image responsive */
-.header-image {
-    max-width: 100%;
-    height: auto;
-}
+        /* Rendre l'image responsive */
+        .header-image {
+            max-width: 100%;
+            height: auto;
+        }
 
-/* Centrer les textes */
-.use-info {
-    text-align: center;
-    font-size: 16px;
-}
+        /* Centrer les textes */
+        .use-info {
+            text-align: center;
+            font-size: 16px;
+        }
 
-@media (max-width: 768px) {
-    .header-title {
-        font-size: 1.2rem;
-    }
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.2rem;
+            }
 
-    .d-flex {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-}
+            .d-flex {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
 
 
     </style>
@@ -545,8 +557,8 @@ button i {
 <div class="text-center mb-2">
     <img src="../images/header.png" class="header-image" alt="Header Image">
     <h2 class="mt-2">التقرير اليومي</h2>
-    <span>بتاريخ</span> : <?php echo date('d/m/Y | H:i'); ?>
-</div>
+    <span>بتاريخ</span> : <span id="currentDateTime"></span>
+    </div>
 
 <!-- User Info -->
 <div class="use-info">
@@ -582,17 +594,17 @@ button i {
                         <tr>
                             <td> <?php echo htmlspecialchars($transaction['transaction_date']) ?></td>
                             <td style="text-align: start;">
-                                <?php 
-                                    echo htmlspecialchars($transaction['transaction_description']) . 
-                                        ' <strong>/ رقم الوصل: </strong>' . 
-                                        htmlspecialchars($transaction['receipt_id']); 
+                                <?php
+                                    echo htmlspecialchars($transaction['transaction_description']) .
+                                        ' <strong>/ رقم الوصل: </strong>' .
+                                        htmlspecialchars($transaction['receipt_id']);
                                     ?>
                             </td>
-                            <td><?php echo ($transaction['transaction_type'] == 'plus' && !$transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'minus' && !$transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['payment_method']==='نقدي' && (int)$transaction['fund_id']===1) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['payment_method']==='نقدي' && (int)$transaction['fund_id']===1) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
                             <td><?php echo htmlspecialchars($transaction['bank_name']); ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['bank_account_id']) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['bank_account_id']) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['payment_method']==='بنكي') ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['payment_method']==='بنكي') ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
                         </tr>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -619,18 +631,23 @@ button i {
 <!-- Signatures Section -->
 <div class="signatures" style="margin-top: 20px; display: flex; justify-content: space-between;">
     <div class="signature-row">
-        <span>التوقيع: _______________</span> <!-- Signature line for Director -->
-        <span>المدير</span> <!-- Director title -->
+        <span>التوقيع: _______________</span>
+        <span>المدير</span>
     </div>
     <div class="signature-row">
-        <span>التوقيع: _______________</span> <!-- Signature line for Counter -->
-        <span>المحاسب</span> <!-- Counter title -->
+        <span>التوقيع: _______________</span>
+        <span>المحاسب</span>
     </div>
 </div>
 
     <button class="print-button" onclick="printTable()">طباعة</button>
 
-
+    <script>
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('fr-FR') + ' | ' +
+                          now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('currentDateTime').textContent = formattedDate;
+</script>
 
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

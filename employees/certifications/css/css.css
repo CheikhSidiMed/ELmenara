@@ -1,7 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap'); */
+@font-face {
+    font-family: 'Expo Arabica Book';
+    src: url('../../fonts/ExpoArabic-Book.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Expo Arabica Book', sans-serif;
+    /* font-family: 'Cairo', sans-serif; */
     margin: 0;
     background-color: #f8f9fa;
     direction: rtl;

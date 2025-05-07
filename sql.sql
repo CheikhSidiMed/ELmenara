@@ -1,10 +1,31 @@
-CREATE TABLE documents (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    filename VARCHAR(255) NOT NULL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+ALTER TABLE `offer_transactions` ADD `type` VARCHAR(20) NOT NULL AFTER `transaction_date`;
 
+INSERT INTO students (
+    remaining, discount, fees, part_count, payment_nature, regstration_date_count,
+    student_name, gender, phone, date_desectivation, suspension_reason,class_id, branch_id, agent_id, level_id, is_active, etat, balance, student_photo
+    
+)
+SELECT
+    s.remaining,
+    s.discount,
+    s.fees,
+    s.part_count,
+    s.payment_nature,
+    DATE(s.reg_date),
+    s.student_name,
+    s.gender,
+    s.phone,
+    DATE(s.suspension_date),
+    s.suspension_reason,
+    (SELECT c.class_id FROM classes c WHERE c.class_name = s.class_name LIMIT 1),
+    (SELECT b.branch_id FROM branches b WHERE b.branch_name = s.branch_name LIMIT 1),
+    (SELECT a.agent_id FROM agents a WHERE a.agent_name = s.agent_name LIMIT 1),
+    (SELECT l.id FROM levels l WHERE l.level_name = s.level_name LIMIT 1),
+    1,
+    0,
+    IFNULL((SELECT SUM(remaining_amount) FROM payments WHERE student_id = s.student_id), 0),
+    ''
+FROM suspended_students s;
 
 
 	23	start	varchar(100)	utf8mb4_general_ci		Oui	NULL			Modifier Modifier	Supprimer Supprimer	

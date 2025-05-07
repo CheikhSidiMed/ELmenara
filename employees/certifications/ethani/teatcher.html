@@ -1379,9 +1379,11 @@
             </g>
           </g>
         </g>
-        <image id="photo" x="132" y="-5" width="321"  />
+        <!-- <image id="photo" x="132" y="-5" width="321"  /> -->
         <image id="photo1" x="32" y="45" width="121" height="150" />
       </svg>
+        <img id="photo" width="321"  />
+
 </div>
 
 
@@ -1392,18 +1394,68 @@
     <input type="text" id="nameIv" placeholder=" وذلك بمناسبة" dir="rtl">
     <input type="date" id="nameDInput">
     <input type="file" id="photoInput1" accept="image/*">
-    <input type="file" id="photoInput" accept="image/*">
+    <!-- <input type="file" id="photoInput" accept="image/*"> -->
 
     <button onclick="updateSVG()">تحديــــــــث</button>
     <button id="saveButton">PNGحفظ كــــــــ</button>
     <button onclick="saveAsPDF()">PDFحفظ كـــــــــ</button>
 </div>
+<img id="photo" alt="Image preview">
+
+<input type="file" id="photoInput" accept="image/*">
+
 
 
 <!-- Include jsPDF Library -->
 <script src="../../js/jspdf.umd.min.js"></script>
 <script src="../../js/html2canvas.min.js"></script>
-
+<script>
+  document.getElementById('photoInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const errorMessage = document.getElementById('errorMessage');
+      const placeholder = document.querySelector('.placeholder-text');
+      const imgPreview = document.getElementById('photo');
+      
+      // Reset states
+      errorMessage.style.display = 'none';
+      errorMessage.textContent = '';
+      
+      if (!file) {
+          placeholder.style.display = 'block';
+          imgPreview.style.display = 'none';
+          return;
+      }
+      
+      // Validate file type
+      if (!file.type.match('image.*')) {
+          errorMessage.textContent = 'الرجاء اختيار ملف صورة فقط (JPG, PNG, etc.)';
+          errorMessage.style.display = 'block';
+          return;
+      }
+      
+      // Validate file size (e.g., 2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+          errorMessage.textContent = 'حجم الصورة يجب أن يكون أقل من 2MB';
+          errorMessage.style.display = 'block';
+          return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+          imgPreview.src = e.target.result;
+          imgPreview.style.display = 'block';
+          placeholder.style.display = 'none';
+      };
+      
+      reader.onerror = function() {
+          errorMessage.textContent = 'حدث خطأ أثناء قراءة الملف';
+          errorMessage.style.display = 'block';
+      };
+      
+      reader.readAsDataURL(file);
+  });
+</script>
 
 <script>
     function updateSVG() {

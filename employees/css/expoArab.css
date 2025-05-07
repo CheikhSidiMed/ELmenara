@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'Expo Arabica Book';
+    src: url('../fonts/ExpoArabic-Book.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Expo Arabica Book', sans-serif;
+}
+

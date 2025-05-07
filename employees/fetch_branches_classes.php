@@ -17,7 +17,7 @@ if (isset($_GET['class_id'])) {
     $class_id = $_GET['class_id'];
 
     // Query to count students in the selected class
-    $stmt = $conn->prepare("SELECT COUNT(*) as student_count FROM students WHERE class_id = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) as student_count FROM students WHERE etat=0 AND is_active=0 AND class_id = ?");
     $stmt->bind_param("i", $class_id);
     $stmt->execute();
     $result = $stmt->get_result();

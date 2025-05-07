@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $transaction_type = $_POST['transaction_type'] ?? null;
 
     $transactionDescription = $_POST['transaction_description'];
-    $amount = $_POST['amount'];
+    $amount = (float)$_POST['amount'];
     $paymentMethod = $_POST['payment_method'] ?? '';
     $expense_account_name = $_POST['expense_account_name'];
     $all_des = "حساب : " . $expense_account_name . " -- " . $transactionDescription;
@@ -75,8 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
 
         if ($bankId !== null) {
-            $stmt_expense_bank = $conn->prepare("INSERT INTO offer_transactions (transaction_date, account_id, transaction_description, amount, payment_method, bank_id) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt_expense_bank->bind_param('sisdsd', $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod, $bankId);
+            $stmt_expense_bank = $conn->prepare("INSERT INTO offer_transactions (type, transaction_date, account_id, transaction_description, amount, payment_method, bank_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt_expense_bank->bind_param('ssisdsd', $transaction_type, $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod, $bankId);
             $stmt_expense_bank->execute();
             $stmt_expense_bank->close();
 
@@ -86,8 +86,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $payment_ids = $stmt_transaction_bank->insert_id;
             $stmt_transaction_bank->close();
         } else {
-            $stmt_expense_cash = $conn->prepare("INSERT INTO offer_transactions (transaction_date, account_id, transaction_description, amount, payment_method) VALUES (?, ?, ?, ?, ?)");
-            $stmt_expense_cash->bind_param('sisds', $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod);
+            $stmt_expense_cash = $conn->prepare("INSERT INTO offer_transactions (type, transaction_date, account_id, transaction_description, amount, payment_method) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt_expense_cash->bind_param('ssisds', $transaction_type, $date_time, $expenseAccountId, $all_des, $amount, $paymentMethod);
             $stmt_expense_cash->execute();
             $stmt_expense_cash->close();
 
