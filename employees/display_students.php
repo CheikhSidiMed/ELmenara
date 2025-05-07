@@ -421,7 +421,7 @@ $result = $stmt->get_result();
                             ?>
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <?php
-                                    $photoSrc = $row['student_photo'] !== '' ?
+                                    $photoSrc = $row['student_photo'] !== '' || $row['student_photo'] !== null ?
                                         $row['student_photo'] :
                                         'uploads/avatar.png';
                                 ?>

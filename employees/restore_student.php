@@ -36,7 +36,7 @@ if ($suspended_student) {
                (SELECT id FROM levels WHERE level_name = ? LIMIT 1)";
     $stmt = $conn->prepare($insert_query);
     $stmt->bind_param("sssssssssssss",
-    $suspended_student['remaining'], $suspended_student['discount'], $suspended_student['fees'], $suspended_student['part_count'],$suspended_student['payment_nature'], $suspended_student['reg_date'], $suspended_student['student_name'], $suspended_student['gender'], $suspended_student['phone'], 
+    $suspended_student['remaining'], $suspended_student['discount'], $suspended_student['fees'], $suspended_student['part_count'],$suspended_student['payment_nature'], $suspended_student['reg_date'], $suspended_student['student_name'], $suspended_student['gender'], $suspended_student['phone'],
         $suspended_student['class_name'], $suspended_student['branch_name'], $suspended_student['agent_name'],
         $suspended_student['level_name']);
     $stmt->execute();
