@@ -14,7 +14,7 @@ if (!isset($_SESSION['userid'])) {
 
 
 // Fetch total counts for students, branches, classes, and agents
-$total_students = $conn->query("SELECT COUNT(*) AS total FROM students")->fetch_assoc()['total'];
+$total_students = $conn->query("SELECT COUNT(*) AS total FROM students WHERE etat=0 AND is_active=0")->fetch_assoc()['total'];
 $total_branches = $conn->query("SELECT COUNT(*) AS total FROM branches")->fetch_assoc()['total'];
 $total_classes = $conn->query("SELECT COUNT(*) AS total FROM classes")->fetch_assoc()['total'];
 $total_agents = $conn->query("SELECT COUNT(*) AS total FROM agents")->fetch_assoc()['total'];
@@ -23,6 +23,7 @@ $classes_query = $conn->query("
     SELECT c.class_id, c.class_name, COUNT(s.id) AS student_count
     FROM classes c
     LEFT JOIN students s ON c.class_id = s.class_id
+    WHERE s.etat=0 AND s.is_active=0
     GROUP BY c.class_id, c.class_name
 ");
 $classes_data = $classes_query->fetch_all(MYSQLI_ASSOC);
@@ -31,6 +32,7 @@ $branches_query = $conn->query("
     SELECT b.branch_id, b.branch_name, COUNT(s.id) AS student_count
     FROM branches b
     LEFT JOIN students s ON b.branch_id = s.branch_id
+    WHERE s.etat=0 AND s.is_active=0
     GROUP BY b.branch_id, b.branch_name
 ");
 $branches_data = $branches_query->fetch_all(MYSQLI_ASSOC);
