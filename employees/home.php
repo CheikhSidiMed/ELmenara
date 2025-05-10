@@ -8,7 +8,7 @@
         echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
         exit();
     }
-    
+    $page = '';
     $userid = $_SESSION['userid'];
     $role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null; 
     $activities = [];
