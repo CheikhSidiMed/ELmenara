@@ -116,7 +116,7 @@
     <link href="css/bootstrap-5.3.1.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="fonts/bootstrap-icons.css" rel="stylesheet">
-    <!-- <style>
+    <style>
         body {
             font-family: 'Tajawal', sans-serif;
             direction: rtl;
@@ -235,8 +235,8 @@
         @media print {
             .no-print { display: none; }
         }
-    </style> -->
-    <style>
+    </style>
+    <!-- <style>
         body {
             font-family: 'Tajawal', sans-serif;
             background-color: #f5f5f5;
@@ -461,7 +461,7 @@
             }
         }
 
-    </style>
+    </style> -->
 </head>
 <body>
 

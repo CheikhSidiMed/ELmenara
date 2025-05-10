@@ -150,7 +150,7 @@ if (!empty($selectedClass)) {
 if (isset($_GET['print_all']) && $_GET['print_all'] == 'true') {
     header('Content-Type: application/json');
 
-    $sql = "SELECT student_name FROM students WHERE class_id = ?";
+    $sql = "SELECT student_name FROM students WHERE etat=0 AND is_active=0 AND class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $selectedClass);
     $stmt->execute();

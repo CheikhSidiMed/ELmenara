@@ -14,6 +14,8 @@ if (!isset($_SESSION['userid'])) {
 $user_id = $_SESSION['userid'];
 $role_id = $_SESSION['role_id'];
 
+$con_user_id = isset($_SESSION['UR_id']) ? $_SESSION['UR_id'] : null;
+$username_con = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 // Initialize variables
 $transactions    = [];
 $account_name    = '';
@@ -28,9 +30,18 @@ $result = $conn->query($sql);
 $last_year = $result && $result->num_rows > 0
     ? $result->fetch_assoc()['year_name']
     : "";
+
+$query_1 = "SELECT id, username FROM users WHERE role_id NOT IN (4, 6)";
+$result_1 = $conn->query($query_1);
+
 // Dates SQL (format pour requête)
 $sqlFromDate = isset($_GET['fromDate']) ? $_GET['fromDate'] : null;
 $sqlToDate = isset($_GET['toDate']) ? $_GET['toDate'] : null;
+
+$user_id = $role_id == 1 ? $_GET['user_id'] ?? $con_user_id : $con_user_id;
+$username = $role_id == 1 ? $_GET['username'] ?? $username_con : $username_con;
+$selectedUser = $user_id;
+
 $sqlFromD = $sqlFromDate . " 00:00:00";
 $sqlToD = $sqlToDate . " 23:59:59";
 
@@ -39,7 +50,13 @@ $dateFilter = '';
 if ($sqlFromDate && $sqlToDate) {
     $dateFilter = "AND r.receipt_date BETWEEN ? AND ?";
 }
+$conUser = " AND ct.user_id = '$user_id'";
+if ($role_id == 1 && $user_id === 'all') {
+    $conUser = '';
+}
 $cond = ($role_id === 1) ? "1=1" : "ct.user_id = $user_id";
+
+
 
 // Déterminer si on filtre par fund ou banque
 if (isset($_GET['fund_id']) || isset($_GET['bank_id'])) {
@@ -76,6 +93,7 @@ if (isset($_GET['fund_id']) || isset($_GET['bank_id'])) {
         WHERE
             $cond
             $dateFilter
+            $conUser
         GROUP BY
             r.receipt_id, ct.type, r.receipt_description, r.receipt_date
         ORDER BY
@@ -391,6 +409,26 @@ $conn->close();
                     <label for="accountName" class="form-label">اسم الحساب:</label>
                     <input type="text" class="form-control" id="accountName" value="<?php echo htmlspecialchars($account_name); ?>" readonly>
                 </div>
+                <?php if ($role_id == 1) { ?>
+                <div class="form-group">
+                    <label for="user-select">المستخدم:</label>
+                    <select id="user-select" class="form-select" name="user_id" onchange="updateUsername()" dir="ltr">
+                        <option value="all">جميع المستخدمين</option>
+                        <?php
+                        if ($result_1->num_rows > 0) {
+                            while ($row = $result_1->fetch_assoc()) {
+                                $optionValue = $role_id != 1 ? $role_id : $row['id'];
+                                $selected = $selectedUser == $row['id'] ? 'selected' : '';
+                                echo "<option value='" . $optionValue . "' $selected>" . $row['username'] . "</option>";
+                            }
+                        } else {
+                            echo "<option value=''>لا يوجد مستخدمون</option>";
+                        }
+                        ?>
+                    </select>
+                    <input type="hidden" id="username" name="username" value="">
+                </div>
+            <?php } ?>
                 <div>
                     <label for="fromDate" class="form-label">من:</label>
                     <input type="date" class="form-control" id="fromDate" value="<?php echo htmlspecialchars($sqlFromDate); ?>">
@@ -480,10 +518,14 @@ function printPage() {
 function applyDateFilter() {
     const fromDate = document.getElementById('fromDate').value;
     const toDate   = document.getElementById('toDate').value;
+    const username   = document.getElementById('username').value;
+    const user_id   = document.getElementById('user-select').value;
     const urlParams = new URLSearchParams(window.location.search);
 
     urlParams.set('fromDate', fromDate);
     urlParams.set('toDate', toDate);
+    urlParams.set('username', username);
+    urlParams.set('user_id', user_id);
 
     window.location.search = urlParams.toString();
 }
@@ -491,6 +533,14 @@ function applyDateFilter() {
 
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+    <script>
+        function updateUsername() {
+            const userSelect = document.getElementById('user-select');
+            const usernameInput = document.getElementById('username');
+            usernameInput.value = userSelect.options[userSelect.selectedIndex].text;
+        }
 
+        document.addEventListener('DOMContentLoaded', updateUsername);
+    </script>
 </body>
 </html>

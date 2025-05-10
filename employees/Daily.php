@@ -40,7 +40,7 @@ $selectedStartDate = $_SESSION['start_date'] ?? '';
 $selectedEndDate = $_SESSION['end_date'] ?? '';
 
 // Fetch all users for the dropdown
-$query = "SELECT id, username FROM users";
+$query = "SELECT id, username FROM users WHERE role_id NOT IN (4, 6)";
 $result = $conn->query($query);
 
 
