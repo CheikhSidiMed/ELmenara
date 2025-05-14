@@ -309,9 +309,9 @@ if (!empty($_POST['id'])) {
 
     </style>
     <script>
-    function printPage() {
-    window.print();
-    }
+        function printPage() {
+            window.print();
+        }
     </script>
 </head>
 <body>
@@ -420,12 +420,13 @@ if (!empty($_POST['id'])) {
                     $stmt->bind_param('is', $student['id'], $selectedMonth);
                     $stmt->execute();
                     $stmt->store_result();
-
+                    $tot_abs = 0;
                     if ($stmt->num_rows > 0) {
                         $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence,
                                         $month3Income, $month3Absence, $totalIncome, $totalAbsence,
                                         $totalGroups, $extra, $notes);
                         $stmt->fetch();
+
                     } else {
                         // Set variables to empty if no data exists
                         $month1Income = $month1Absence = $month2Income = $month2Absence =
@@ -479,12 +480,15 @@ if (!empty($_POST['id'])) {
                     $stmt->bind_param('is', $student['id'], $selectedMonth);
                     $stmt->execute();
                     $stmt->store_result();
+                    $tot_abs = 0;
 
                     if ($stmt->num_rows > 0) {
                         $stmt->bind_result($month1Income, $month1Absence, $month2Income, $month2Absence,
                                         $month3Income, $month3Absence, $totalIncome, $totalAbsence,
                                         $totalGroups, $extra, $notes);
                         $stmt->fetch();
+                        $tot_abs = (int)$month1Absence + (int)$month2Absence + (int)$month3Absence;
+
                     } else {
                         // Set variables to empty if no data exists
                         $month1Income = $month1Absence = $month2Income = $month2Absence =
@@ -495,7 +499,7 @@ if (!empty($_POST['id'])) {
                 ?>
                 <tr>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_income]" value="<?php echo htmlspecialchars($totalIncome); ?>" class="no-border" /></td>
-                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_ab); ?>" class="no-border" /></td>
+                    <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_abs); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_groups]" value="<?php echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][extra]" value="<?php echo htmlspecialchars($extra); ?>" class="no-border" /></td>
                     <td><input type="text" name="student_data[<?php echo $student['id']; ?>][notes]" value="<?php echo htmlspecialchars($notes); ?>" class="no-border" /></td>

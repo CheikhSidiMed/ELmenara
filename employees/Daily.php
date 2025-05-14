@@ -161,13 +161,13 @@ foreach ($transactions as $transaction) {
     $type = $transaction['transaction_type'];
     $fundId = isset($transaction['fund_id']) ? (int) $transaction['fund_id'] : 0;
 
-    if ($type === 'plus' && $method === 'بنكي') {
+    if ($type === 'plus' && (int)$fundId !== 1) {
         $total_addition_bank += $amount;
-    } elseif ($type === 'plus' && $method === 'نقدي' && $fundId === 1) {
+    } elseif ($type === 'plus' && (int)$fundId === 1) {
         $total_addition_amount += $amount;
-    } elseif ($type === 'minus' && $method === 'بنكي') {
+    } elseif ($type === 'minus' && (int)$fundId !== 1) {
         $total_subtraction_bank += abs($amount);
-    } elseif ($type === 'minus' && $method === 'نقدي' && $fundId === 1) {
+    } elseif ($type === 'minus' && $fundId === 1) {
         $total_subtraction_amount += abs($amount);
     }
 }
@@ -600,11 +600,11 @@ foreach ($transactions as $transaction) {
                                         htmlspecialchars($transaction['receipt_id']);
                                     ?>
                             </td>
-                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['payment_method']==='نقدي' && (int)$transaction['fund_id']===1) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['payment_method']==='نقدي' && (int)$transaction['fund_id']===1) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && (int)$transaction['fund_id']===1) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && (int)$transaction['fund_id']===1) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
                             <td><?php echo htmlspecialchars($transaction['bank_name']); ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'plus' && $transaction['payment_method']==='بنكي') ? htmlspecialchars($transaction['amount']) : ''; ?></td>
-                            <td><?php echo ($transaction['transaction_type'] == 'minus' && $transaction['payment_method']==='بنكي') ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'plus' && (int)$transaction['fund_id']!==1) ? htmlspecialchars($transaction['amount']) : ''; ?></td>
+                            <td><?php echo ($transaction['transaction_type'] == 'minus' && (int)$transaction['fund_id']!==1) ? htmlspecialchars(abs($transaction['amount'])) : ''; ?></td>
                         </tr>
                     <?php endif; ?>
                 <?php endforeach; ?>
