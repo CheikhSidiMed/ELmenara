@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
 
                 
-                $des = "نقل الأموال من حساب " . $sourceN .  " الى حساب " . $destinationN .' { ' . $desc . ' }';  
+                $des = "نقل الأموال من حساب " . $sourceN .  " الى حساب " . $destinationN .' { ' . $desc . ' }';
 
 
                 $stmt = $conn->prepare("INSERT INTO receipts (receipt_date, total_amount, receipt_description, created_by)
@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
             </div>
             <div class="mb-3">
-                <label for="destination_id" class="form-label">حساب الوجهة</label>
+                <label for="destination_id" class="form-label">رقم الوجهة</label>
                 <select id="destination_id" name="destination_id" class="form-select" required>
                     <option value="">-- اختر نوع الوجهة أولاً --</option>
                 </select>
@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $(document).ready(function () {
             $('#source_id').change(function () {
                 const selectedOption = $(this).find('option:selected').text();
-                console.log('source_name',selectedOption)
+                $('#source_name').val(selectedOption);
             });
 
             $('#destination_id').change(function () {
