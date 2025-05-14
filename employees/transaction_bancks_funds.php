@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $destinationN = $_POST['destination_name'] ?? '';
     $destinationType = $_POST['destination_type'];
     $destinationId = $_POST['destination_id'];
+    $paymentMethod = '';
     $desc = $_POST['desc'];
     $amount = floatval($_POST['amount']);
 
@@ -40,11 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destinationTable = $destinationType === 'bank_account' ? 'bank_accounts' : 'funds';
         $destinationTableId = $destinationType === 'bank_account' ? 'account_id' : 'id';
 
-        $destIdBnck = $destinationType === 'bank_account' ? $sourceId : null;
-        $destIdFund = $destinationType === 'bank_account' ? null : $sourceId;
+        $destIdBnck = $destinationType === 'bank_account' ? $destinationId : null;
+        $destIdFund = $destinationType === 'bank_account' ? null : $destinationId;
 
-        $sourIdBnck = $sourceType === 'bank_account' ? $destinationId : null;
-        $sourIdFund = $sourceType === 'bank_account' ? null : $destinationId;
+        $paymentMethod = $destinationType === 'bank_account' ? 'بنكي' : 'نقدي';
+        $sourIdBnck = $sourceType === 'bank_account' ? $sourceId : null;
+        $sourIdFund = $sourceType === 'bank_account' ? null : $sourceId;
+
 
         // Récupérer le solde source
         $sourceSQL = "SELECT balance FROM $sourceTable WHERE $sourceTableId = ?";
@@ -220,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
             </div>
             <div class="mb-3">
-                <label for="destination_id" class="form-label">رقم الوجهة</label>
+                <label for="destination_id" class="form-label">حساب الوجهة</label>
                 <select id="destination_id" name="destination_id" class="form-select" required>
                     <option value="">-- اختر نوع الوجهة أولاً --</option>
                 </select>
@@ -289,12 +292,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $(document).ready(function () {
             $('#source_id').change(function () {
                 const selectedOption = $(this).find('option:selected').text();
-                $('#source_name').val(selectedOption); 
+                console.log('source_name',selectedOption)
             });
 
             $('#destination_id').change(function () {
                 const selectedOption = $(this).find('option:selected').text();
-                $('#destination_name').val(selectedOption); 
+                $('#destination_name').val(selectedOption);
+
             });
         });
     </script>
