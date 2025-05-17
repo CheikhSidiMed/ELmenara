@@ -17,6 +17,8 @@ if (!isset($_SESSION['userid'])) {
 $sql = "SELECT year_name FROM academic_years ORDER BY start_date DESC LIMIT 1";
 $result = $conn->query($sql);
 
+$branches = $conn->query("SELECT branch_id, branch_name FROM branches")->fetch_all(MYSQLI_ASSOC);
+
 $last_year = "";
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
@@ -24,19 +26,37 @@ if ($result->num_rows > 0) {
 }
 
 // Fetch available classes from the database
-$sql = "SELECT class_name FROM classes";
-$result = $conn->query($sql);
+// $sql = "SELECT class_name FROM classes";
+// $result = $conn->query($sql);
+
+// $classes = [];
+// while ($row = $result->fetch_assoc()) {
+//     $classes[] = $row['class_name'];
+// }
 
 $classes = [];
-while ($row = $result->fetch_assoc()) {
-    $classes[] = $row['class_name'];
-}
+
+
+
 
 $selectedYear = isset($_GET['year']) ? $_GET['year'] : '2024-2023';
 $filterType = isset($_GET['filter']) ? $_GET['filter'] : 'class';
 $selectedClass = isset($_GET['class']) ? $_GET['class'] : '';
+$selectedBranch = $_GET['branch'] ?? '';
 
 
+if (!empty($selectedBranch)) {
+    $stmt = $conn->prepare("SELECT class_name FROM classes WHERE branch_id = ?");
+    $stmt->bind_param("i", $selectedBranch);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    $result = $conn->query("SELECT class_name FROM classes");
+}
+
+while ($row = $result->fetch_assoc()) {
+    $classes[] = $row['class_name'];
+}
 $arabicMonths = [
     1 => 'يناير', 2 => 'فبراير', 3 => 'مارس',
     4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
@@ -70,7 +90,6 @@ if ($currentMonth <= $startMonth) {
 $allAcademicMonths = array_merge($starAcademicMonths, $endaAcademicMonths);
 
 
-
 if ($filterType === 'all') {
     $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month,
                p.remaining_amount, a.whatsapp_phone, s.remaining as price
@@ -78,27 +97,39 @@ if ($filterType === 'all') {
                 LEFT JOIN payments p ON s.id = p.student_id
                 LEFT JOIN agents a ON s.agent_id = a.agent_id
                 JOIN levels l ON s.level_id = l.id
-                WHERE s.etat=0 AND s.is_active=0 AND s.remaining != 0.00
-                ";
+                WHERE s.etat = 0 AND s.is_active = 0 AND s.remaining != 0.00";
+
+    if (!empty($selectedBranch)) {
+        $sql_new .= " AND s.branch_id = ?";
+        $stmt = $conn->prepare($sql_new);
+        $stmt->bind_param("i", $selectedBranch);
+    } else {
+        $stmt = $conn->prepare($sql_new);
+    }
+
 } else {
-    $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month, a.whatsapp_phone,
-                p.remaining_amount, s.remaining as price
+    $sql_new = "SELECT s.id, s.student_name, s.registration_date, s.phone, p.month,
+                a.whatsapp_phone, p.remaining_amount, s.remaining as price
                 FROM students s
                 LEFT JOIN payments p ON s.id = p.student_id
                 LEFT JOIN agents a ON s.agent_id = a.agent_id
                 JOIN classes c ON s.class_id = c.class_id
                 JOIN levels l ON s.level_id = l.id
-                WHERE s.etat=0 AND s.is_active=0 AND c.class_name = ? AND s.remaining != 0.00 ";
+                WHERE s.etat = 0 AND s.is_active = 0 AND s.remaining != 0.00 AND c.class_name = ?";
+
+    if (!empty($selectedBranch)) {
+        $sql_new .= " AND s.branch_id = ?";
+        $stmt = $conn->prepare($sql_new);
+        $stmt->bind_param("si", $selectedClass, $selectedBranch);
+    } else {
+        $stmt = $conn->prepare($sql_new);
+        $stmt->bind_param("s", $selectedClass);
+    }
 }
 
-$stmt_new = $conn->prepare($sql_new);
-
-if ($filterType === 'class') {
-    $stmt_new->bind_param('s', $selectedClass);
-}
-
-$stmt_new->execute();
-$result = $stmt_new->get_result();
+// No need for $stmt_new
+$stmt->execute();
+$result = $stmt->get_result();
 
 
 
@@ -160,7 +191,7 @@ foreach ($students as $studentName => &$student) {
 
 unset($student);
 
-$stmt_new->close();
+$stmt->close();
 $conn->close();
 
 ?>
@@ -435,9 +466,18 @@ $conn->close();
             <i class="bi bi-file-earmark-text-fill"></i> الطلاب المدينين
         </h2>
         <div class="d-flex flex-column flex-md-row gap-2 mt-2 mt-md-0">
-            <button class="btn btn-success" onclick="window.location.href='home.php'">
+            <button class="btn btn-success h-25" onclick="window.location.href='home.php'">
                 الصفحة الرئيسية <i class="fas fa-home ms-2"></i>
             </button>
+            
+
+        <!-- Sélection de l'année -->
+        <div class="col-12 col-md-6 ">
+            <!-- <label for="year-select" class="form-label">السنة المالية:</label> -->
+            <select id="year-select" name="year" class="form-select">
+                <option><?php echo htmlspecialchars($last_year); ?></option>
+            </select>
+        </div>
         </div>
     </div>
 
@@ -450,23 +490,29 @@ $conn->close();
             </a>
         </div>
 
-        <!-- Sélection de l'année -->
-        <div class="col-12 col-md-6 col-lg-2">
-            <label for="year-select" class="form-label">السنة المالية:</label>
-            <select id="year-select" name="year" class="form-select">
-                <option><?php echo htmlspecialchars($last_year); ?></option>
-            </select>
-        </div>
+        <!-- Filtrer par branche -->
+       <!-- Branch selection -->
+<div class="col-12 col-md-6 col-lg-2">
+    <label for="branch" class="form-label">الفرع:</label>
+    <select id="branch" name="branch" class="form-select">
+        <option value="">-- اختر الفرع --</option>
+        <?php foreach ($branches as $branch): ?>
+            <option value="<?= $branch['branch_id'] ?>"><?= htmlspecialchars($branch['branch_name']) ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
 
-        <!-- Sélection de la section -->
-        <div class="col-12 col-md-6 col-lg-2">
-            <label for="section" class="form-label">حسب القسم:</label>
-            <select id="section" name="class" class="form-select">
-                <?php foreach ($classes as $class): ?>
-                    <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+<!-- Class selection -->
+<div class="col-12 col-md-6 col-lg-2">
+    <label for="section" class="form-label">حسب القسم:</label>
+    <select id="section" name="class" class="form-select">
+        <option value="">-- اختر القسم --</option>
+        <?php foreach ($classes as $class): ?>
+            <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
 
         <!-- Sélection du filtre -->
         <div class="col-12 col-md-6 col-lg-2">
@@ -566,5 +612,28 @@ $conn->close();
 
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('branch').addEventListener('change', function () {
+            const branchId = this.value;
+
+            fetch('fetch_classe_s.php?branch_id=' + branchId)
+                .then(response => response.json())
+                .then(data => {
+                    const classSelect = document.getElementById('section');
+                    classSelect.innerHTML = '<option value="">-- اختر القسم --</option>';
+
+                    data.forEach(className => {
+                        const option = document.createElement('option');
+                        option.value = className;
+                        option.textContent = className;
+                        classSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching classes:', error);
+                });
+        });
+    </script>
+
 </body>
 </html>
