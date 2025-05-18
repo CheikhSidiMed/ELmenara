@@ -64,33 +64,70 @@ $payments = [];
 $transactions = [];
 
 
-
 if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
+    $sql = "SELECT
+            SUM(CASE
+                WHEN ct.type IN ('plus', 'deposit') THEN ct.paid_amount
+                WHEN ct.type IN ('minus', 'withdrawal') THEN -ct.paid_amount
+                ELSE 0
+            END) AS net_total
+        FROM
+            receipts r
+        JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+        LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
+        LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
+        WHERE
+            ct.user_id = ?
+            AND ct.fund_id = 1
+            AND r.receipt_date < ?;";
+    
+    $sql_stmt = $conn->prepare($sql);
+    $sql_stmt->bind_param("is", $user_id, $start_date);
+
     $transactions_query = "SELECT
-        r.receipt_id,
-        r.receipt_description AS transaction_description,
-        sum(ct.paid_amount) AS amount,
-        ct.type AS transaction_type,
-        ct.payment_method,
-        ct.fund_id,
-        r.receipt_date AS transaction_date,
-        ct.bank_id AS bank_account_id,
-        b.bank_name
-    FROM
-        receipts r
-    JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
-    LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
-    LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
-    WHERE
-        ct.user_id = ?
-        AND r.receipt_date BETWEEN ? AND ?
-        GROUP BY r.receipt_id, ct.type
-    ORDER BY
-        r.receipt_date DESC";
+            r.receipt_id,
+            r.receipt_description AS transaction_description,
+            sum(ct.paid_amount) AS amount,
+            ct.type AS transaction_type,
+            ct.payment_method,
+            ct.fund_id,
+            r.receipt_date AS transaction_date,
+            ct.bank_id AS bank_account_id,
+            b.bank_name
+        FROM
+            receipts r
+        JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+        LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
+        LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
+        WHERE
+            ct.user_id = ?
+            AND r.receipt_date BETWEEN ? AND ?
+            GROUP BY r.receipt_id, ct.type
+        ORDER BY
+            r.receipt_date DESC";
 
     $stmt = $conn->prepare($transactions_query);
     $stmt->bind_param("iss", $user_id, $start_date, $end_date);
 } elseif(!empty($_POST['user_id']) && $_POST['user_id'] === 'all'){
+
+    $sql = "SELECT
+            SUM(CASE
+                WHEN ct.type IN ('plus', 'deposit') THEN ct.paid_amount
+                WHEN ct.type IN ('minus', 'withdrawal') THEN -ct.paid_amount
+                ELSE 0
+            END) AS net_total
+        FROM
+            receipts r
+        JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+        LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
+        LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
+        WHERE
+            ct.fund_id = 1
+            AND r.receipt_date < ?;";
+    
+    $sql_stmt = $conn->prepare($sql);
+    $sql_stmt->bind_param("s", $start_date);
+
     $t_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
@@ -112,10 +149,28 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     ORDER BY
         r.receipt_date DESC;";
 
-
     $stmt = $conn->prepare($t_query);
     $stmt->bind_param("ss", $start_date, $end_date);
 } else {
+    $sql = "SELECT
+            SUM(CASE
+                WHEN ct.type IN ('plus', 'deposit') THEN ct.paid_amount
+                WHEN ct.type IN ('minus', 'withdrawal') THEN -ct.paid_amount
+                ELSE 0
+            END) AS net_total
+        FROM
+            receipts r
+        JOIN receipt_payments AS rp ON rp.receipt_id = r.receipt_id
+        LEFT JOIN combined_transactions AS ct ON ct.id = rp.transaction_id
+        LEFT JOIN bank_accounts b ON ct.bank_id = b.account_id
+        WHERE
+            ct.user_id = ?
+            AND ct.fund_id = 1
+            AND r.receipt_date < ?;";
+    
+    $sql_stmt = $conn->prepare($sql);
+    $sql_stmt->bind_param("is", $con_user_id, $start_date);
+
     $t_query = "SELECT
         r.receipt_id,
         r.receipt_description AS transaction_description,
@@ -142,6 +197,15 @@ if (!empty($_POST['user_id']) && $_POST['user_id'] !== 'all') {
     $stmt = $conn->prepare($t_query);
     $stmt->bind_param("iss", $con_user_id, $start_date, $end_date);
 }
+
+$sql_stmt->execute();
+$sql_stmt->bind_result($net_total);
+$sql_stmt->fetch();
+$sql_stmt->close();
+
+$net_total = $net_total ?? 0;
+
+
 
 $stmt->execute();
 $transactions_result = $stmt->get_result();
@@ -589,6 +653,20 @@ foreach ($transactions as $transaction) {
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td> </td>
+                    <td style="text-align: start;">
+                        <?php
+                            echo ' <strong> الرصيد قبل  : ' . $selectedStartDate . '</strong>';
+                            ?>
+                    </td>
+                    <td colspan="2">
+                    <?php echo '<strong>' . number_format($net_total, 2, '.', ',') . '</strong>'; ?>
+                </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
                 <?php foreach ($transactions as $transaction): ?>
                     <?php if (!empty($transaction['transaction_description'])): ?>
                         <tr>
@@ -612,18 +690,18 @@ foreach ($transactions as $transaction) {
         
                 <tr class="table-footer">
                     <td colspan="2"><strong>المجاميع:</strong></td>
-                    <td><?php echo htmlspecialchars($total_addition_amount); ?></td>
-                    <td><?php echo htmlspecialchars($total_subtraction_amount); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($total_addition_amount, 2, '.', ',')); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($total_subtraction_amount, 2, '.', ',')); ?></td>
                     <td><strong>المجاميع:</strong></td>
-                    <td><?php echo htmlspecialchars($total_addition_bank); ?></td>
-                    <td><?php echo htmlspecialchars($total_subtraction_bank); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($total_addition_bank, 2, '.', ',')); ?></td>
+                    <td><?php echo htmlspecialchars(number_format($total_subtraction_bank, 2, '.', ',')); ?></td>
                 </tr>
                 <tr class="table-footer">
                     <td  colspan="2"><strong>الرصيد الكلي:</strong></td>
-                    <td colspan="2" ><?php echo htmlspecialchars($total_addition_amount - $total_subtraction_amount); ?></td>
+                    <td colspan="2" ><?php echo htmlspecialchars(number_format($total_addition_amount - $total_subtraction_amount, 2, '.', ',')); ?></td>
 
                     <td><strong>الرصيد الكلي:</strong></td>
-                    <td colspan="2"><?php echo htmlspecialchars($total_addition_bank - $total_subtraction_bank); ?></td>
+                    <td colspan="2"><?php echo htmlspecialchars(number_format($total_addition_bank - $total_subtraction_bank, 2, '.', ',')); ?></td>
                 </tr>
             
         </table>

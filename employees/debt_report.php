@@ -490,28 +490,27 @@ $conn->close();
             </a>
         </div>
 
-        <!-- Filtrer par branche -->
-       <!-- Branch selection -->
-<div class="col-12 col-md-6 col-lg-2">
-    <label for="branch" class="form-label">الفرع:</label>
-    <select id="branch" name="branch" class="form-select">
-        <option value="">-- اختر الفرع --</option>
-        <?php foreach ($branches as $branch): ?>
-            <option value="<?= $branch['branch_id'] ?>"><?= htmlspecialchars($branch['branch_name']) ?></option>
-        <?php endforeach; ?>
-    </select>
-</div>
+        <!-- Branch selection -->
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="branch" class="form-label">الفرع:</label>
+            <select id="branch" name="branch" class="form-select">
+                <option value="">-- اختر الفرع --</option>
+                <?php foreach ($branches as $branch): ?>
+                    <option value="<?= $branch['branch_id'] ?>"><?= htmlspecialchars($branch['branch_name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-<!-- Class selection -->
-<div class="col-12 col-md-6 col-lg-2">
-    <label for="section" class="form-label">حسب القسم:</label>
-    <select id="section" name="class" class="form-select">
-        <option value="">-- اختر القسم --</option>
-        <?php foreach ($classes as $class): ?>
-            <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
-        <?php endforeach; ?>
-    </select>
-</div>
+        <!-- Class selection -->
+        <div class="col-12 col-md-6 col-lg-2">
+            <label for="section" class="form-label">حسب القسم:</label>
+            <select id="section" name="class" class="form-select">
+                <option value="">-- اختر القسم --</option>
+                <?php foreach ($classes as $class): ?>
+                    <option value="<?= htmlspecialchars($class) ?>"><?= htmlspecialchars($class) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
 
         <!-- Sélection du filtre -->
