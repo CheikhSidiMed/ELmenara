@@ -226,7 +226,7 @@ $result = $stmt->get_result();
             border-color: var(--secondary);
         }
         
-        .btn-edit, .btn-disb, .btn-del, .btn-act {
+        .btn-edit, .btn-disb, .btn-del, .btn-act , .btn-ivd {
             border: none;
             color: white;
             padding: 6px 12px;
@@ -246,6 +246,9 @@ $result = $stmt->get_result();
         .btn-del {
             background-color: var(--secondary2);
         }
+        .btn-ivd {
+            background-color: #380;
+        }
         .btn-act {
             background-color: var(--primary);
         }
@@ -255,6 +258,13 @@ $result = $stmt->get_result();
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px #30021c;
+        }
+        
+        .btn-idv:hover {
+            background-color: #3856;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px #380;
         }
         .btn-disb:hover {
             background-color: #e0a800;
@@ -463,6 +473,13 @@ $result = $stmt->get_result();
                                             <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['id']; ?>)" class="btn-del">
                                                 <i class="fas fa-trash"></i>فصل
                                             </a>
+
+                                            <a href="javascript:void(0);"
+                                                onclick="createIvada(event)"
+                                                data-student-id="<?= $row['id']; ?>"
+                                                class="btn-ivd">
+                                                إفادة
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -620,6 +637,63 @@ $result = $stmt->get_result();
             }
         });
     }
+    
+    function createIvada(event) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const studentId = btn.dataset.studentId;
+
+    Swal.fire({
+        title: 'إفادة تحديد المستوى عند خروج الطالب',
+        html: `
+            <input id="swal-status" class="swal2-input" placeholder="أدخل الحالة العامة للمحفوظات">
+            <textarea id="swal-note" class="swal2-textarea" placeholder="أدخل الملحوظات"></textarea>
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'إنشاء',
+        cancelButtonText: 'إلغاء',
+        preConfirm: () => {
+            const status = document.getElementById('swal-status').value.trim();
+            const note = document.getElementById('swal-note').value.trim();
+            if (!status || !note) {
+                Swal.showValidationMessage('يجب ملء الحقول: الحالة العامة والملحوظات');
+                return false;
+            }
+            return { status, note };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const status = result.value.status;
+            const note = result.value.note;
+
+            // Create a hidden form and submit it to a new tab
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'document-management/pdf_exit.php';
+            form.target = '_blank';
+
+            const inputs = [
+                { name: 'student_id', value: studentId },
+                { name: 'status', value: status },
+                { name: 'note', value: note }
+            ];
+
+            inputs.forEach(inputData => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = inputData.name;
+                input.value = inputData.value;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+    });
+}
+
 
     // AJAX to process suspension
     function processSuspendStudent(student_id, suspension_reason, targetStatus, msg1, msg2) {

@@ -1523,7 +1523,8 @@
           <rect class="cls-53" x="60" y="560.01" width="136" height="33"/>
         </g>
         <text class="cls-33" transform="translate(284.57 272.05)"><tspan x="0" y="0" xml:space="preserve">.الحمد لله رب العالمين، والصلاة والسلام على رسول الله  </tspan><tspan x="210.58" y="14.4" xml:space="preserve">:أما بعد  </tspan><tspan x="105.23" y="43.2" xml:space="preserve" text-anchor="middle" 
-            dominant-baseline="middle" id="name-text">:فإن الطالبة </tspan><tspan x="-30.72" y="72" xml:space="preserve" id="name-v"> المولودة في  :                                       | تاريخ الميلاد</tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan><tspan x="-190.8" y="105.2" xml:space="preserve">من طالبات العلم المتميزات، وتحفظ من كتاب الله تعالى:    وتميزت بحسن الخلق والسلوك القويم </tspan><tspan x="65.75" y="126.6" xml:space="preserve">.نسأل الله أن يوفقها ويزيدها علمًا وفهما  </tspan><tspan text-anchor="middle" 
+            dominant-baseline="middle" id="name-text">:فإن الطالبة </tspan><tspan x="-30.72" y="72" xml:space="preserve" id="name-v"> المولودة في  :                                       | تاريخ الميلاد</tspan><tspan x="266.2" y="86.4" xml:space="preserve">  </tspan>
+            <tspan x="-190.8" y="105.2" xml:space="preserve" id="name-m">من طالبات العلم المتميزات،  </tspan><tspan x="65.75" y="126.6" xml:space="preserve">.نسأل الله أن يوفقها ويزيدها علمًا وفهما  </tspan><tspan text-anchor="middle" 
             dominant-baseline="middle" x="142.79" y="145.8" >.وقد سلمناها هذه الإفادة للإدلاء بها عند الحاجة</tspan><tspan x="23.94" y="170.2">.وما شهدنا إلا بما علـــــــــــــــــــــــــــــــــــــــــــــــــمنا</tspan></text>
         <text class="cls-35" transform="translate(98.64 566.11)">
           <tspan x="0" y="0">الإدارة </tspan>
@@ -1541,6 +1542,8 @@
 <div class="b-group">
     <input type="text" id="nameInput" placeholder="أدخل الاسم" dir="rtl">
     <input type="text" id="nameVInput" placeholder=" المولود في" dir="rtl">
+    <input type="text" id="nameMInput" placeholder=" من طالبات " dir="rtl">
+
     <input type="date" id="nameDInput">
     <!-- <input type="text" id="nameMInput" placeholder=" وقد" dir="rtl"> -->
     <input type="date" id="dateInput">
@@ -1563,9 +1566,13 @@
         const name_v = document.getElementById("nameVInput").value;
         const name_d = document.getElementById("nameDInput").value;
         const name_f = document.getElementById("nameFInput").value;
+        const name_m = document.getElementById("nameMInput").value;
 
         if (name) {
             document.getElementById("name-text").textContent = " فإن الطالبة: " + name;
+        }
+        if (name_m) {
+            document.getElementById("name-m").textContent = "  من طلاب  " + name_m;
         }
         if (name_f) {
             document.getElementById("name-f").textContent = name_f;
