@@ -89,22 +89,48 @@ $result = $stmt->get_result();
     <link href="css/style1.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+    <style>
+        .receipt-header {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .header-imag {
+            width: 100%;
+            height: auto;
+        }
+        .titl {
+            position: absolute;
+            height: auto;
+            right: 3vw;
+            top: 7vw;
+            z-index: 10;
+            text-align: center;
+            font-size: 3.1vw;
+            color: #017B6A;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container pb-2">
             <div class="how">
-                <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>  الرئيسية</a>
+                <a class="nav-link" href="../home.php"><i class="bi bi-house-fill"></i>الرئيسية</a>
             </div>
             <a class="navbar-brand" href="#"> حصيلة الإمتحان - مقرأة المنارة والرباط</a>
         </div>
     </nav>
 
     
-    <div class="container-full " style="direction: rtl;">
-        <h2>حصيلة الإمتحان
+    <div class="container-full " style="direction: rtl; position: relative;">
+        <span class="titl">حصيلة الإمتحان
             <!-- <span class="is_active"> الفصلي </span> -->
-        </h2>
+        </span>
+        <div class="receipt-header">
+            <img src="imgs/header.png" alt="" class="header-imag">
+        </div>
+        
         <div class="search-filter-container text-center mb-3 row align-items-center">
             <div class="col-md-5 mb-2 mb-md-0">
                 <input type="text" id="searchInput" class="form-control" placeholder="البحث عن طريق اسم الطالب...">
@@ -186,6 +212,9 @@ $result = $stmt->get_result();
                     ?>
                 </tbody>
             </table>
+        </div>
+        <div class="receipt-header">
+            <img src="imgs/footer.png" alt="" class="header-imag">
         </div>
     </div>
 

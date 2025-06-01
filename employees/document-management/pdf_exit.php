@@ -374,8 +374,7 @@ $conn->close();
         <div class="app-container">
             <div class="receipt" id="certificate">
                 <div class="watermark">
-                <img src="bk.jpg"
-                alt="Header Image" class="header-imag">
+                    <img src="bk.jpg" alt="Header Image" class="header-imag">
                 </div>
                 
                 <div class="receipt-header">

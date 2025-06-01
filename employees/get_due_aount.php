@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['months'])) {
     $total_due_amount = 0;
 
     // Récupérer les étudiants de l'agent
-    $sql_students = "SELECT id, remaining, registration_date FROM students WHERE agent_id = ? AND remaining != 0.00";
+    $sql_students = "SELECT id, remaining, registration_date FROM students WHERE etat=0 AND is_active=0 AND agent_id = ? AND remaining != 0.00";
     $stmt_students = $conn->prepare($sql_students);
     $stmt_students->bind_param("i", $agent_id);
     $stmt_students->execute();

@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             LEFT JOIN branches b ON s.branch_id = b.branch_id
             LEFT JOIN levels l ON s.level_id = l.id
             LEFT JOIN classes c ON s.class_id = c.class_id
-            WHERE s.agent_id = ? AND remaining != 0.00";
+            WHERE s.etat=0 AND s.is_active=0 AND s.agent_id = ? AND remaining != 0.00";
          $stmt_students = $conn->prepare($sql_students);
          $stmt_students->bind_param('i', $agent_data['agent_id']);
          $stmt_students->execute();
