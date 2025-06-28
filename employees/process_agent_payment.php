@@ -107,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $receipts_id = insertReceipts($conn, $to_t_paid, $descr_ion, $user_id, $agent_id);
 
-        $sql_students = "SELECT id, student_name, remaining FROM students WHERE agent_id = ? AND remaining > 0.00";
+        $sql_students = "SELECT id, student_name, remaining FROM students WHERE etat=0 AND is_active=0 AND agent_id = ? AND remaining > 0.00";
         $stmt_students = $conn->prepare($sql_students);
         $stmt_students->bind_param("i", $agent_id);
         $stmt_students->execute();
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $monthsA = explode(',', $monthsString);
             $sql_s = "SELECT s.id, s.student_name, s.remaining FROM students s
                         LEFT JOIN payments p ON s.id = p.student_id AND p.month IN ($placeholders)
-                        WHERE s.agent_id = ? AND s.remaining > 0.00
+                        WHERE etat=0 AND is_active=0 AND  s.agent_id = ? AND s.remaining > 0.00
                         GROUP BY s.id, s.student_name, s.remaining
                         HAVING COUNT(p.payment_id) < ?
                     ";
