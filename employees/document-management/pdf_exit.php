@@ -23,6 +23,7 @@ if ($result->num_rows > 0) {
 
 $student_id = $_POST['student_id'] ?? '';
 $status = $_POST['status'] ?? '';
+$mustewa = $_POST['mustewa'] ?? '';
 $note = $_POST['note'] ?? '';
 
 $sql = "SELECT s.student_name, b.branch_name, l.level_name, c.class_name,
@@ -395,7 +396,7 @@ $conn->close();
                 </div>
                 
                 <div class="info-container">
-                    <div><strong>المستوى:</strong> <span class="value"><?php echo $level_name ?></span></div>
+                    <div><strong>المستوى:</strong> <span class="value"><?php echo $mustewa ?></span></div>
                     <div><strong>التاريخ:</strong> <span class="value"><?php echo date('Y-m-d'); ?></span></div>
                 </div>
                 

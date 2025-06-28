@@ -647,6 +647,7 @@ $result = $stmt->get_result();
         title: 'إفادة تحديد المستوى عند خروج الطالب',
         html: `
             <input id="swal-status" class="swal2-input" placeholder="أدخل الحالة العامة للمحفوظات">
+            <input id="swal-mustewa" class="swal2-input" placeholder="أدخل المستوى">
             <textarea id="swal-note" class="swal2-textarea" placeholder="أدخل الملحوظات"></textarea>
         `,
         focusConfirm: false,
@@ -656,16 +657,18 @@ $result = $stmt->get_result();
         preConfirm: () => {
             const status = document.getElementById('swal-status').value.trim();
             const note = document.getElementById('swal-note').value.trim();
-            if (!status || !note) {
+            const mustewa = document.getElementById('swal-mustewa').value.trim();
+            if (!status || !note || !mustewa) {
                 Swal.showValidationMessage('يجب ملء الحقول: الحالة العامة والملحوظات');
                 return false;
             }
-            return { status, note };
+            return { status, note, mustewa};
         }
     }).then((result) => {
         if (result.isConfirmed) {
             const status = result.value.status;
             const note = result.value.note;
+            const mustewa = result.value.mustewa;
 
             // Create a hidden form and submit it to a new tab
             const form = document.createElement('form');
@@ -676,6 +679,7 @@ $result = $stmt->get_result();
             const inputs = [
                 { name: 'student_id', value: studentId },
                 { name: 'status', value: status },
+                { name: 'mustewa', value: mustewa },
                 { name: 'note', value: note }
             ];
 
