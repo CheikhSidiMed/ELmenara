@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $receipts_id = insertReceipts($conn, $to_t_paid, $descr_ion, $user_id, $agent_id);
         
-        $sql_students = "SELECT id, student_name FROM students WHERE agent_id = ?";
+        $sql_students = "SELECT id, student_name FROM students WHERE etat=0 AND is_active=0 agent_id = ?";
         $stmt_students = $conn->prepare($sql_students);
         $stmt_students->bind_param("i", $agent_id);
         $stmt_students->execute();
