@@ -62,8 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $transaction_id = $conn->insert_id;
 
         // Insert into `receipt_payments`
-        $stmt = $conn->prepare("
-        INSERT INTO receipt_payments (receipt_id, transaction_id)
+        $stmt = $conn->prepare("INSERT INTO receipt_payments (receipt_id, transaction_id)
         VALUES (?, ?)
         ");
         $stmt->bind_param("ss", $receipts_id, $transaction_id);

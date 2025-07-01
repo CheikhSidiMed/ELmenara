@@ -52,6 +52,7 @@ $result = $stmt->get_result();
     <link href="css/style1.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -163,6 +164,11 @@ $result = $stmt->get_result();
                                             data-is-active='{$selectedStatus}'>
                                             <i class='bi bi-ban-fill'></i> {$btnText}
                                         </a>
+                                        <a class='h5 btn btn-action btn-ivd' href='javascript:void(0);'
+                                                onclick='createIvada(event)'
+                                                data-student-id='{$row['id']}'>
+                                                إفادة
+                                            </a>
                                         </div>
 
                                         </td>
@@ -191,6 +197,67 @@ $result = $stmt->get_result();
             });
         });
     });
+
+        
+    function createIvada(event) {
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const studentId = btn.dataset.studentId;
+
+        Swal.fire({
+            title: 'إفادة تحديد المستوى عند خروج الطالب',
+            html: `
+                <input id="swal-status" class="swal2-input" placeholder="أدخل الحالة العامة للمحفوظات">
+                <input id="swal-mustewa" class="swal2-input" placeholder="أدخل المستوى">
+                <textarea id="swal-note" class="swal2-textarea" placeholder="أدخل الملحوظات"></textarea>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'إنشاء',
+            cancelButtonText: 'إلغاء',
+            preConfirm: () => {
+                const status = document.getElementById('swal-status').value.trim();
+                const note = document.getElementById('swal-note').value.trim();
+                const mustewa = document.getElementById('swal-mustewa').value.trim();
+                if (!status || !note || !mustewa) {
+                    Swal.showValidationMessage('يجب ملء الحقول: الحالة العامة والملحوظات');
+                    return false;
+                }
+                return { status, note, mustewa};
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const status = result.value.status;
+                const note = result.value.note;
+                const mustewa = result.value.mustewa;
+
+                // Create a hidden form and submit it to a new tab
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '../document-management/pdf_exit.php';
+                form.target = '_blank';
+
+                const inputs = [
+                    { name: 'student_id', value: studentId },
+                    { name: 'status', value: status },
+                    { name: 'mustewa', value: mustewa },
+                    { name: 'note', value: note }
+                ];
+
+                inputs.forEach(inputData => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = inputData.name;
+                    input.value = inputData.value;
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            }
+        });
+    }
 </script>
 
 <script>

@@ -148,6 +148,11 @@ th, td{
     border: 1px solid #BD9237 !important;
 }
 
+.btn-ivd {
+    background-color: #380;
+    color: white;
+}
+
 
 @media (max-width: 768px) {
    

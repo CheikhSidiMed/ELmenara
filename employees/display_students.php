@@ -639,64 +639,64 @@ $result = $stmt->get_result();
     }
     
     function createIvada(event) {
-    event.preventDefault();
-    const btn = event.currentTarget;
-    const studentId = btn.dataset.studentId;
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const studentId = btn.dataset.studentId;
 
-    Swal.fire({
-        title: 'إفادة تحديد المستوى عند خروج الطالب',
-        html: `
-            <input id="swal-status" class="swal2-input" placeholder="أدخل الحالة العامة للمحفوظات">
-            <input id="swal-mustewa" class="swal2-input" placeholder="أدخل المستوى">
-            <textarea id="swal-note" class="swal2-textarea" placeholder="أدخل الملحوظات"></textarea>
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'إنشاء',
-        cancelButtonText: 'إلغاء',
-        preConfirm: () => {
-            const status = document.getElementById('swal-status').value.trim();
-            const note = document.getElementById('swal-note').value.trim();
-            const mustewa = document.getElementById('swal-mustewa').value.trim();
-            if (!status || !note || !mustewa) {
-                Swal.showValidationMessage('يجب ملء الحقول: الحالة العامة والملحوظات');
-                return false;
+        Swal.fire({
+            title: 'إفادة تحديد المستوى عند خروج الطالب',
+            html: `
+                <input id="swal-status" class="swal2-input" placeholder="أدخل الحالة العامة للمحفوظات">
+                <input id="swal-mustewa" class="swal2-input" placeholder="أدخل المستوى">
+                <textarea id="swal-note" class="swal2-textarea" placeholder="أدخل الملحوظات"></textarea>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'إنشاء',
+            cancelButtonText: 'إلغاء',
+            preConfirm: () => {
+                const status = document.getElementById('swal-status').value.trim();
+                const note = document.getElementById('swal-note').value.trim();
+                const mustewa = document.getElementById('swal-mustewa').value.trim();
+                if (!status || !note || !mustewa) {
+                    Swal.showValidationMessage('يجب ملء الحقول: الحالة العامة والملحوظات');
+                    return false;
+                }
+                return { status, note, mustewa};
             }
-            return { status, note, mustewa};
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const status = result.value.status;
-            const note = result.value.note;
-            const mustewa = result.value.mustewa;
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const status = result.value.status;
+                const note = result.value.note;
+                const mustewa = result.value.mustewa;
 
-            // Create a hidden form and submit it to a new tab
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'document-management/pdf_exit.php';
-            form.target = '_blank';
+                // Create a hidden form and submit it to a new tab
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'document-management/pdf_exit.php';
+                form.target = '_blank';
 
-            const inputs = [
-                { name: 'student_id', value: studentId },
-                { name: 'status', value: status },
-                { name: 'mustewa', value: mustewa },
-                { name: 'note', value: note }
-            ];
+                const inputs = [
+                    { name: 'student_id', value: studentId },
+                    { name: 'status', value: status },
+                    { name: 'mustewa', value: mustewa },
+                    { name: 'note', value: note }
+                ];
 
-            inputs.forEach(inputData => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = inputData.name;
-                input.value = inputData.value;
-                form.appendChild(input);
-            });
+                inputs.forEach(inputData => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = inputData.name;
+                    input.value = inputData.value;
+                    form.appendChild(input);
+                });
 
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-        }
-    });
-}
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            }
+        });
+    }
 
 
     // AJAX to process suspension
