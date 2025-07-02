@@ -110,7 +110,6 @@ $quarterlyMonths_number = [
 
 $months = isset($quarterlyMonths_number[$selectedMonth]) ? $quarterlyMonths_number[$selectedMonth] : [];
 
-
 $className = '';
 $students = [];
 $studentAbsences = [];
@@ -495,11 +494,13 @@ if (!empty($selectedClass)) {
                     </tr>
 
                     <?php foreach ($students as $studentId => $student) {
-
-                        $tot_ab =
-                        ($studentAbsences[$student['id']][$months[0]] ?? 0) +
-                        ($studentAbsences[$student['id']][$months[1]] ?? 0) +
-                        ($studentAbsences[$student['id']][$months[2]] ?? 0);
+                        $ab1 = $studentAbsences[$student['id']][$months[0]] ?? 0;
+                        $ab2 = $studentAbsences[$student['id']][$months[1]] ?? 0;
+                        $ab3 = $studentAbsences[$student['id']][$months[2]] ?? 0;
+                        $tot_ab = $ab1 + $ab2 + $ab3;
+                        // ($studentAbsences[$student['id']][$months[0]] ?? 0) +
+                        // ($studentAbsences[$student['id']][$months[1]] ?? 0) +
+                        // ($studentAbsences[$student['id']][$months[2]] ?? 0);
                                         $stmt = $conn->prepare("SELECT month_1_income, month_1_absence, month_2_income, month_2_absence,
                                 month_3_income, month_3_absence, total_income, total_absence,
                                 total_groups, extra, notes
@@ -530,14 +531,14 @@ if (!empty($selectedClass)) {
                         <input type="hidden" name="quarter" value="<?php echo $selectedMonth; ?>" />
                         <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_income]" value="<?php echo htmlspecialchars($month1Income); ?>" class="no-border"/></td>
                         <!-- <td><input type="text" name="student_data[<?php // echo $student['id']; ?>][month_1_absence]" value="<?php //echo htmlspecialchars($month1Absence); ?>" class="no-border" /></td> -->
-                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($month2Absence); ?>" class="no-border" /></td>
+                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_1_absence]" value="<?php echo htmlspecialchars($ab3); ?>" class="no-border" /></td>
                         <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_income]" value="<?php echo htmlspecialchars($month2Income); ?>" class="no-border" /></td>
                         <!-- <td><input type="text" name="student_data[<?php // echo $student['id']; ?>][month_2_absence]" value="<?php //  echo htmlspecialchars($month2Absence); ?>" class="no-border" /></td> -->
-                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($month1Absence); ?>" class="no-border" /></td>
+                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_2_absence]" value="<?php echo htmlspecialchars($ab2); ?>" class="no-border" /></td>
                         <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_income]" value="<?php echo htmlspecialchars($month3Income); ?>" class="no-border" /></td>
-                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($month3Absence); ?>" class="no-border" /></td>
+                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][month_3_absence]" value="<?php echo htmlspecialchars($ab1); ?>" class="no-border" /></td>
                         <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_income]" value="<?php echo htmlspecialchars($totalIncome); ?>" class="no-border" /></td>
-                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_abs); ?>" class="no-border" /></td>
+                        <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_absence]" value="<?php echo htmlspecialchars($tot_ab); ?>" class="no-border" /></td>
 
                         <td><input type="text" name="student_data[<?php echo $student['id']; ?>][total_groups]" value="<?php echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td>
                         <!-- <td><input type="text" name="student_data[<?php // echo $student['id']; ?>][total_groups]" value="<?php // echo htmlspecialchars($totalGroups); ?>" class="no-border" /></td> -->
